@@ -3,8 +3,8 @@
  * SerializableClosure Class
  * 
  * Packages a PHP Closure for serialization.
- * @author		Jeremy Lindblom
- * @copyright	(c) 2010 Jeremy Lindblom
+ * @author     Jeremy Lindblom <http://webdevilaz.com>
+ * @copyright  (c) 2010 Jeremy Lindblom
  */
 class SerializableClosure implements Serializable {
 
@@ -33,8 +33,8 @@ class SerializableClosure implements Serializable {
 		$reflected = new ReflectionFunction($this->closure);
 		if ( ! $reflected->isClosure())
 			throw new RuntimeException();
-		$code      = $this->_getCode($reflected);
-		$context   = $reflected->getStaticVariables();
+		$code    = $this->_getCode($reflected);
+		$context = $reflected->getStaticVariables();
 		return serialize(array($code, $context));
 	}
 	
@@ -51,7 +51,7 @@ class SerializableClosure implements Serializable {
 	protected function _getCode($reflected)
 	{
 		$file = new SplFileObject($reflected->getFileName());
-		$file->seek($reflected->getStartLine()-1);
+		$file->seek($reflected->getStartLine() - 1);
 		$code = '';
 		while ($file->key() < $reflected->getEndLine())
 		{

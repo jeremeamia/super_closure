@@ -57,10 +57,51 @@ class SerializableClosure implements Serializable {
 		{
 			$code .= $file->current();
 			$file->next();
-		}
+		}		
 		$begin = strpos($code, 'function');
-		$end   = strrpos($code, '}');
-		$code  = substr($code, $begin, $end - $begin + 1);
-		return $code;
+		$index = strpos($code, '{', $begin);
+		$bracketCount = 1;
+		$inString = false;
+		$escape = false;
+		while($bracketCount) {
+			$index++;
+			$char = $code[$index];
+			
+			if($inString && $char == '\\') {
+				$escape = !$escape;
+				continue;
+			}
+			
+			if($escape) {
+				$escape = false;
+				continue;
+			}
+			
+			if($char == '"' || $char == "'") {
+				if(!$inString) {
+					$inString = $char;
+					continue;
+				}
+				
+				if($inString == $char) {
+					$inString = false;
+					continue;
+				}
+			}
+			
+			if($inString) { 
+				continue;
+			}
+			
+			if($code[$index] == '{') {
+				$bracketCount++;
+			} 
+			
+			if($code[$index] == '}') {
+				$bracketCount--;
+			}
+		}
+		
+		return substr($code, $begin, $index - $begin + 1);
 	}
 }

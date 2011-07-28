@@ -1,139 +1,131 @@
 <?php
+
+require 'FunctionParser.class.php';
+
 /**
- * Super Closure Class
+ * SuperClosure Class
  * 
  * The SuperClosure class encapsulates a PHP Closure and adds new capabilities
- * like serialization and code retrieval. It uses the ReflectionFunction class
- * heavily to acquire information about the closure.
- * @author		Jeremy Lindblom
- * @copyright	(c) 2010 Synapse Studios, LLC.
+ * like serialization and code fetching. It uses the ReflectionFunction class
+ * heavily to acquire information about the Closure. Because the class works
+ * with Closures, it requires PHP version 5.3+. DISCLAIMERS: This class is not
+ * designed to perform well due to the nature of the techniques it uses. Also, 
+ * you should note that it uses the `extract()` and `eval()` functions to make
+ * serialization/unserialization possible.
+ * 
+ * @author     Jeremy Lindblom
+ * @copyright  Copyright (c) 2011 Jeremy Lindblom
  */
-class SuperClosure {
+class SuperClosure implements Serializable
+{
+	protected $closure;
+	protected $reflection;
+	protected $code;
+	protected $context;
 
-	protected $closure = NULL;
-	protected $reflection = NULL;
-	protected $code = NULL;
-	protected $used_variables = array();
-
-
-	public function __construct($function)
+	public function __construct(Closure $closure)
 	{
-		// Check if parameter is an actual closure
-		if ( ! $function instanceOf Closure)
-			throw new InvalidArgumentException();
-
-		// Set the member variable values
-		$this->closure = $function;
-		$this->reflection = new ReflectionFunction($function);
-		$this->code = $this->_fetchCode();
-		$this->used_variables = $this->_fetchUsedVariables();
+		$this->_init($closure);
 	}
 
-
-	public function __invoke()
+	protected function _init(Closure $closure, $code = NULL, $context = NULL)
 	{
-		$args = func_get_args();
-		return $this->reflection->invokeArgs($args);
-	}
+		$this->closure = $closure;
+		$this->reflection = new ReflectionFunction($closure);
 
+		// Use the FunctionParser to get the code and context if it is not
+		// provided to the initialization during an unserialization.
+		if ($code === NULL OR $context === NULL)
+		{
+			$parser = new FunctionParser($this->reflection);
+
+			$this->code = $parser->getCode();
+			$this->context = $parser->getContext();
+		}
+		else
+		{
+			$this->code = (string) $code;
+			$this->context = (array) $context;
+		}
+	}
 
 	public function getClosure()
 	{
 		return $this->closure;
 	}
 
-
-	protected function _fetchCode()
+	public function getReflection()
 	{
-		// Open file and seek to the first line of the closure
-		$file = new SplFileObject($this->reflection->getFileName());
-		$file->seek($this->reflection->getStartLine()-1);
-
-		// Retrieve all of the lines that contain code for the closure
-		$code = '';
-		while ($file->key() < $this->reflection->getEndLine())
-		{
-			$code .= $file->current();
-			$file->next();
-		}
-
-		// Only keep the code defining that closure
-		$begin = strpos($code, 'function');
-		$end = strrpos($code, '}');
-		$code = substr($code, $begin, $end - $begin + 1);
-
-		return $code;
+		return $this->reflection;
 	}
-
 
 	public function getCode()
 	{
 		return $this->code;
 	}
 
-
-	public function getParameters()
+	public function getContext()
 	{
-		return $this->reflection->getParameters();
+		return $this->context;
 	}
 
-
-	protected function _fetchUsedVariables()
+	public function __invoke()
 	{
-		// Make sure the use construct is actually used
-		$use_index = stripos($this->code, 'use');
-		if ( ! $use_index)
-			return array();
-
-		// Get the names of the variables inside the use statement
-		$begin = strpos($this->code, '(', $use_index) + 1;
-		$end = strpos($this->code, ')', $begin);
-		$vars = explode(',', substr($this->code, $begin, $end - $begin));
-
-		// Get the static variables of the function via reflection
-		$static_vars = $this->reflection->getStaticVariables();
-		
-		// Only keep the variables that appeared in both sets
-		$used_vars = array();
-		foreach ($vars as $var)
+		// Delegate to the closure when this class is invoked as a method.
+		// Use the fastest way depending on number of arguments.
+		$args = func_get_args();
+		if (count($args) == 0)
 		{
-			$var = trim($var, ' $&');
-			$used_vars[$var] = $static_vars[$var];
+			return $this->closure();
 		}
-
-		return $used_vars;
-	}
-
-
-	public function getUsedVariables()
-	{
-		return $this->used_variables;
-	}
-
-
-	public function __sleep()
-	{
-		// Only serialize the code and used_variables, the closure or reflection members with cause a fatal error
-		return array('code', 'used_variables');
-	}
-
-
-	public function __wakeup()
-	{
-		// Import the used variables so they can again be inherited by the closure
-		extract($this->used_variables);
-
-		// Eval the closure's code to recreate the closure
-		eval('$_function = '.$this->code.';');
-
-		// If the eval succeeded create the reflection object as well
-		if (isset($_function) AND $_function instanceOf Closure)
+		elseif (count($args) == 1)
 		{
-			$this->closure = $_function;
-			$this->reflection = new ReflectionFunction($_function);
+			return $this->closure($args[0]);
 		}
 		else
-			throw new Exception();
+		{
+			return $this->reflection->invokeArgs($args);
+		}
 	}
 
+	public function __call($method, $args)
+	{
+		// Delegate all unknown methods to the ReflectionFunction instance.
+		// Use the fastest way depending on number of arguments.
+		if (count($args) == 0)
+		{
+			return $this->reflection->{$method}();
+		}
+		elseif (count($args) == 1)
+		{
+			return $this->reflection->{$method}($args[0]);
+		}
+		else
+		{
+			$function = array($this->reflection, $method);
+			return call_user_func_array($function, $args);
+		}
+	}
+
+	public function serialize()
+	{
+		// Closures and Reflected Closures cannot be serialized. The code and
+		// context will be serialized so that the Closure can be reconstructed.
+		return serialize($this->getCode(), $this->getContext());
+	}
+
+	public function unserialize($serialized)
+	{
+		// Unserialize the data we need to reconstruct the SuperClosure
+		list($code, $context) = unserialize($serialized);
+
+		// Simulate the original context the Closure was created in
+		extract($context);
+
+		// Eval the code to recreate the Closure
+		eval("\$_closure = $code;");
+
+		// Re-initialize the SuperClosure
+		$this->_init($_closure, $code, $context);
+	}
 }

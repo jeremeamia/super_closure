@@ -67,16 +67,6 @@ class FunctionParser
 		$tokens = token_get_all("<?php\n".$code);
 		array_shift($tokens);
 
-		// Make sure only one function is defined in this code block
-		$functions_defined = array_filter($tokens, function($token) {
-			return (is_array($token) AND $token[0] == T_FUNCTION);
-		});
-		if (count($functions_defined) > 1)
-		{
-			throw new RuntimeException('Cannot parse the closure; too many '
-			. 'functions declared in the code block containing the closure.');
-		}
-
 		return $tokens;
 	}
 
@@ -88,6 +78,28 @@ class FunctionParser
 		$parsing_complete = FALSE;
 		foreach ($this->tokens as $token)
 		{
+			// AFTER PARSING COMPLETE -----------------------------------------
+
+			// After the parsing is complete, we need to make sure there are
+			// no other T_FUNCTION found which would indicate a possible
+			// ambiguity in the function code we retrieved. This only would
+			// in situations where the code is minified or poorly formatted.
+			if ($parsing_complete)
+			{
+				if (is_array($token) AND $token[0] === T_FUNCTION)
+				{
+					throw new RuntimeException('Cannot parse the Closure; '
+					. 'multiple, non-nested functions were defined in the code '
+					. 'block containing the Closure.');
+				}
+				else
+				{
+					continue;
+				}
+			}
+
+			// BEFORE PARSING COMPLETE ----------------------------------------
+
 			//if (is_array($token)) $token[0] = token_name($token[0]);
 			//echo '<pre>'.htmlentities(print_r($token, 1)).'</pre>';
 			if (is_array($token))
@@ -114,16 +126,11 @@ class FunctionParser
 
 			// Reconstruct the code token by token
 			$parsed_code .= $token;
-
-			// Once the closing brace is found, stop parsing
-			if ($parsing_complete)
-			{
-				break;
-			}
 		}
 
 		// If all tokens have been looked at and the closing brace was not 
 		// found, then there is a problem with the code defining the Closure.
+		// This should probably never happen.
 		if ( ! $parsing_complete)
 		{
 			throw new RuntimeException('Cannot parse the Closure. The code '
@@ -168,7 +175,10 @@ class FunctionParser
 		$context = array();
 		foreach ($variable_names as $variable_name)
 		{
-			$context[$variable_name] = $variable_values[$variable_name];
+			if (isset($variable_values[$variable_name]))
+			{
+				$context[$variable_name] = $variable_values[$variable_name];
+			}
 		}
 
 		return $context;

@@ -2,6 +2,11 @@
 /**
  * FunctionParser Class
  *
+ * The FunctionParser class has the ability to take a reflected function or
+ * method and retrieve both the code and contextmof that method. It relies on
+ * PHP lexical scanner, so the tokenizer must be enabled in order to use the
+ * library.
+ *
  * @author     Jeremy Lindblom
  * @copyright  Copyright (c) 2011 Jeremy Lindblom
  */
@@ -64,6 +69,7 @@ class FunctionParser
 		$code = trim(substr($code, $beginning, $ending - $beginning + 1));
 
 		// Tokenize the remaining code using PHP's lexical scanner
+        // Note: A PHP opening tag is required, but it is removed immediately
 		$tokens = token_get_all("<?php\n".$code);
 		array_shift($tokens);
 
@@ -72,18 +78,19 @@ class FunctionParser
 
 	protected function _parseCode()
 	{
-		// Parse the code, looking for the end of the function
+		// Parse the code looking for the end of the function
 		$brace_level = 0;
 		$parsed_code = '';
 		$parsing_complete = FALSE;
 		foreach ($this->tokens as $token)
 		{
-			// AFTER PARSING COMPLETE -----------------------------------------
+			// AFTER PARSING COMPLETE ------------------------------------------
 
 			// After the parsing is complete, we need to make sure there are
-			// no other T_FUNCTION found which would indicate a possible
-			// ambiguity in the function code we retrieved. This only would
-			// in situations where the code is minified or poorly formatted.
+			// no other T_FUNCTION tokens found, which would indicate a possible
+			// ambiguity in the function code we retrieved. This sould only
+			// happen in situations where the code is minified or poorly
+            // formatted.
 			if ($parsing_complete)
 			{
 				if (is_array($token) AND $token[0] === T_FUNCTION)
@@ -98,10 +105,10 @@ class FunctionParser
 				}
 			}
 
-			// BEFORE PARSING COMPLETE ----------------------------------------
+			// WHILE PARSING ---------------------------------------------------
 
-			//if (is_array($token)) $token[0] = token_name($token[0]);
-			//echo '<pre>'.htmlentities(print_r($token, 1)).'</pre>';
+            // Scan through the tokens (while keeping track of braces), and 
+            // reconstruct the code from the parsed tokens.
 			if (is_array($token))
 			{
 				// Only need the actual PHP code of the token
@@ -130,7 +137,7 @@ class FunctionParser
 
 		// If all tokens have been looked at and the closing brace was not 
 		// found, then there is a problem with the code defining the Closure.
-		// This should probably never happen.
+		// This should probably never happen, but just in case...
 		if ( ! $parsing_complete)
 		{
 			throw new RuntimeException('Cannot parse the Closure. The code '
@@ -171,7 +178,7 @@ class FunctionParser
 		// Get the values of the variables that are closed upon in "use"
 		$variable_values = $this->reflection->getStaticVariables();
 
-		// The context consists only of the items in both variable arrays
+		// Construct the context by combining the variable names and values
 		$context = array();
 		foreach ($variable_names as $variable_name)
 		{

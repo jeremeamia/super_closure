@@ -1,0 +1,11 @@
+{
+    "hash": "dd450227a2b09c6033262e6fe0124444",
+    "packages": [
+        {
+            "package": "jeremeamia/FunctionParser",
+            "version": "dev-master",
+            "source-reference": "1068f0a5e62ca361652d6c9bc8a6d1817efe62bf"
+        }
+    ],
+    "aliases": []
+}

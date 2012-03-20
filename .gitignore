@@ -1,0 +1,7 @@
+.idea/*
+vendor/*
+build/*
+.DS_Store
+cache.properties
+phpunit.xml
+composer.phar

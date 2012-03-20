@@ -1,0 +1,20 @@
+{
+    "name": "jeremeamia/SuperClosure",
+    "type": "library",
+    "description": "A serializable, self-aware, super closure!",
+    "keywords": ["closure", "serialize", "serializable", "function", "parser", "tokenizer"],
+    "homepage": "https://github.com/jeremeamia/super_closure",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeremy Lindblom"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "jeremeamia/FunctionParser": "*"
+    },
+    "autoload": {
+        "psr-0": { "SuperClosure": "src/" }
+    }
+}

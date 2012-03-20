@@ -35,8 +35,9 @@ echo 'SERIALIZATION:' . PHP_EOL;
 var_dump($serialized);
 echo PHP_EOL;
 
+/** @var $unserialized \Closure */
 $unserialized = unserialize($serialized);
 
 echo "POST-SERIALIZATION EVALUATION:" . PHP_EOL;
-echo $super_closure(8) . PHP_EOL;
+echo $unserialized(8) . PHP_EOL;
 echo PHP_EOL;

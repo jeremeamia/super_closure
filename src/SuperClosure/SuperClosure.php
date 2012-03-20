@@ -35,9 +35,9 @@ class SuperClosure extends FunctionParser implements Serializable
     protected $reflection;
 
     /**
-     * ??
+     * Creates a SuperClosure from a normal closure.
      *
-     * @param Closure $closure ??
+     * @param \Closure $closure The closure to become super.
      */
     public function __construct(Closure $closure)
     {
@@ -47,9 +47,9 @@ class SuperClosure extends FunctionParser implements Serializable
     }
 
     /**
-     * ??
+     * Returns the original closure.
      *
-     * @return Closure ??
+     * @return \Closure The original closure.
      */
     public function getClosure()
     {
@@ -67,12 +67,12 @@ class SuperClosure extends FunctionParser implements Serializable
     }
 
     /**
-     * ??
+     * Serializes the SuperClosure.
      *
-     * Closures (and reflected closures) cannot be serialized. The code and context will be serialized so that the
-     * closure can be reconstructed.
+     * Closures (and reflected closures) cannot be serialized by normal means. The code and context are serialized so
+     * that the closure can be reconstructed upon unserialization.
      *
-     * @return string ??
+     * @return string The serialized string representing the closure.
      */
     public function serialize()
     {
@@ -80,9 +80,9 @@ class SuperClosure extends FunctionParser implements Serializable
     }
 
     /**
-     * ??
+     *  Unserializes the SuperClosure.
      *
-     * @param $serialized ??
+     * @param $serialized The serialized string representing the closure.
      */
     public function unserialize($serialized)
     {

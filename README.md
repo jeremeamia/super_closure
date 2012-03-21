@@ -1,12 +1,12 @@
 # SuperClosure
 
-The PHP SuperClosure by Jeremy Lindblom.
+The **PHP SuperClosure** by Jeremy Lindblom.
 
-NOTES: The original SuperClosure class was written as a experiment for an article on [HTMList.com][htmlist] called
+> The original SuperClosure class was written as an experiment for an article on [HTMList.com][htmlist] called
 [Extending PHP 5.3 Closures with Serialization and Reflection][article]. The original code for that class is located in
-this repository at [/src/_legacy/SuperClosure.php][legacy], and should not be used in production. Please use the
-updated, properly-namespaced, and better-tested version of SuperClosure in this repository by install SuperClosure via
-Composer. Please see the installation section below.
+this repository at [/src/_legacy/SuperClosure.php][legacy], and should *not* be used in production. Please use the
+updated, properly-namespaced, and better-tested version of SuperClosure in this repository by installing SuperClosure via
+Composer. Please see the installation section below for instructions.
 
 ## Purpose
 
@@ -19,9 +19,9 @@ code defining the function and the names and values of any variables in the `use
 
 Check it out!
 
-    use SuperClosure/SuperClosure;
+	use SuperClosure/SuperClosure;
 
-	$foo = 2;
+	$foo     = 2;
 	$closure = function($bar) use($foo) {
 	    return $foo + $bar;
 	};
@@ -38,15 +38,15 @@ Check it out!
 	}
 
 	$code = $closure->getCode();
-	echo  PHP_EOL . "CODE:" . PHP_EOL . $code;
+	echo "CODE: {$code}";
 
 ## Installation
 
-The SuperClosure relies on the [FunctionParser library][parser], which requires the Reflection API and also on the PHP 
+The SuperClosure relies on the [FunctionParser library][parser], which requires the Reflection API and also the PHP 
 tokenizer (`token_get_all()`). PHP must be compiled with the `--enable-tokenizer` flag in order for the tokenizer to be
-available. You must also be using PHP 5.3, since this deals with closures.
+available. You must be using PHP 5.3, since this deals with closures.
 
-Requirements:
+### Requirements:
 
 - **PHP 5.3.2+**
 - **PHPUnit** for tests

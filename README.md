@@ -38,7 +38,7 @@ Check it out!
 	}
 
 	$code = $closure->getCode();
-	echo "CODE: {$code}";
+	echo "CODE: {$code}" . PHP_EOL;
 
 ## Installation
 
@@ -66,7 +66,7 @@ Then run `php composer.phar install --install-suggests` from your project's root
 ## Warning
 
 The SuperClosure class uses the `extract()` and `eval()` functions. These functions considered dangerous by many
-developers, but their use is required to created the serialization/unserialization functionality of SuperClosure.
+developers, but their use is required to create the serialization/unserialization functionality of SuperClosure.
 
 
 

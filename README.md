@@ -50,7 +50,7 @@ available. You must be using PHP 5.3, since this deals with closures.
 
 - **PHP 5.3.2+**
 - **PHPUnit** for tests
-- **Composer** for consuming FunctionParser as a dependency
+- **[Composer][composer]** for consuming FunctionParser as a dependency
 
 To install SuperClosure as a dependency of your project using Composer, please add the following to your
 `composer.json` config file.
@@ -68,9 +68,15 @@ Then run `php composer.phar install --install-suggests` from your project's root
 The SuperClosure class uses the `extract()` and `eval()` functions. These functions considered dangerous by many
 developers, but their use is required to create the serialization/unserialization functionality of SuperClosure.
 
+## Links
+
+- [SuperClosure on Packagist][packagist]
 
 
-[htmlist]: http://htmlist.com
-[article]: http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
-[legacy]:  https://github.com/jeremeamia/super_closure/blob/master/src/_legacy/SuperClosure.php
-[parser]:  https://github.com/jeremeamia/FunctionParser
+
+[htmlist]:   http://htmlist.com
+[article]:   http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
+[legacy]:    https://github.com/jeremeamia/super_closure/blob/master/src/_legacy/SuperClosure.php
+[parser]:    https://github.com/jeremeamia/FunctionParser
+[packagist]: http://packagist.org/packages/jeremeamia/SuperClosure
+[composer]:  http://getcomposer.org

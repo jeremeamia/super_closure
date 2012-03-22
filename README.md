@@ -74,6 +74,7 @@ developers, but their use is required to create the serialization/unserializatio
 
 - [SuperClosure on Packagist][packagist]
 - [SuperClosure on Travis CI][travis-ci]
+- [SuperClosure on Ohloh][ohloh]
 
 
 
@@ -85,3 +86,4 @@ developers, but their use is required to create the serialization/unserializatio
 [composer]:  http://getcomposer.org
 [travis-ci]: http://travis-ci.org/#!/jeremeamia/super_closure
 [ci-status]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
+[ohloh]:     https://www.ohloh.net/p/PHPSuperClosure

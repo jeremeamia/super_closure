@@ -1,0 +1,12 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+
+before_script:
+  - wget --quiet http://getcomposer.org/composer.phar # Install Composer
+  - php composer.phar install --install-suggests      # Install dependencies
+  - cp phpunit.xml.dist phpunit.xml                   # Setup PHPUnit config
+
+script: sudo phpunit --coverage-text

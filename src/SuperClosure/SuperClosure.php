@@ -82,7 +82,7 @@ class SuperClosure extends FunctionParser implements Serializable
     /**
      *  Unserializes the SuperClosure.
      *
-     * @param $serialized The serialized string representing the closure.
+     * @param string $serialized The serialized string representing the closure.
      */
     public function unserialize($serialized)
     {

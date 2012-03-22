@@ -2,6 +2,8 @@
 
 The **PHP SuperClosure** by Jeremy Lindblom.
 
+[![Build Status][ci-status]][travis-ci]
+
 > The original SuperClosure class was written as an experiment for an article on [HTMList.com][htmlist] called
 [Extending PHP 5.3 Closures with Serialization and Reflection][article]. The original code for that class is located in
 this repository at [/src/_legacy/SuperClosure.php][legacy], and should *not* be used in production. Please use the
@@ -10,7 +12,7 @@ Composer. Please see the installation section below for instructions.
 
 ## Purpose
 
-The SuperClosure is a wrapper for a regular closure that allows serialization, code retrieval, and easy reflection. 
+The SuperClosure is a wrapper for a regular closure that allows serialization, code retrieval, and easy reflection.
 PHP closures cannot be serialized by normal means, so the SuperClosure enables serialization by using reflection and
 tokenizing/parsing to get all the information about the closure it needs to recreate it. This is includes the actual
 code defining the function and the names and values of any variables in the `use` statement of the closure.
@@ -42,7 +44,7 @@ Check it out!
 
 ## Installation
 
-The SuperClosure relies on the [FunctionParser library][parser], which requires the Reflection API and also the PHP 
+The SuperClosure relies on the [FunctionParser library][parser], which requires the Reflection API and also the PHP
 tokenizer (`token_get_all()`). PHP must be compiled with the `--enable-tokenizer` flag in order for the tokenizer to be
 available. You must be using PHP 5.3, since this deals with closures.
 
@@ -71,6 +73,7 @@ developers, but their use is required to create the serialization/unserializatio
 ## Links
 
 - [SuperClosure on Packagist][packagist]
+- [SuperClosure on Travis CI][travis-ci]
 
 
 
@@ -80,3 +83,5 @@ developers, but their use is required to create the serialization/unserializatio
 [parser]:    https://github.com/jeremeamia/FunctionParser
 [packagist]: http://packagist.org/packages/jeremeamia/SuperClosure
 [composer]:  http://getcomposer.org
+[travis-ci]: http://travis-ci.org/#!/jeremeamia/super_closure
+[ci-status]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master

@@ -90,13 +90,13 @@ class SuperClosure extends FunctionParser implements Serializable
         list($code, $context) = unserialize($serialized);
 
         // Setup a safe scope to create the closure
-        $buildClosure = function($code, $context)
+        $buildClosure = function($_code, $_context)
         {
             // Simulate the original context the Closure was created in
-            extract($context);
+            extract($_context);
 
             // Evaluate the code to recreate the Closure
-            eval("\$_closure = $code;");
+            eval("\$_closure = $_code;");
 
             /** @var $_closure Closure */
             return $_closure;

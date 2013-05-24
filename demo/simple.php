@@ -1,43 +1,27 @@
 <?php
 
-const DS = DIRECTORY_SEPARATOR;
+require __DIR__ . '/../vendor/autoload.php';
 
-require_once dirname(__DIR__) . DS . 'vendor' . DS . '.composer' . DS . 'autoload.php';
-
-use SuperClosure\SuperClosure;
+use Jeremeamia\SuperClosure\SerializableClosure;
 
 $foo = 2;
-$closure = function($bar) use($foo) {
+$closure = function ($bar) use ($foo) {
     return $foo + $bar;
 };
 
-$super_closure = new SuperClosure($closure);
+$closure = new SerializableClosure($closure);
 
-echo "EVALUATION:" . PHP_EOL;
-echo $super_closure(8) . PHP_EOL;
-echo PHP_EOL;
+echo "EVALUATION:\n";
+echo $closure(8) . "\n\n";
 
-echo "CODE:" . PHP_EOL;
-echo $super_closure->getCode() . PHP_EOL;
-echo PHP_EOL;
+$serialized = serialize($closure);
 
-echo 'PARAMETERS:' . PHP_EOL;
-var_dump($super_closure->getParameters());
-echo PHP_EOL;
-
-echo 'CONTEXT:' . PHP_EOL;
-var_dump($super_closure->getContext());
-echo PHP_EOL;
-
-$serialized = serialize($super_closure);
-
-echo 'SERIALIZATION:' . PHP_EOL;
+echo "SERIALIZATION:\n";
 var_dump($serialized);
-echo PHP_EOL;
+echo "\n";
 
 /** @var $unserialized \Closure */
 $unserialized = unserialize($serialized);
 
-echo "POST-SERIALIZATION EVALUATION:" . PHP_EOL;
-echo $unserialized(8) . PHP_EOL;
-echo PHP_EOL;
+echo "POST-SERIALIZATION EVALUATION:\n";
+echo $unserialized(8) . "\n\n";

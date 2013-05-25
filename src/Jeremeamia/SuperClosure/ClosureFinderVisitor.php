@@ -30,14 +30,20 @@ class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
      * specified in the constructor by its reflection
      *
      * {@inheritdoc}
+     * @throws \RuntimeException when 2 closures appear on the same line
      */
     public function leaveNode(\PHPParser_Node $node)
     {
-        if (!$this->closureNode && $node instanceof \PHPParser_Node_Expr_Closure) {
-            $nodeStartLine = $node->getAttribute('startLine');
+        if ($node instanceof \PHPParser_Node_Expr_Closure) {
             $closureStartLine = $this->reflection->getStartLine();
+            $nodeStartLine = $node->getAttribute('startLine');
             if ($nodeStartLine == $closureStartLine) {
-                $this->closureNode = $node;
+                if ($this->closureNode) {
+                    throw new \RuntimeException('Two closures were declared on the same line of code. '
+                        . 'Cannot determine which closure to use.');
+                } else {
+                    $this->closureNode = $node;
+                }
             }
         }
     }

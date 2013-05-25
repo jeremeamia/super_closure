@@ -52,13 +52,44 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
 
     public function testCanSerializeRecursiveClosure()
     {
-        $factorial = new SerializableClosure(function ($num) use (&$factorial) {
-            return ($num <= 1) ? 1 : $num + $factorial($num - 1);
+        $factorial = new SerializableClosure(function ($n) use (&$factorial) {
+            return ($n <= 1) ? 1 : $n * $factorial($n - 1);
         });
 
         $returnValue = call_user_func($factorial, 5);
         $newReturnValue = call_user_func(unserialize(serialize($factorial)), 5);
 
         $this->assertEquals($returnValue, $newReturnValue);
+    }
+
+    /**
+     * CAVEAT #1: Serializing a closure will sever relationships with things passed by reference
+     */
+    public function testDoesNotMaintainsReferencesEvenWhenVariablesAreStillInScope()
+    {
+        $num = 0;
+        $inc = new SerializableClosure(function () use (&$num) {
+            $num++;
+        });
+
+        $inc();
+        $inc();
+        $this->assertEquals(2, $num, '$num should be incremented twice because by reference');
+
+        $newInc = unserialize(serialize($inc));
+        /** @var $newInc \Closure */
+        $newInc();
+        $this->assertEquals(2, $num, '$num should not be incremented again because the reference is lost');
+    }
+
+    /**
+     * CAVEAT #2: You can't serialize a closure if there are two closures declared on one line
+     */
+    public function testCannotDetermineWhichClosureToUseIfTwoDeclaredOnTheSameLine()
+    {
+        $this->setExpectedException('Exception');
+
+        $add = function ($a, $b) {return $a + $b;}; $sub = function ($a, $b) {return $a - $b;};
+        $serialized = serialize(new SerializableClosure($sub));
     }
 }

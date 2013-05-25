@@ -4,11 +4,12 @@ namespace Jeremeamia\SuperClosure\Test;
 
 use Jeremeamia\SuperClosure\ClosureParser;
 
-/**
- * @covers \Jeremeamia\SuperClosure\ClosureParser
- */
 class ClosureParserTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::__construct
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getReflection
+     */
     public function testCanGetReflectionBackFromParser()
     {
         $closure = function () {};
@@ -18,6 +19,9 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($reflection, $parser->getReflection());
     }
 
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::fromClosure
+     */
     public function testCanUseFactoryMethodToCreateParser()
     {
         $parser = ClosureParser::fromClosure(function () {});
@@ -25,11 +29,42 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Jeremeamia\SuperClosure\ClosureParser', $parser);
     }
 
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::__construct
+     */
     public function testRaisesErrorWhenNonClosureIsProvided()
     {
         $this->setExpectedException('InvalidArgumentException');
 
         $reflection = new \ReflectionFunction('strpos');
         $parser = new ClosureParser($reflection);
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getCode
+     */
+    public function testCanGetCodeFromParser()
+    {
+        $closure = function () {};
+        $expectedCode = "function () {\n    \n};";
+        $parser = new ClosureParser(new \ReflectionFunction($closure));
+        $actualCode = $parser->getCode();
+
+        $this->assertEquals($expectedCode, $actualCode);
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getUsedVariables
+     */
+    public function testCanGetUsedVariablesFromParser()
+    {
+        $foo = 1;
+        $bar = 2;
+        $closure = function () use ($foo, $bar) {};
+        $expectedVars = array('foo' => 1, 'bar' => 2);
+        $parser = new ClosureParser(new \ReflectionFunction($closure));
+        $actualVars = $parser->getUsedVariables();
+
+        $this->assertEquals($expectedVars, $actualVars);
     }
 }

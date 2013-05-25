@@ -1,87 +1,87 @@
-# SuperClosure
+# PHP Super Closure [![Build Status][1]][2]
 
-The **PHP SuperClosure** by Jeremy Lindblom.
+Have you ever seen this?
 
-[![Build Status][ci-status]][travis-ci]
+> Uncaught exception 'Exception' with message 'Serialization of 'Closure' is not allowed'
 
-> The original SuperClosure class was written as an experiment for an article on [HTMList.com][htmlist] called
-[Extending PHP 5.3 Closures with Serialization and Reflection][article]. The original code for that class is located in
-this repository at [/src/_legacy/SuperClosure.php][legacy], and should *not* be used in production. Please use the
-updated, properly-namespaced, and better-tested version of SuperClosure in this repository by installing SuperClosure via
-Composer. Please see the installation section below for instructions.
+It's true! If you try to serialize a `Closure`, PHP will throw an exception and tell you that it is not allowed. But even though it is not "allowed" by PHP, the Super Closure library ([jeremeamia/superclosure][3] on Packagist) makes it **possible**.
 
-## Purpose
+I'm not joking, *you really can serialize a PHP closure*!
 
-The SuperClosure is a wrapper for a regular closure that allows serialization, code retrieval, and easy reflection.
-PHP closures cannot be serialized by normal means, so the SuperClosure enables serialization by using reflection and
-tokenizing/parsing to get all the information about the closure it needs to recreate it. This is includes the actual
-code defining the function and the names and values of any variables in the `use` statement of the closure.
+```php
+<?php
 
-## General Use
+require 'vendor/autoload.php';
 
-Check it out!
+use Jeremeamia\SuperClosure\SerializableClosure;
 
-	use SuperClosure/SuperClosure;
+$factorial = new SerializableClosure(function ($n) use (&$factorial) {
+    return ($n <= 1) ? 1 : $n * $factorial($n - 1);
+});
 
-	$foo     = 2;
-	$closure = function($bar) use($foo) {
-	    return $foo + $bar;
-	};
+echo $factorial(5) . PHP_EOL;
+//> 120
 
-	$closure = new SuperClosure($closure);
+$serialized = serialize($factorial);
+$unserialized = unserialize($serialized);
 
-	$original_result = $closure(8);
-	$serialized      = serialize($super_closure);
-	$unserialized    = unserialize($serialized);
-	$final_result    = $unserialized(8);
+echo $unserialized(5) . PHP_EOL;
+//> 120
+```
+Yep, pretty cool huh?
 
-	if ($original_result === $final_result) {
-		echo "It's working!" . PHP_EOL;
-	}
+## Tell Me More!
 
-	$code = $closure->getCode();
-	echo "CODE: {$code}" . PHP_EOL;
+It all started way back in the beginning of 2010 when PHP 5.3 was starting to gain traction. I wrote a blog post called [Extending PHP 5.3 Closures with Serialization and Reflection][4] on my former employers' blog, [HTMList][5], showing how it can be done. Since then I've made a few iterations on the code, and this most recent iteration brings with it a generally more robust solution that takes advantage of the fabulous [nikic/php-parser][6] library.
+
+### Features
+
+* Grants the ability to serialize closures
+* Handles closures with used/inherited/imported variables
+* Handles recursive closures
+* Handles closures that use other closures
+* Handles closures that reference class names in the parameters or body
+* Allows you to get the code of a closure
+* Allows you to get the names and values of variables used by a closure
+* Allows you to get an Abstract Syntax Tree (AST) representing the code of a closure
+* Uses an accurate parsing method of a context-free grammar via the [nikic/php-parser][6] library
+* PSR-0 compliant and installable via Composer
+
+### Caveats
+
+1. For any variables used by reference (e.g., `function () use (<vars here>) {…}`), the references are not maintained after serialization/unserialization. The only exception is when the used variable is a reference to the `SerializableClosure` object being serialized, which is the case with a recursive function. For some reason — that I actually don't quite understand — this works.
+2. If you have two closures defined on a single line (you shouldn't do this anyway), You will not be able to serialize either one because it is ambiguous which closure's code should be parsed.
+3. Because the technique to acquire the code and context of the closure requires reflection and full AST-style parsing, the performance of serializing a closure is likely not good.
+4. **Warning**: Both `eval()` and `extract()` are required to unserialize the closure. These functions are considered dangerous by many, so you will have to evaluate whether or not you actual want to be using this library if these functions concern you. These functions *must* be used to make this technique work.
 
 ## Installation
 
-The SuperClosure relies on the [FunctionParser library][parser], which requires the Reflection API and also the PHP
-tokenizer (`token_get_all()`). PHP must be compiled with the `--enable-tokenizer` flag in order for the tokenizer to be
-available. You must be using PHP 5.3, since this deals with closures.
-
-### Requirements:
-
-- **PHP 5.3.2+**
-- **PHPUnit** for tests
-- **[Composer][composer]** for consuming FunctionParser as a dependency
-
-To install SuperClosure as a dependency of your project using Composer, please add the following to your
-`composer.json` config file.
+To install the Super Closure library in your project using Composer, first add the following to your `composer.json` config file.
 
     {
         "require": {
-            "jeremeamia/SuperClosure": "*"
+            "jeremeamia/superclosure": "1.0.*"
         }
     }
 
-Then run `php composer.phar install --install-suggests` from your project's root directory to install the SuperClosure.
+Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for more information about how to use Composer.
 
-## Warning
+## Why Would I Need To Serialize Closures?
 
-The SuperClosure class uses the `extract()` and `eval()` functions. These functions considered dangerous by many
-developers, but their use is required to create the serialization/unserialization functionality of SuperClosure.
+Well, since you are here looking at this README, you may already have a use case in mind. Even though this concept began as an experiment, there have been some use cases that have come up in the wild.
 
-## Links
+For example, in a [video about Laravel 4 and IronMQ][8] by [UserScape][9], at about the 7:50 mark they show how you can push a closure onto a queue as a job so that it can be executed by a worker. This is nice because you do not have to create a whole class for a job that might be really simple. The closure serialization is done by a class in the Laravel 4 framework that is based on one of my older versions of SuperClosure.
 
-- [SuperClosure on Packagist][packagist]
-- [SuperClosure on Travis CI][travis-ci]
+Essentially this library let's you create closures in one process and use them in another. It would even be possible to provide closures (or algorithms) as a service through an API.
 
+If you have seen or can think of any other use cases, let me know.
 
-
-[htmlist]:   http://htmlist.com
-[article]:   http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
-[legacy]:    https://github.com/jeremeamia/super_closure/blob/master/src/_legacy/SuperClosure.php
-[parser]:    https://github.com/jeremeamia/FunctionParser
-[packagist]: http://packagist.org/packages/jeremeamia/SuperClosure
-[composer]:  http://getcomposer.org
-[travis-ci]: http://travis-ci.org/#!/jeremeamia/super_closure
-[ci-status]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
+[1]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
+[2]: http://travis-ci.org/#!/jeremeamia/super_closure
+[3]: http://packagist.org/packages/jeremeamia/SuperClosure
+[4]: http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
+[5]: http://www.htmlist.com
+[6]: https://github.com/nikic/PHP-Parser
+[7]: http://getcomposer.org
+[8]: http://vimeo.com/64703617
+[9]: http://www.userscape.com

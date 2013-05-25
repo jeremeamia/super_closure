@@ -19,4 +19,14 @@ class ClosureFinderVisitorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($closureNode, $closureFinder->getClosureNode());
     }
+
+    public function testClosureNodeIsAmbiguousIfMultipleClosuresOnLine()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $closure = function(){}; function(){}; // Take the line number here and set it as the "startLine"
+        $closureFinder = new ClosureFinderVisitor(new \ReflectionFunction($closure));
+        $closureFinder->leaveNode(new \PHPParser_Node_Expr_Closure(array(), array('startLine' => 27)));
+        $closureFinder->leaveNode(new \PHPParser_Node_Expr_Closure(array(), array('startLine' => 27)));
+    }
 }

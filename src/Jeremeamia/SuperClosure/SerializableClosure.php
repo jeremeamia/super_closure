@@ -2,6 +2,10 @@
 
 namespace Jeremeamia\SuperClosure;
 
+/**
+ * This class allows you to do the impossible – serializing closures! With the combined power of the nikic/php-parser
+ * library, the Reflection API, and eval, you can serialize a closure.
+ */
 class SerializableClosure implements \Serializable
 {
     /**

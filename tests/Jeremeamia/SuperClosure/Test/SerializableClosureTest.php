@@ -4,6 +4,9 @@ namespace Jeremeamia\SuperClosure\Test;
 
 use Jeremeamia\SuperClosure\SerializableClosure;
 
+/**
+ * @covers \Jeremeamia\SuperClosure\SerializableClosure
+ */
 class SerializableClosureTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -27,20 +30,23 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $this->serializableClosure = new SerializableClosure($exp);
     }
 
-    public function testGetClosureReturnsTheOriginalClosure()
+    public function testClosureInvokesTheOriginalClosure()
     {
         $this->assertInstanceOf('\Closure', $this->serializableClosure->getClosure());
         $this->assertSame($this->originalClosure, $this->serializableClosure->getClosure());
+        $this->assertEquals(
+            call_user_func($this->originalClosure, 4),
+            call_user_func($this->serializableClosure, 4)
+        );
     }
 
-    public function testInvokeActuallyInvokesTheOriginalClosure()
+    public function testClosureBehavesTheSameAfterSerializationProcess()
     {
-        $originalClosure = $this->originalClosure;
-        $serializableClosure = $this->serializableClosure;
+        $originalReturnValue = call_user_func($this->serializableClosure, 4);
+        $serializedClosure = serialize($this->serializableClosure);
+        $unserializedClosure = unserialize($serializedClosure);
+        $finalReturnValue = call_user_func($unserializedClosure, 4);
 
-        $originalClosureResult = $originalClosure(4);
-        $serializableClosureResult = $serializableClosure(4);
-
-        $this->assertEquals($originalClosureResult, $serializableClosureResult);
+        $this->assertEquals($originalReturnValue, $finalReturnValue);
     }
 }

@@ -23,12 +23,12 @@
   </filter>
 
   <logging>
-    <log type="coverage-html" target="./build/tests/coverage"
+    <log type="coverage-html" target="./build/artifacts/coverage"
          yui="true" highlight="false" charset="UTF-8"
          lowUpperBound="35" highLowerBound="70"/>
-    <log type="coverage-clover" target="./build/tests/coverage.xml"/>
-    <log type="junit" target="./build/tests/log.xml" logIncompleteSkipped="false"/>
-    <log type="testdox-html" target="./build/tests/testdox.html"/>
+    <log type="coverage-clover" target="./build/artifacts/coverage.xml"/>
+    <log type="junit" target="./build/artifacts/log.xml" logIncompleteSkipped="false"/>
+    <log type="testdox-html" target="./build/artifacts/testdox.html"/>
   </logging>
 
 </phpunit>

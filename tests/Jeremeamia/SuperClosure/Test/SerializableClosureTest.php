@@ -52,6 +52,10 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
 
     public function testCanSerializeRecursiveClosure()
     {
+        if (version_compare(PHP_VERSION, '5.4', '<')) {
+            $this->markTestSkipped('Requires version 5.4+ of PHP');
+        }
+
         $factorial = new SerializableClosure(function ($n) use (&$factorial) {
             return ($n <= 1) ? 1 : $n * $factorial($n - 1);
         });

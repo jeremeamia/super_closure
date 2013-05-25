@@ -4,7 +4,9 @@ Have you ever seen this?
 
 > Uncaught exception 'Exception' with message 'Serialization of 'Closure' is not allowed'
 
-It's true! If you try to serialize a `Closure`, PHP will throw an exception and tell you that it is not allowed. But even though it is not "allowed" by PHP, the Super Closure library ([jeremeamia/superclosure][3] on Packagist) makes it **possible**.
+It's true! If you try to serialize a `Closure`, PHP will throw an exception and tell you that it is not allowed. But
+even though it is not "allowed" by PHP, the Super Closure library ([jeremeamia/superclosure][3] on Packagist) makes it
+**possible**.
 
 I'm not joking, *you really can serialize a PHP closure*!
 
@@ -32,15 +34,18 @@ Yep, pretty cool huh?
 
 ## Tell Me More!
 
-It all started way back in the beginning of 2010 when PHP 5.3 was starting to gain traction. I wrote a blog post called [Extending PHP 5.3 Closures with Serialization and Reflection][4] on my former employers' blog, [HTMList][5], showing how it can be done. Since then I've made a few iterations on the code, and this most recent iteration brings with it a generally more robust solution that takes advantage of the fabulous [nikic/php-parser][6] library.
+It all started way back in the beginning of 2010 when PHP 5.3 was starting to gain traction. I wrote a blog post called
+[Extending PHP 5.3 Closures with Serialization and Reflection][4] on my former employers' blog, [HTMList][5], showing
+how it can be done. Since then I've made a few iterations on the code, and this most recent iteration brings with it a
+generally more robust solution that takes advantage of the fabulous [nikic/php-parser][6] library.
 
 ### Features
 
 * Grants the ability to serialize closures
 * Handles closures with used/inherited/imported variables
-* Handles recursive closures
 * Handles closures that use other closures
 * Handles closures that reference class names in the parameters or body
+* Handles recursive closures (PHP 5.4+ only)
 * Allows you to get the code of a closure
 * Allows you to get the names and values of variables used by a closure
 * Allows you to get an Abstract Syntax Tree (AST) representing the code of a closure
@@ -49,14 +54,22 @@ It all started way back in the beginning of 2010 when PHP 5.3 was starting to ga
 
 ### Caveats
 
-1. For any variables used by reference (e.g., `function () use (<vars here>) {…}`), the references are not maintained after serialization/unserialization. The only exception is when the used variable is a reference to the `SerializableClosure` object being serialized, which is the case with a recursive function. For some reason — that I actually don't quite understand — this works.
-2. If you have two closures defined on a single line (you shouldn't do this anyway), You will not be able to serialize either one because it is ambiguous which closure's code should be parsed.
-3. Because the technique to acquire the code and context of the closure requires reflection and full AST-style parsing, the performance of serializing a closure is likely not good.
-4. **Warning**: Both `eval()` and `extract()` are required to unserialize the closure. These functions are considered dangerous by many, so you will have to evaluate whether or not you actual want to be using this library if these functions concern you. These functions *must* be used to make this technique work.
+1. For any variables used by reference (e.g., `function () use (<vars here>) {…}`), the references are not maintained
+after serialization/unserialization. The only exception is when (in PHP 5.4+ only) the used variable is a reference to
+the `SerializableClosure` object being serialized, which is the case with a recursive function. For some reason — that I
+actually don't quite understand — this works.
+2. If you have two closures defined on a single line (you shouldn't do this anyway), you will not be able to serialize
+either one since it is ambiguous which closure's code should be parsed.
+3. Because the technique to acquire the code and context of the closure requires reflection and full AST-style parsing,
+the performance of serializing a closure is likely not good.
+4. **Warning**: Both `eval()` and `extract()` are required to unserialize the closure. These functions are considered
+dangerous by many, so you will have to evaluate whether or not you actual want to be using this library if these
+functions concern you. These functions *must* be used to make this technique work.
 
 ## Installation
 
-To install the Super Closure library in your project using Composer, first add the following to your `composer.json` config file.
+To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
+config file.
 
     {
         "require": {
@@ -64,17 +77,24 @@ To install the Super Closure library in your project using Composer, first add t
         }
     }
 
-Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for more information about how to use Composer.
+Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for
+more information about how to use Composer.
 
 ## Why Would I Need To Serialize Closures?
 
-Well, since you are here looking at this README, you may already have a use case in mind. Even though this concept began as an experiment, there have been some use cases that have come up in the wild.
+Well, since you are here looking at this README, you may already have a use case in mind. Even though this concept began
+as an experiment, there have been some use cases that have come up in the wild.
 
-For example, in a [video about Laravel 4 and IronMQ][8] by [UserScape][9], at about the 7:50 mark they show how you can push a closure onto a queue as a job so that it can be executed by a worker. This is nice because you do not have to create a whole class for a job that might be really simple. The closure serialization is done by a class in the Laravel 4 framework that is based on one of my older versions of SuperClosure.
+For example, in a [video about Laravel 4 and IronMQ][8] by [UserScape][9], at about the 7:50 mark they show how you can
+push a closure onto a queue as a job so that it can be executed by a worker. This is nice because you do not have to
+create a whole class for a job that might be really simple. The closure serialization is done by a class in the Laravel
+4 framework that is based on one of my older versions of SuperClosure.
 
-Essentially this library let's you create closures in one process and use them in another. It would even be possible to provide closures (or algorithms) as a service through an API.
+Essentially this library let's you create closures in one process and use them in another. It would even be possible to
+provide closures (or algorithms) as a service through an API.
 
 If you have seen or can think of any other use cases, let me know.
+
 
 [1]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
 [2]: http://travis-ci.org/#!/jeremeamia/super_closure

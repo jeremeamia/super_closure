@@ -14,7 +14,7 @@ class ClosureParser
     protected $reflection;
 
     /**
-     * @var PHPParser_Node An abstract syntax tree defining the code of the closure
+     * @var \PHPParser_Node An abstract syntax tree defining the code of the closure
      */
     protected $abstractSyntaxTree;
 
@@ -27,6 +27,16 @@ class ClosureParser
      * @var  string The closure's code
      */
     protected $code;
+
+    /**
+     * @param \Closure $closure
+     *
+     * @return ClosureParser
+     */
+    public static function fromClosure(\Closure $closure)
+    {
+        return new self(new \ReflectionFunction($closure));
+    }
 
     /**
      * @param \ReflectionFunction $reflection
@@ -51,7 +61,7 @@ class ClosureParser
     }
 
     /**
-     * @return PHPParser_Node_Expr_Closure
+     * @return \PHPParser_Node_Expr_Closure
      * @throws \InvalidArgumentException
      */
     public function getClosureAbstractSyntaxTree()

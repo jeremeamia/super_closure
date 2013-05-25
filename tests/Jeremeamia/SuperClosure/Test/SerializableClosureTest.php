@@ -30,7 +30,7 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $this->serializableClosure = new SerializableClosure($exp);
     }
 
-    public function testClosureInvokesTheOriginalClosure()
+    public function testClosureProxiesToTheOriginalClosureWhenInvoked()
     {
         $this->assertInstanceOf('\Closure', $this->serializableClosure->getClosure());
         $this->assertSame($this->originalClosure, $this->serializableClosure->getClosure());
@@ -48,5 +48,17 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $finalReturnValue = call_user_func($unserializedClosure, 4);
 
         $this->assertEquals($originalReturnValue, $finalReturnValue);
+    }
+
+    public function testCanSerializeRecursiveClosure()
+    {
+        $factorial = new SerializableClosure(function ($num) use (&$factorial) {
+            return ($num <= 1) ? 1 : $num + $factorial($num - 1);
+        });
+
+        $returnValue = call_user_func($factorial, 5);
+        $newReturnValue = call_user_func(unserialize(serialize($factorial)), 5);
+
+        $this->assertEquals($returnValue, $newReturnValue);
     }
 }

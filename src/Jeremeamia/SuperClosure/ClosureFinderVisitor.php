@@ -2,9 +2,9 @@
 
 namespace Jeremeamia\SuperClosure;
 
-use PHPParser_NodeVisitorAbstract;
 use PHPParser_Node;
 use PHPParser_Node_Expr_Closure;
+use PHPParser_NodeVisitorAbstract;
 
 class ClosureFinderVisitor extends PHPParser_NodeVisitorAbstract
 {

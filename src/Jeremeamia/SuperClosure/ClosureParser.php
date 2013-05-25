@@ -2,12 +2,12 @@
 
 namespace Jeremeamia\SuperClosure;
 
-use PHPParser_Parser;
-use PHPParser_Lexer;
-use PHPParser_Node_Expr_Closure;
-use PHPParser_Node;
 use PHPParser_Error;
+use PHPParser_Lexer_Emulative;
+use PHPParser_Parser;
 use PHPParser_PrettyPrinter_Default;
+use PHPParser_Node;
+use PHPParser_Node_Expr_Closure;
 use PHPParser_Node_Name;
 use PHPParser_NodeTraverser;
 use PHPParser_NodeVisitor_NameResolver;
@@ -63,7 +63,7 @@ class ClosureParser
     public function getClosureAbstractSyntaxTree()
     {
         if (!$this->abstractSyntaxTree) {
-            $parser = new PHPParser_Parser(new PHPParser_Lexer);
+            $parser = new PHPParser_Parser(new PHPParser_Lexer_Emulative);
             $traverser = new PHPParser_NodeTraverser();
             $closureFinder = new ClosureFinderVisitor($this->reflection);
             $traverser->addVisitor(new PHPParser_NodeVisitor_NameResolver);

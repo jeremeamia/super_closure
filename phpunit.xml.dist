@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
   bootstrap="./tests/bootstrap.php"
-  colors="true"
   processIsolation="false"
   stopOnFailure="false"
   syntaxCheck="false"
@@ -13,13 +12,13 @@
 
   <testsuites>
     <testsuite name="SuperClosure">
-      <directory>./tests/SuperClosure/Test</directory>
+      <directory>./tests/Jeremeamia/SuperClosure/Test</directory>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
-      <directory suffix=".php">./src/SuperClosure</directory>
+      <directory suffix=".php">./src/Jeremeamia/SuperClosure</directory>
     </whitelist>
   </filter>
 

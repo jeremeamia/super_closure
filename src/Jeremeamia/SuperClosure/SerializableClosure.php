@@ -70,8 +70,8 @@ class SerializableClosure implements \Serializable
     /**
      * Unserializes the closure data and recreates the closure. Attempts to recreate the closure's context as well by
      * extracting the used variables into the scope. Variables names in this method are surrounded with underlines in
-     * order to prevent collisions with the variables in the context. There be dragons here! Both `eval` and `extract`
-     * are used in this method
+     * order to prevent collisions with the variables in the context. NOTE: There be dragons here! Both `eval` and
+     * `extract` are used in this method
      *
      * @param string $__serialized__
      */

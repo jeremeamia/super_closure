@@ -19,6 +19,11 @@ class SerializableClosure implements \Serializable
     protected $reflection;
 
     /**
+     * @var array Serialized state
+     */
+    private $state;
+
+    /**
      * @param \Closure $closure
      */
     public function __construct(\Closure $closure)
@@ -63,12 +68,17 @@ class SerializableClosure implements \Serializable
      */
     public function serialize()
     {
-        $parser = new ClosureParser($this->getReflection());
-        $context = array_map(function ($var) {
-            return ($var instanceof \Closure) ? new self($var) : $var;
-        }, $parser->getUsedVariables());
+        if (!$this->state) {
+            $parser = new ClosureParser($this->getReflection());
+            $this->state = array(
+                $parser->getCode(),
+                array_map(function ($var) {
+                    return ($var instanceof \Closure) ? new self($var) : $var;
+                }, $parser->getUsedVariables())
+            );
+        }
 
-        return serialize(array($parser->getCode(), $context));
+        return serialize($this->state);
     }
 
     /**
@@ -82,7 +92,8 @@ class SerializableClosure implements \Serializable
     public function unserialize($__serialized__)
     {
         // Unserialize the data we need to reconstruct the SuperClosure
-        list($__code__, $__context__) = unserialize($__serialized__);
+        $this->state = unserialize($__serialized__);
+        list($__code__, $__context__) = $this->state;
 
         // Simulate the original context the Closure was created in
         extract($__context__);

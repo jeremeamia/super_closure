@@ -60,10 +60,10 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
             return ($n <= 1) ? 1 : $n * $factorial($n - 1);
         });
 
-        $returnValue = call_user_func($factorial, 5);
-        $newReturnValue = call_user_func(unserialize(serialize($factorial)), 5);
-
-        $this->assertEquals($returnValue, $newReturnValue);
+        $this->assertSame(120, call_user_func($factorial, 5));
+        $this->assertSame(120, call_user_func(unserialize(serialize($factorial)), 5));
+        $this->assertSame(120, call_user_func(unserialize(serialize(unserialize(serialize($factorial)))), 5));
+        $this->assertSame(120, call_user_func(unserialize(serialize(unserialize(serialize(unserialize(serialize($factorial)))))), 5));
     }
 
     /**

@@ -87,21 +87,21 @@ as an experiment, there have been some use cases that have come up in the wild.
 
 For example, in a [video about Laravel 4 and IronMQ][8] by [UserScape][9], at about the 7:50 mark they show how you can
 push a closure onto a queue as a job so that it can be executed by a worker. This is nice because you do not have to
-create a whole class for a job that might be really simple. The closure serialization is done by a class in the Laravel
-4 framework that is based on one of my older versions of SuperClosure.
+create a whole class for a job that might be really simple. The closure serialization is done by a [class in the Laravel
+4 framework][10] that is based on one of my older versions of SuperClosure.
 
 Essentially this library let's you create closures in one process and use them in another. It would even be possible to
 provide closures (or algorithms) as a service through an API.
 
 If you have seen or can think of any other use cases, let me know.
 
-
-[1]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
-[2]: http://travis-ci.org/#!/jeremeamia/super_closure
-[3]: http://packagist.org/packages/jeremeamia/SuperClosure
-[4]: http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
-[5]: http://www.htmlist.com
-[6]: https://github.com/nikic/PHP-Parser
-[7]: http://getcomposer.org
-[8]: http://vimeo.com/64703617
-[9]: http://www.userscape.com
+[1]:  https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
+[2]:  http://travis-ci.org/#!/jeremeamia/super_closure
+[3]:  http://packagist.org/packages/jeremeamia/SuperClosure
+[4]:  http://www.htmlist.com/development/extending-php-5-3-closures-with-serialization-and-reflection/
+[5]:  http://www.htmlist.com
+[6]:  https://github.com/nikic/PHP-Parser
+[7]:  http://getcomposer.org
+[8]:  http://vimeo.com/64703617
+[9]:  http://www.userscape.com
+[10]: https://github.com/illuminate/support/blob/master/SerializableClosure.php

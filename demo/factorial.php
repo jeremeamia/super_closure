@@ -1,5 +1,9 @@
 <?php
 
+if (version_compare(PHP_VERSION, '5.4', '<=')) {
+    throw new \RuntimeException('PHP 5.4+ is required for this example.');
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use Jeremeamia\SuperClosure\SerializableClosure;

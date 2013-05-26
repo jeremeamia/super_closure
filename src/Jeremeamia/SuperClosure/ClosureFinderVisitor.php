@@ -4,6 +4,8 @@ namespace Jeremeamia\SuperClosure;
 
 /**
  * This is a visitor that extends the nikic/php-parser library and looks for a closure node.
+ *
+ * @copyright Jeremy Lindblom 2010-2013
  */
 class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
 {

@@ -5,6 +5,8 @@ namespace Jeremeamia\SuperClosure;
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
  * ClosureParser uses the fabulous nikic/php-parser library which creates abstract syntax trees (AST) of the code.
+ *
+ * @copyright Jeremy Lindblom 2010-2013
  */
 class ClosureParser
 {

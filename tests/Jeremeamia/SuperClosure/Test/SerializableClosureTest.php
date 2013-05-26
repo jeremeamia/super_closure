@@ -60,10 +60,26 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
             return ($n <= 1) ? 1 : $n * $factorial($n - 1);
         });
 
-        $this->assertSame(120, call_user_func($factorial, 5));
-        $this->assertSame(120, call_user_func(unserialize(serialize($factorial)), 5));
-        $this->assertSame(120, call_user_func(unserialize(serialize(unserialize(serialize($factorial)))), 5));
-        $this->assertSame(120, call_user_func(unserialize(serialize(unserialize(serialize(unserialize(serialize($factorial)))))), 5));
+        $this->assertEquals(120, call_user_func($factorial, 5));
+    }
+
+    public function testCanSerializeMultipleTimes()
+    {
+        $result = call_user_func($this->serializableClosure, 5);
+        $this->assertEquals(32, $result);
+
+        $serializedOnce = unserialize(serialize($this->serializableClosure));
+        $this->assertEquals(32, call_user_func($serializedOnce, 5));
+        $internalState = $this->readAttribute($serializedOnce, 'state');
+        $this->assertCount(2, $internalState);
+
+        $serializedAgain = unserialize(serialize($this->serializableClosure));
+        $this->assertEquals(32, call_user_func($serializedAgain, 5));
+        $this->assertEquals($internalState, $this->readAttribute($serializedAgain, 'state'));
+
+        $serializedTwice = unserialize(serialize($serializedOnce));
+        $this->assertEquals(32, call_user_func($serializedTwice, 5));
+        $this->assertEquals($internalState, $this->readAttribute($serializedTwice, 'state'));
     }
 
     /**

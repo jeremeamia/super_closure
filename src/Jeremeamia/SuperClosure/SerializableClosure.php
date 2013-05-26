@@ -19,7 +19,7 @@ class SerializableClosure implements \Serializable
     protected $reflection;
 
     /**
-     * @var array Serialized state
+     * @var array The calculated state to serialize
      */
     private $state;
 
@@ -68,14 +68,14 @@ class SerializableClosure implements \Serializable
      */
     public function serialize()
     {
+        // Prepare the state to serialize using a ClosureParser
         if (!$this->state) {
             $parser = new ClosureParser($this->getReflection());
-            $this->state = array(
-                $parser->getCode(),
-                array_map(function ($var) {
-                    return ($var instanceof \Closure) ? new self($var) : $var;
-                }, $parser->getUsedVariables())
-            );
+            $this->state = array($parser->getCode());
+            // Add the used variables (context) to the state, but wrap all closures with SerializableClosure
+            $this->state[] = array_map(function ($var) {
+                return ($var instanceof \Closure) ? new self($var) : $var;
+            }, $parser->getUsedVariables());
         }
 
         return serialize($this->state);

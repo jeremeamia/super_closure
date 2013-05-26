@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "nikic/php-parser": "0.9.*@dev"
+        "nikic/php-parser": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

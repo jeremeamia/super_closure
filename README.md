@@ -59,17 +59,17 @@ generally more robust solution that takes advantage of the fabulous [nikic/php-p
 
 ### Caveats
 
-1. For any variables used by reference (e.g., `function () use (<vars here>) {…}`), the references are not maintained
-after serialization/unserialization. The only exception is when (in PHP 5.4+ only) the used variable is a reference to
-the `SerializableClosure` object being serialized, which is the case with a recursive function. For some reason — that I
-actually don't quite understand — this works.
+1. For any variables used by reference (e.g., `function () use (&$vars, &$like, &$these) {…}`), the references are not
+   maintained after serialization/unserialization. The only exception is when (in PHP 5.4+ only) the used variable is a
+   reference to the `SerializableClosure` object being serialized, which is the case with a recursive function. For some
+   reason — that I actually don't quite understand — this works.
 2. If you have two closures defined on a single line (you shouldn't do this anyway), you will not be able to serialize
-either one since it is ambiguous which closure's code should be parsed.
+   either one since it is ambiguous which closure's code should be parsed.
 3. Because the technique to acquire the code and context of the closure requires reflection and full AST-style parsing,
-the performance of serializing a closure is likely not good.
+   the performance of serializing a closure is likely not good.
 4. **Warning**: Both `eval()` and `extract()` are required to unserialize the closure. These functions are considered
-dangerous by many, so you will have to evaluate whether or not you actual want to be using this library if these
-functions concern you. These functions *must* be used to make this technique work.
+   dangerous by many, so you will have to evaluate whether or not you actual want to be using this library if these
+   functions concern you. These functions *must* be used to make this technique work.
 
 ## Installation
 
@@ -100,10 +100,10 @@ provide closures (or algorithms) as a service through an API.
 
 ## Who Is Using Super Closure?
 
-- [Laravel 4](https://github.com/laravel/framework) - Serializes closure to push onto job queue
-- [HTTP Mock for PHP](https://github.com/InterNations/http-mock) - Serializes closures to send to remote server within
+- [Laravel 4](https://github.com/laravel/framework) - Serializes a closure to potentially push onto a job queue
+- [HTTP Mock for PHP](https://github.com/InterNations/http-mock) - Serialize a closure to send to remote server within
   a test workflow
-- [Jumper](https://github.com/kakawait/Jumper) - Serializes closure to run on remote host
+- [Jumper](https://github.com/kakawait/Jumper) - Serialize a closure to run on remote host via SSH
 - Please let me know if and how your project uses Super Closure.
 
 [1]:  https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master

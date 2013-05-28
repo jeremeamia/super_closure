@@ -78,7 +78,7 @@ config file.
 
     {
         "require": {
-            "jeremeamia/superclosure": "1.0.*"
+            "jeremeamia/superclosure": "~0.9.2"
         }
     }
 

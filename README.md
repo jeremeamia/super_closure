@@ -98,7 +98,13 @@ create a whole class for a job that might be really simple. The closure serializ
 Essentially this library let's you create closures in one process and use them in another. It would even be possible to
 provide closures (or algorithms) as a service through an API.
 
-If you have seen or can think of any other use cases, let me know.
+## Who Is Using Super Closure?
+
+- [Laravel 4](https://github.com/laravel/framework) - Serializes closure to push onto job queue
+- [HTTP Mock for PHP](https://github.com/InterNations/http-mock) - Serializes closures to send to remote server within
+  a test workflow
+- [Jumper](https://github.com/kakawait/Jumper) - Serializes closure to run on remote host
+- Please let me know if and how your project uses Super Closure.
 
 [1]:  https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
 [2]:  http://travis-ci.org/#!/jeremeamia/super_closure

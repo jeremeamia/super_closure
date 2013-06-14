@@ -5,3 +5,4 @@ build/*
 cache.properties
 phpunit.xml
 composer.phar
+composer.lock

@@ -52,18 +52,19 @@ available. You must be using PHP 5.3, since this deals with closures.
 
 - **PHP 5.3.2+**
 - **PHPUnit** for tests
-- **[Composer][composer]** for consuming FunctionParser as a dependency
+- **[Composer][composer]** for including FunctionParser as a dependency
 
 To install SuperClosure as a dependency of your project using Composer, please add the following to your
 `composer.json` config file.
 
     {
         "require": {
-            "jeremeamia/SuperClosure": "*"
+            "jeremeamia/superclosure": "~0.8.0"
         }
     }
 
-Then run `php composer.phar install --install-suggests` from your project's root directory to install the SuperClosure.
+Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][composer]
+for more information about how to use Composer.
 
 ## Warning
 
@@ -84,4 +85,4 @@ developers, but their use is required to create the serialization/unserializatio
 [packagist]: http://packagist.org/packages/jeremeamia/SuperClosure
 [composer]:  http://getcomposer.org
 [travis-ci]: http://travis-ci.org/#!/jeremeamia/super_closure
-[ci-status]: https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master
+[ci-status]: https://travis-ci.org/jeremeamia/super_closure.png?branch=old

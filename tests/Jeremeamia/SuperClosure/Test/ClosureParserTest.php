@@ -67,4 +67,34 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedVars, $actualVars);
     }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::clearCache
+     */
+    public function testCanClearCache()
+    {
+        $parserClass = 'Jeremeamia\SuperClosure\ClosureParser';
+
+        $p = new \ReflectionProperty($parserClass, 'cache');
+        $p->setAccessible(true);
+        $p->setValue(null, array('foo' => 'bar'));
+
+        $this->assertEquals(array('foo' => 'bar'), $this->readAttribute($parserClass, 'cache'));
+
+        ClosureParser::clearCache();
+
+        $this->assertEquals(array(), $this->readAttribute($parserClass, 'cache'));
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getClosureAbstractSyntaxTree
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getFileAbstractSyntaxTree
+     */
+    public function testCanGetClosureAst()
+    {
+        $closure = function () {};
+        $parser = new ClosureParser(new \ReflectionFunction($closure));
+        $ast = $parser->getClosureAbstractSyntaxTree();
+        $this->assertInstanceOf('PHPParser_Node_Expr_Closure', $ast);
+    }
 }

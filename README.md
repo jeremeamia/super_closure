@@ -1,4 +1,8 @@
-# PHP Super Closure [![Build Status][1]][2]
+# PHP Super Closure
+
+[![Latest Stable Version](https://poser.pugx.org/jeremeamia/superclosure/v/stable.png)](https://packagist.org/packages/jeremeamia/superclosure)
+[![Total Downloads](https://poser.pugx.org/jeremeamia/superclosure/downloads.png)](https://packagist.org/packages/jeremeamia/superclosure)
+[![Build Status][1]][2]
 
 Have you ever seen this?
 

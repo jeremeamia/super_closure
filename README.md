@@ -105,10 +105,12 @@ provide closures (or algorithms) as a service through an API.
 
 ## Who Is Using Super Closure?
 
-- [Laravel 4](https://github.com/laravel/framework) - Serializes a closure to potentially push onto a job queue
+- [Laravel 4](https://github.com/laravel/framework) - Serializes a closure to potentially push onto a job queue.
 - [HTTP Mock for PHP](https://github.com/InterNations/http-mock) - Serialize a closure to send to remote server within
-  a test workflow
-- [Jumper](https://github.com/kakawait/Jumper) - Serialize a closure to run on remote host via SSH
+  a test workflow.
+- [Jumper](https://github.com/kakawait/Jumper) - Serialize a closure to run on remote host via SSH.
+- [nicmart/Benchmark](https://github.com/nicmart/Benchmark) - Uses the `ClosureParser` to display a benchmarked
+  Closure's code.
 - Please let me know if and how your project uses Super Closure.
 
 [1]:  https://secure.travis-ci.org/jeremeamia/super_closure.png?branch=master

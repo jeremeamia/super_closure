@@ -1,15 +1,14 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\Visitor;
+namespace Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor;
 
-use Jeremeamia\SuperClosure\ClosureLocation;
+use Jeremeamia\SuperClosure\ClosureParser\ClosureLocation;
+use Jeremeamia\SuperClosure\ClosureParser\ClosureParsingException;
 
 /**
  * This is a visitor that extends the nikic/php-parser library and looks for a closure node and its location
- *
- * @copyright Jeremy Lindblom 2010-2013
  */
-class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
+class ClosureLocatorVisitor extends \PHPParser_NodeVisitorAbstract
 {
     /**
      * @var \ReflectionFunction
@@ -22,27 +21,25 @@ class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
     protected $closureNode;
 
     /**
-     * @var ClosureLocation
+     * @var  ClosureLocation
      */
     protected $location;
 
     /**
      * @param \ReflectionFunction $reflection
      */
-    public function __construct(\ReflectionFunction $reflection)
+    public function __construct($reflection)
     {
         $this->reflection = $reflection;
-        $this->location = new ClosureLocation;
     }
 
     public function beforeTraverse(array $nodes)
     {
-        $this->location = ClosureLocation::fromReflection($this->reflection);
-    }
-
-    public function afterTraverse(array $nodes)
-    {
-        $this->location->finalize();
+        $this->location = new ClosureLocation(array(
+            'directory' => dirname($this->reflection->getFileName()),
+            'file'      => $this->reflection->getFileName(),
+            'function'  => $this->reflection->getName(),
+        ));
     }
 
     public function enterNode(\PHPParser_Node $node)
@@ -50,14 +47,15 @@ class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
         // Determine information about the closure's location
         if (!$this->closureNode) {
             if ($node instanceof \PHPParser_Node_Stmt_Namespace) {
-                $this->location->namespace = is_array($node->name->parts) ? implode('\\', $node->name->parts) : null;
+                $namespace = ($node->name && is_array($node->name->parts)) ? implode('\\', $node->name->parts) : null;
+                $this->location->namespace = $namespace;
             }
             if ($node instanceof \PHPParser_Node_Stmt_Trait) {
-                $this->location->trait = $this->location->namespace . '\\' . $node->name;
+                $this->location->trait = $node->name;
                 $this->location->class = null;
             }
             elseif ($node instanceof \PHPParser_Node_Stmt_Class) {
-                $this->location->class = $this->location->namespace . '\\' . $node->name;
+                $this->location->class = $node->name;
                 $this->location->trait = null;
             }
         }
@@ -66,8 +64,8 @@ class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
         if ($node instanceof \PHPParser_Node_Expr_Closure) {
             if ($node->getAttribute('startLine') == $this->reflection->getStartLine()) {
                 if ($this->closureNode) {
-                    throw new \RuntimeException('Two closures were declared on the same line of code. Cannot determine '
-                        . 'which closure was the intended target.');
+                    throw new ClosureParsingException('Two closures were declared on the same line of code. Cannot '
+                        . 'determine which closure was the intended target.');
                 } else {
                     $this->closureNode = $node;
                 }
@@ -88,6 +86,24 @@ class ClosureFinderVisitor extends \PHPParser_NodeVisitorAbstract
             elseif ($node instanceof \PHPParser_Node_Stmt_Class) {
                 $this->location->class = null;
             }
+        }
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        if ($this->location->class) {
+            $this->location->class = $this->location->namespace . '\\' . $this->location->class;
+            $this->location->method = "{$this->location->class}::{$this->location->function}";
+        } elseif ($this->location->trait) {
+            $this->location->trait = $this->location->namespace . '\\' . $this->location->trait;
+            $this->location->method = "{$this->location->trait}::{$this->location->function}";
+        }
+
+        if (!$this->location->class && PHP_VERSION_ID >= 50400) {
+            // @codeCoverageIgnoreStart
+            $closureScopeClass = $this->reflection->getClosureScopeClass();
+            $this->location->class = $closureScopeClass ? $closureScopeClass->getName() : null;
+            // @codeCoverageIgnoreEnd
         }
     }
 

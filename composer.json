@@ -1,13 +1,16 @@
 {
-    "name": "jeremeamia/SuperClosure",
+    "name": "jeremeamia/superclosure",
     "type": "library",
-    "description": "Doing interesting things with closures like serialization.",
-    "keywords": ["closure", "serialize", "serializable", "function", "parser", "tokenizer"],
+    "description": "Serialize Closures, including their context",
+    "keywords": ["closure", "serialize", "serializable", "function", "parser", "tokenizer", "lambda"],
     "homepage": "https://github.com/jeremeamia/super_closure",
     "license": "MIT",
     "authors": [
         {
-            "name": "Jeremy Lindblom"
+            "name": "Jeremy Lindblom",
+            "email": "jeremeamia@gmail.com",
+            "homepage": "http://webjeremy.com",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -18,6 +21,12 @@
         "phpunit/phpunit": "~3.7"
     },
     "autoload": {
-        "psr-0": { "Jeremeamia\\SuperClosure": "src/" }
+        "psr-4": {
+            "Jeremeamia\\SuperClosure\\": "src/",
+            "Jeremeamia\\SuperClosure\\Test\\": "tests/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
     }
 }

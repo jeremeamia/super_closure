@@ -1,20 +1,18 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\Visitor;
+namespace Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor;
 
-use Jeremeamia\SuperClosure\ClosureLocation;
+use Jeremeamia\SuperClosure\ClosureParser\ClosureLocation;
 use PHPParser_Node_Scalar_LNumber as NumberNode;
 use PHPParser_Node_Scalar_String as StringNode;
 
 /**
  * This is a visitor that resolves magic constants (e.g., __FILE__) to their intended values within a closure's AST
- *
- * @copyright Jeremy Lindblom 2010-2013
  */
 class MagicConstantVisitor extends \PHPParser_NodeVisitorAbstract
 {
     /**
-     * @var ClosureLocation
+     * @var array
      */
     protected $location;
 

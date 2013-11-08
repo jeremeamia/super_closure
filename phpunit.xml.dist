@@ -12,13 +12,13 @@
 
   <testsuites>
     <testsuite name="SuperClosure">
-      <directory>./tests/Jeremeamia/SuperClosure/Test</directory>
+      <directory>./tests</directory>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
-      <directory suffix=".php">./src/Jeremeamia/SuperClosure</directory>
+      <directory suffix=".php">./src</directory>
     </whitelist>
   </filter>
 

@@ -2,19 +2,17 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Jeremeamia\SuperClosure\SerializableClosure;
-
 $greeting = 'Hello';
-$helloWorld = new SerializableClosure(function ($name = 'World') use ($greeting) {
+$helloWorld = function ($name = 'World') use ($greeting) {
     echo "{$greeting}, {$name}!\n";
-});
+};
 
 $helloWorld();
 //> Hello, World!
 $helloWorld('Jeremy');
 //> Hello, Jeremy!
 
-$serialized = serialize($helloWorld);
+$serialized = serialize_closure($helloWorld);
 $unserialized = unserialize($serialized);
 
 $unserialized();

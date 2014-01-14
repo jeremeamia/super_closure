@@ -21,11 +21,8 @@
         "phpunit/phpunit": "~3.7"
     },
     "autoload": {
-        "psr-4": {
-            "Jeremeamia\\SuperClosure\\": "src/",
-            "Jeremeamia\\SuperClosure\\Test\\": "tests/"
-        },
         "files": [
+            "autoload.php",
             "src/functions.php"
         ]
     }

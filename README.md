@@ -15,8 +15,6 @@ even though it is not "allowed" by PHP, the Super Closure library ([jeremeamia/s
 I'm not joking, *you really can serialize a PHP closure*!
 
 ```php
-<?php
-
 require 'vendor/autoload.php';
 
 use Jeremeamia\SuperClosure\SerializableClosure;
@@ -80,13 +78,13 @@ generally more robust solution that takes advantage of the fabulous [nikic/php-p
 
 To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
 config file.
-
-    {
-        "require": {
-            "jeremeamia/superclosure": "~1.0"
-        }
+```javascript
+{
+    "require": {
+        "jeremeamia/superclosure": "~1.0"
     }
-
+}
+```
 Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for
 more information about how to use Composer.
 

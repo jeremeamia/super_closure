@@ -2,6 +2,7 @@
 
 namespace
 {
+    // This alias exists to provide backwards compatibility with version 1.0 of SuperClosure.
     class_alias('SuperClosure\SerializableClosure', 'Jeremeamia\SuperClosure\SerializableClosure');
 }
 

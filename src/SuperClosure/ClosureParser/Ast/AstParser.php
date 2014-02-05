@@ -26,6 +26,7 @@ class AstParser extends AbstractClosureParser
 
     public function parse($closure)
     {
+        // Prepare the closure and reflection objects for parsing
         $closure = $this->prepareClosure($closure);
         $closureReflection = $closure->getReflection();
 
@@ -37,6 +38,7 @@ class AstParser extends AbstractClosureParser
             // @codeCoverageIgnoreEnd
         }
 
+        // Do a second traversal through the closure's AST to apply additional transformations
         $closureLocation = $closureLocator->getLocation();
         if ($this->options[Options::HANDLE_MAGIC_CONSTANTS]) {
             // Resolve additional nodes by making a second pass through just the closure's nodes
@@ -46,7 +48,7 @@ class AstParser extends AbstractClosureParser
             $closureAst = $closureAst[0];
         }
 
-        // Get closure context data
+        // Get and return closure context data
         $astPrinter = new \PHPParser_PrettyPrinter_Default();
         $closureCode = $astPrinter->prettyPrint(array($closureAst));
         $closureVariables = $this->determineVariables($closureAst, $closureReflection);

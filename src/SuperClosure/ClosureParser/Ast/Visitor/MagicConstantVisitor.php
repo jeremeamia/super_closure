@@ -1,8 +1,8 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor;
+namespace SuperClosure\ClosureParser\Ast\Visitor;
 
-use Jeremeamia\SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\ClosureLocation;
 use PHPParser_Node_Scalar_LNumber as NumberNode;
 use PHPParser_Node_Scalar_String as StringNode;
 

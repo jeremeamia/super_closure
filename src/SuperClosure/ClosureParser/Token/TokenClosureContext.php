@@ -1,9 +1,9 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Token;
+namespace SuperClosure\ClosureParser\Token;
 
-use Jeremeamia\SuperClosure\ClosureBinding;
-use Jeremeamia\SuperClosure\ClosureParser\AbstractClosureContext;
+use SuperClosure\ClosureBinding;
+use SuperClosure\ClosureParser\AbstractClosureContext;
 
 class TokenClosureContext extends AbstractClosureContext
 {

@@ -1,6 +1,6 @@
 <?php
 
-use Jeremeamia\SuperClosure\SerializableClosure;
+use SuperClosure\SerializableClosure;
 
 //=============================================================================
 // 1. Recursive closure

@@ -1,8 +1,8 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser;
+namespace SuperClosure\ClosureParser;
 
-use Jeremeamia\SuperClosure\ClosureBinding;
+use SuperClosure\ClosureBinding;
 
 interface ClosureContextInterface
 {

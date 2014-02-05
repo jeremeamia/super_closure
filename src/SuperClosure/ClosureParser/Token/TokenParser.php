@@ -1,10 +1,11 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Token;
+namespace SuperClosure\ClosureParser\Token;
 
-use Jeremeamia\SuperClosure\ClosureParser\AbstractClosureParser;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParsingException;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParserInterface as Parser;
+use SuperClosure\ClosureParser\AbstractClosureParser;
+use SuperClosure\ClosureParser\ClosureParsingException;
+use SuperClosure\ClosureParser\ClosureParserInterface as Parser;
+use SuperClosure\ClosureParser\Options;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
@@ -14,10 +15,10 @@ class TokenParser extends AbstractClosureParser
 {
     public function getDefaultOptions()
     {
-        return array(
-            Parser::VALIDATE_TOKENS         => true,
-            Parser::HANDLE_CLOSURE_BINDINGS => true,
-        );
+        return new Options(array(
+            Options::VALIDATE_TOKENS         => true,
+            Options::HANDLE_CLOSURE_BINDINGS => true,
+        ));
     }
 
     public function parse($closure)
@@ -27,13 +28,13 @@ class TokenParser extends AbstractClosureParser
         $closureTokens = $this->fetchTokens($closureReflection);
 
         // Only validate the tokens if configured to do so
-        if ($this->options[Parser::VALIDATE_TOKENS]) {
+        if ($this->options[Options::VALIDATE_TOKENS]) {
             $closureTokens = $this->validateTokens($closureTokens);
         }
 
         $closureCode = implode('', $closureTokens);
         $closureVariables = $this->determineVariables($closureReflection, $closureTokens);
-        $closureBinding = $this->options[Parser::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
+        $closureBinding = $this->options[Options::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
 
         return new TokenClosureContext($closureCode, $closureVariables, $closureTokens, $closureBinding);
     }
@@ -49,7 +50,11 @@ class TokenParser extends AbstractClosureParser
     protected function fetchTokens(\ReflectionFunction $closureReflection)
     {
         // Load the file containing the code for the function
-        $file = new \SplFileObject($closureReflection->getFileName());
+        $fileName = $closureReflection->getFileName();
+        if (!file_exists($fileName)) {
+            throw new ClosureParsingException("The file containing the closure, \"{$fileName}\" did not exist.");
+        }
+        $file = new \SplFileObject($fileName);
 
         // Identify the first and last lines of the code for the function
         $firstLine = $closureReflection->getStartLine();

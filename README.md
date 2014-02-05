@@ -19,7 +19,7 @@ I'm not joking, *you really can serialize a PHP closure*!
 
 require 'vendor/autoload.php';
 
-use Jeremeamia\SuperClosure\SerializableClosure;
+use SuperClosure\SerializableClosure;
 
 $greeting = 'Hello';
 $helloWorld = new SerializableClosure(function ($name = 'World') use ($greeting) {

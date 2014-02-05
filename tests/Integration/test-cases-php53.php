@@ -1,6 +1,6 @@
 <?php
 
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\ClosureParserInterface;
 use Things\Queue;
 
 /** @var \Closure $addTestCase */

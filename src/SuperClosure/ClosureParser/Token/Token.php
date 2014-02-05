@@ -1,6 +1,6 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Token;
+namespace SuperClosure\ClosureParser\Token;
 
 /**
  * The Token object is an object-oriented abstraction representing a single item from the results of the get_token_all()
@@ -17,7 +17,7 @@ class Token
     protected $name;
 
     /**
-     * @var integer The token's integer value.
+     * @var int|null The token's integer value.
      */
     protected $value;
 
@@ -27,7 +27,7 @@ class Token
     protected $code;
 
     /**
-     * @var integer The line number of the token in the original code.
+     * @var int|null The line number of the token in the original code.
      */
     protected $line;
 
@@ -52,9 +52,9 @@ class Token
     /**
      * Constructs a token object.
      *
-     * @param string $code
-     * @param string $value
-     * @param int    $line
+     * @param string   $code
+     * @param int|null $value
+     * @param int|null $line
      */
     public function __construct($code, $value = null, $line = null)
     {
@@ -79,7 +79,7 @@ class Token
     /**
      * Get the token's integer value. Always null for literal tokens.
      *
-     * @return integer The token value.
+     * @return int|null The token value.
      */
     public function getValue()
     {
@@ -99,7 +99,7 @@ class Token
     /**
      * Get the line where the token was defined. Always null for literal tokens.
      *
-     * @return integer The line number.
+     * @return int|null The line number.
      */
     public function getLine()
     {
@@ -109,7 +109,7 @@ class Token
     /**
      * Determines whether the token is an opening brace.
      *
-     * @return boolean True if the token is an opening brace.
+     * @return bool True if the token is an opening brace.
      */
     public function isOpeningBrace()
     {
@@ -119,7 +119,7 @@ class Token
     /**
      * Determines whether the token is an closing brace.
      *
-     * @return boolean True if the token is an closing brace.
+     * @return bool True if the token is an closing brace.
      */
     public function isClosingBrace()
     {
@@ -129,7 +129,7 @@ class Token
     /**
      * Determines whether the token is an opening parenthesis.
      *
-     * @return boolean True if the token is an opening parenthesis.
+     * @return bool True if the token is an opening parenthesis.
      */
     public function isOpeningParenthesis()
     {
@@ -139,7 +139,7 @@ class Token
     /**
      * Determines whether the token is an closing parenthesis.
      *
-     * @return boolean True if the token is an closing parenthesis.
+     * @return bool True if the token is an closing parenthesis.
      */
     public function isClosingParenthesis()
     {
@@ -150,7 +150,8 @@ class Token
      * Determines whether the token's integer value or code is equal to the specified value.
      *
      * @param mixed $value The value to check.
-     * @return boolean True if the token is equal to the value.
+     *
+     * @return bool True if the token is equal to the value.
      */
     public function matches($value)
     {

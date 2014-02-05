@@ -1,9 +1,9 @@
 <?php
 
-namespace Jeremeamia\SuperClosure;
+namespace SuperClosure;
 
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParserInterface;
-use Jeremeamia\SuperClosure\ClosureParser\Ast\AstParser as DefaultClosureParser;
+use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\Ast\AstParser as DefaultClosureParser;
 
 /**
  * This class allows you to do the impossible: serialize closures! With the combined power of lexical parsing, the
@@ -67,7 +67,7 @@ class SerializableClosure extends SuperClosure implements \Serializable
     {
         $this->fetchSerializableData();
 
-        return serialize(array($this->code, $this->variables, $this->binding));
+        return \serialize(array($this->code, $this->variables, $this->binding));
     }
 
     /**
@@ -81,7 +81,7 @@ class SerializableClosure extends SuperClosure implements \Serializable
     public function unserialize($serialized)
     {
         // Unserialize the data we need to reconstruct the SuperClosure
-        list($this->code, $this->variables, $this->binding) = unserialize($serialized);
+        list($this->code, $this->variables, $this->binding) = \unserialize($serialized);
 
         // Simulate the original context the Closure was created in
         extract($this->variables);

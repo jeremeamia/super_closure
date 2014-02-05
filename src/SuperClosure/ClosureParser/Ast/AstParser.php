@@ -1,13 +1,13 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Ast;
+namespace SuperClosure\ClosureParser\Ast;
 
-use Jeremeamia\SuperClosure\ClosureParser\AbstractClosureParser;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParsingException;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParserInterface as Parser;
-use Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
-use Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
+use SuperClosure\ClosureParser\AbstractClosureParser;
+use SuperClosure\ClosureParser\ClosureParsingException;
+use SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
+use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
 use PHPParser_Node_Expr_Closure as ClosureAst;
+use SuperClosure\ClosureParser\Options;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
@@ -17,11 +17,11 @@ class AstParser extends AbstractClosureParser
 {
     public function getDefaultOptions()
     {
-        return array(
-            Parser::HANDLE_CLOSURE_BINDINGS => true,
-            Parser::HANDLE_MAGIC_CONSTANTS  => true,
-            Parser::HANDLE_CLASS_NAMES      => true,
-        );
+        return new Options(array(
+            Options::HANDLE_CLOSURE_BINDINGS => true,
+            Options::HANDLE_MAGIC_CONSTANTS  => true,
+            Options::HANDLE_CLASS_NAMES      => true,
+        ));
     }
 
     public function parse($closure)
@@ -38,7 +38,7 @@ class AstParser extends AbstractClosureParser
         }
 
         $closureLocation = $closureLocator->getLocation();
-        if ($this->options[Parser::HANDLE_MAGIC_CONSTANTS]) {
+        if ($this->options[Options::HANDLE_MAGIC_CONSTANTS]) {
             // Resolve additional nodes by making a second pass through just the closure's nodes
             $closureTraverser = new \PHPParser_NodeTraverser();
             $closureTraverser->addVisitor(new MagicConstantVisitor($closureLocation));
@@ -50,7 +50,7 @@ class AstParser extends AbstractClosureParser
         $astPrinter = new \PHPParser_PrettyPrinter_Default();
         $closureCode = $astPrinter->prettyPrint(array($closureAst));
         $closureVariables = $this->determineVariables($closureAst, $closureReflection);
-        $closureBinding = $this->options[Parser::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
+        $closureBinding = $this->options[Options::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
 
         return new AstClosureContext($closureCode, $closureVariables, $closureAst, $closureLocation, $closureBinding);
     }
@@ -70,7 +70,7 @@ class AstParser extends AbstractClosureParser
             $fileAst = $this->getFileAst($closureReflection);
 
             $fileTraverser = new \PHPParser_NodeTraverser();
-            if ($this->options[Parser::HANDLE_CLASS_NAMES]) {
+            if ($this->options[Options::HANDLE_CLASS_NAMES]) {
                 $fileTraverser->addVisitor(new \PHPParser_NodeVisitor_NameResolver);
             }
             $fileTraverser->addVisitor($closureLocator);
@@ -87,11 +87,17 @@ class AstParser extends AbstractClosureParser
     /**
      * @param \ReflectionFunction $closureReflection
      *
+     * @throws ClosureParsingException
      * @return \PHPParser_Node[]
      */
     private function getFileAst(\ReflectionFunction $closureReflection)
     {
-        $fileContents = file_get_contents($closureReflection->getFileName());
+        $fileName = $closureReflection->getFileName();
+        if (!file_exists($fileName)) {
+            throw new ClosureParsingException("The file containing the closure, \"{$fileName}\" did not exist.");
+        }
+
+        $fileContents = file_get_contents($fileName);
         $parser = new \PHPParser_Parser(new \PHPParser_Lexer_Emulative);
         $fileAst = $parser->parse($fileContents);
 

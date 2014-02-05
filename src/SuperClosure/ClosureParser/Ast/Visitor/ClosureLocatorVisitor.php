@@ -1,9 +1,9 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Ast\Visitor;
+namespace SuperClosure\ClosureParser\Ast\Visitor;
 
-use Jeremeamia\SuperClosure\ClosureParser\ClosureLocation;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParsingException;
+use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\ClosureParsingException;
 
 /**
  * This is a visitor that extends the nikic/php-parser library and looks for a closure node and its location

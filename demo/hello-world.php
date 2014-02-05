@@ -12,7 +12,7 @@ $helloWorld();
 $helloWorld('Jeremy');
 //> Hello, Jeremy!
 
-$serialized = serialize_closure($helloWorld);
+$serialized = SuperClosure\serialize($helloWorld);
 $unserialized = unserialize($serialized);
 
 $unserialized();

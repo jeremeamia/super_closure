@@ -21,9 +21,7 @@
         "phpunit/phpunit": "~3.7"
     },
     "autoload": {
-        "files": [
-            "autoload.php",
-            "src/functions.php"
-        ]
+        "psr-4": {"SuperClosure\\": "src/SuperClosure/"},
+        "files": ["src/functions.php"]
     }
 }

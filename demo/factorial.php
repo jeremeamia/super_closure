@@ -6,7 +6,7 @@ if (version_compare(PHP_VERSION, '5.4', '<=')) {
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Jeremeamia\SuperClosure\SerializableClosure;
+use SuperClosure\SerializableClosure;
 
 $factorial = new SerializableClosure(function ($n) use (&$factorial) {
     return ($n <= 1) ? 1 : $n * $factorial($n - 1);

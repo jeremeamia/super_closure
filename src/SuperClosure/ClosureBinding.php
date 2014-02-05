@@ -1,7 +1,16 @@
 <?php
 
-namespace Jeremeamia\SuperClosure;
+namespace SuperClosure;
 
+/**
+ * A value object representing the binding of a PHP Closure.
+ *
+ * Closures, as of 5.4+, are bound to an object and a scope depending on where they are declared, or if they were
+ * created via `Closure::bind` or `Closure::bindTo`. The binding information is especially important if the closure
+ * references `$this` or `self` inside the function body.
+ *
+ * @package SuperClosure
+ */
 class ClosureBinding
 {
     /**
@@ -36,17 +45,17 @@ class ClosureBinding
             throw new \InvalidArgumentException('Please provide the reflection of a closure.');
         }
 
+        // Only closures in PHP 5.4+ have bindings
         if (PHP_VERSION_ID < 50400) {
-            // Only closures in PHP 5.4+ have bindings
             return new self(null, null);
-        } else {
-            /** @var \ReflectionFunction $scope */
-            if ($scope = $reflection->getClosureScopeClass()) {
-                $scope = $scope->getName();
-            }
-
-            return new self($reflection->getClosureThis(), $scope);
         }
+
+        /** @var \ReflectionFunction $scope */
+        if ($scope = $reflection->getClosureScopeClass()) {
+            $scope = $scope->getName();
+        }
+
+        return new self($reflection->getClosureThis(), $scope);
     }
 
     /**

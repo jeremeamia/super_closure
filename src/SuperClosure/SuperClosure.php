@@ -1,6 +1,6 @@
 <?php
 
-namespace Jeremeamia\SuperClosure;
+namespace SuperClosure;
 
 class SuperClosure
 {

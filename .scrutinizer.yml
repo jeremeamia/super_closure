@@ -1,0 +1,20 @@
+filter:
+    paths:
+        - src/
+
+before_commands:
+    - 'composer install --no-interaction --prefer-source --dev'
+    - 'cp phpunit.xml.dist phpunit.xml'
+
+tools:
+    sensiolabs_security_checker: true
+    php_code_coverage:
+        test_command: vendor/bin/phpunit
+        config_path: phpunit.xml
+    php_hhvm:
+        config:
+            unknown_class: true
+            unknown_base_class: true
+            unknown_function: true
+            unknown_object_method: true
+            unknown_trait: true

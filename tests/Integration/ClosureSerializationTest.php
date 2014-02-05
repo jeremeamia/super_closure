@@ -1,11 +1,11 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\Test\Integration;
+namespace SuperClosure\Test\Integration;
 
-use Jeremeamia\SuperClosure\ClosureParser\ClosureParserInterface;
-use Jeremeamia\SuperClosure\ClosureParser\Token\TokenParser as TokenParser;
-use Jeremeamia\SuperClosure\ClosureParser\Ast\AstParser as AstParser;
-use Jeremeamia\SuperClosure\SerializableClosure;
+use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\Token\TokenParser as TokenParser;
+use SuperClosure\ClosureParser\Ast\AstParser as AstParser;
+use SuperClosure\SerializableClosure;
 
 class ClosureSerializationTest extends \PHPUnit_Framework_TestCase
 {

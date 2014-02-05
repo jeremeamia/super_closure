@@ -1,22 +1,25 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser;
+namespace SuperClosure\ClosureParser;
 
-use Jeremeamia\SuperClosure\SuperClosure;
+use SuperClosure\SuperClosure;
 
 abstract class AbstractClosureParser implements ClosureParserInterface
 {
     /**
-     * @var array
+     * @var Options
      */
     protected $options;
 
     /**
-     * @param array $options
+     * @param Options $options
      */
-    public function __construct(array $options = array())
+    public function __construct(Options $options = null)
     {
-        $this->options = $options + $this->getDefaultOptions();
+        $this->options = $this->getDefaultOptions();
+        if ($options) {
+            $this->options->merge($options);
+        }
     }
 
     /**
@@ -28,7 +31,7 @@ abstract class AbstractClosureParser implements ClosureParserInterface
     protected function prepareClosure($closure)
     {
         if ($closure instanceof \Closure) {
-            $closure = new SuperClosure($closure);
+            return new SuperClosure($closure);
         }
 
         if ($closure instanceof SuperClosure) {
@@ -39,7 +42,7 @@ abstract class AbstractClosureParser implements ClosureParserInterface
     }
 
     /**
-     * @return array
+     * @return Options
      */
     abstract protected function getDefaultOptions();
 }

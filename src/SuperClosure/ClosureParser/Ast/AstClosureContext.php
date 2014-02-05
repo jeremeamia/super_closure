@@ -1,10 +1,10 @@
 <?php
 
-namespace Jeremeamia\SuperClosure\ClosureParser\Ast;
+namespace SuperClosure\ClosureParser\Ast;
 
-use Jeremeamia\SuperClosure\ClosureBinding;
-use Jeremeamia\SuperClosure\ClosureParser\AbstractClosureContext;
-use Jeremeamia\SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureBinding;
+use SuperClosure\ClosureParser\AbstractClosureContext;
+use SuperClosure\ClosureParser\ClosureLocation;
 use PHPParser_Node_Expr_Closure as ClosureAst;
 
 class AstClosureContext extends AbstractClosureContext

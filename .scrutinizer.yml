@@ -4,7 +4,6 @@ filter:
 
 before_commands:
     - 'composer install --no-interaction --prefer-source --dev'
-    - 'cp phpunit.xml.dist phpunit.xml'
 
 tools:
     sensiolabs_security_checker: true

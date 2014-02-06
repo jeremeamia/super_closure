@@ -64,8 +64,9 @@ class ClosureLocatorVisitor extends \PHPParser_NodeVisitorAbstract
         if ($node instanceof \PHPParser_Node_Expr_Closure) {
             if ($node->getAttribute('startLine') == $this->reflection->getStartLine()) {
                 if ($this->closureNode) {
-                    throw new ClosureParsingException('Two closures were declared on the same line of code. Cannot '
-                        . 'determine which closure was the intended target.');
+                    $line = $this->location->file . ':' . $node->getAttribute('startLine');
+                    throw new ClosureParsingException("Two closures were declared on the same line ({$line}) of code. "
+                        . 'Cannot determine which closure was the intended target.');
                 } else {
                     $this->closureNode = $node;
                 }

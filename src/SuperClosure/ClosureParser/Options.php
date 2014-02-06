@@ -2,13 +2,12 @@
 
 namespace SuperClosure\ClosureParser;
 
-class Options implements \ArrayAccess
+class Options implements \ArrayAccess, \IteratorAggregate
 {
     const HANDLE_CLASS_NAMES      = 'handle_class_names';
     const HANDLE_CLOSURE_BINDINGS = 'handle_closure_bindings';
     const HANDLE_MAGIC_CONSTANTS  = 'handle_magic_constants';
     const VALIDATE_TOKENS         = 'validate_tokens';
-    const TURBO_MODE              = 'turbo_mode';
 
     /**
      * @var array
@@ -59,6 +58,11 @@ class Options implements \ArrayAccess
     public function offsetUnset($key)
     {
         $this->options[$key] = null;
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->options);
     }
 
     /**

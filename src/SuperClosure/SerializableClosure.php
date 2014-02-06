@@ -4,6 +4,7 @@ namespace SuperClosure;
 
 use SuperClosure\ClosureParser\ClosureParserInterface;
 use SuperClosure\ClosureParser\Ast\AstParser as DefaultClosureParser;
+use SuperClosure\ClosureParser\ClosureParsingException;
 
 /**
  * This class allows you to do the impossible: serialize closures! With the combined power of lexical parsing, the
@@ -77,6 +78,8 @@ class SerializableClosure extends SuperClosure implements \Serializable
      * in this method to perform the unserialization.
      *
      * @param string $serialized
+     *
+     * @throws ClosureUnserializationException
      */
     public function unserialize($serialized)
     {
@@ -87,7 +90,10 @@ class SerializableClosure extends SuperClosure implements \Serializable
         extract($this->variables);
 
         // Evaluate the code to recreate the Closure
-        eval("\$this->closure = {$this->code};");
+        @eval("\$this->closure = {$this->code};");
+        if (!$this->closure instanceof \Closure) {
+            throw new ClosureUnserializationException('The serialized closure was corrupted and cannot be unserialized.');
+        }
 
         // Rebind the closure to its former $this object and scope (or to null, if there was no binding serialized)
         if (PHP_VERSION_ID >= 50400) {
@@ -97,24 +103,30 @@ class SerializableClosure extends SuperClosure implements \Serializable
 
     /**
      * Uses the closure parser to get information about the closure required for serialization
+     *
+     * @throws ClosureSerializationException
      */
     protected function fetchSerializableData()
     {
-        $parser = $this->closureParser;
         if (!$this->code) {
-            // Use the parser to fetch the closure context
-            $context = $parser->parse($this);
+            try {
+                // Use the parser to fetch the closure context
+                $parser = $this->closureParser;
+                $context = $parser->parse($this);
 
-            // Save the data from the closure context, and wrap any closures in the variables to be serializable as well
-            $this->code = $context->getCode();
-            $this->binding = $context->getBinding();
-            $this->variables = array_map(function ($variable) use ($parser) {
-                if ($variable instanceof \Closure) {
-                    return new SerializableClosure($variable, $parser);
-                } else {
-                    return $variable;
-                }
-            }, $context->getVariables());
+                // Save the data from the closure context, and wrap any inner closures to be serializable as well
+                $this->code = $context->getCode();
+                $this->binding = $context->getBinding();
+                $this->variables = array_map(function ($variable) use ($parser) {
+                    if ($variable instanceof \Closure) {
+                        return new SerializableClosure($variable, $parser);
+                    } else {
+                        return $variable;
+                    }
+                }, $context->getVariables());
+            } catch (ClosureParsingException $e) {
+                throw new ClosureSerializationException('Could not be serialize the closure. ' . $e->getMessage(), 0, $e);
+            }
         }
     }
 }

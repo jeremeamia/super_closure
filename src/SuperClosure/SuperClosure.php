@@ -60,10 +60,10 @@ class SuperClosure
     }
 
     /**
-     * @param object        $object The object to which the given anonymous function should be bound, or NULL for the
-     *                              closure to be unbound. If a ClosureBinding object is provided, the information from
-     *                              the ClosureBinding will be used to do the internal bindTo()
-     * @param string|object $scope  The class scope to which associate the closure is to be associated, or 'static'
+     * @param object        $object The object to which the given anonymous function should be bound, or `NULL` for the
+     *                              closure to be unbound. If a `ClosureBinding` object is provided, the information
+     *                              from the `ClosureBinding` will be used to do the internal `bindTo()`
+     * @param string|object $scope  The class scope to which associate the closure is to be associated, or "static"
      *                              to keep the current one. If an object is given, the type of the object will be
      *                              used instead. This determines the visibility of protected and private methods of
      *                              the bound object.
@@ -74,7 +74,9 @@ class SuperClosure
     public function bindTo($object, $scope = 'static')
     {
         if (PHP_VERSION_ID < 50400) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('Closure binding is a feature of PHP 5.4+.');
+            // @codeCoverageIgnoreEnd
         }
 
         // If a ClosureBinding object is provided, pull out the binding information to use
@@ -91,10 +93,19 @@ class SuperClosure
         return $this;
     }
 
+    /**
+     * Delegate the Closure invocation to the actual closure object using PHP's pre-5.6 pseudo-variadics.
+     *
+     * Important Notes:
+     *
+     * - `ReflectionFunction::invokeArgs()` should not be used here, because it does not work with closure bindings.
+     * - Args passed-by-reference lose their references when proxied through `__invoke()`. This is is an unfortunate,
+     *   but understandable, limitation of PHP that will probably never change.
+     *
+     * @return mixed
+     */
     public function __invoke()
     {
-        // Delegate the call to the actual closure using pseudo-variadics
-        // NOTE: ReflectionFunction::invokeArgs() should not be used, since it does not work with closure bindings
         return call_user_func_array($this->closure, func_get_args());
     }
 }

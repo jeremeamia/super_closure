@@ -8,8 +8,6 @@ namespace SuperClosure;
  * Closures, as of 5.4+, are bound to an object and a scope depending on where they are declared, or if they were
  * created via `Closure::bind` or `Closure::bindTo`. The binding information is especially important if the closure
  * references `$this` or `self` inside the function body.
- *
- * @package SuperClosure
  */
 class ClosureBinding
 {
@@ -47,7 +45,9 @@ class ClosureBinding
 
         // Only closures in PHP 5.4+ have bindings
         if (PHP_VERSION_ID < 50400) {
+            // @codeCoverageIgnoreStart
             return new self(null, null);
+            // @codeCoverageIgnoreEnd
         }
 
         /** @var \ReflectionFunction $scope */

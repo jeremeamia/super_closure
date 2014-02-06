@@ -26,18 +26,6 @@ class ClosureParserFactory
     {
         // Build an options array from the default options and provided options
         $options = $options + $this->defaultOptions;
-
-        // Handle the turbo mode option specially
-        if (isset($options[Options::TURBO_MODE]) && $options[Options::TURBO_MODE]) {
-            $options = array(
-                Options::HANDLE_CLOSURE_BINDINGS => false,
-                Options::HANDLE_MAGIC_CONSTANTS  => false,
-                Options::HANDLE_CLASS_NAMES      => false,
-                Options::VALIDATE_TOKENS         => false,
-            );
-        }
-
-        // Instantiate an options object
         $options = new Options($options);
 
         // Use the AST parser if requiring features that only the AST parser provides

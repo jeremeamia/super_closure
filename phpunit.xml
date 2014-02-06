@@ -11,8 +11,8 @@
 >
 
   <testsuites>
-    <testsuite name="SuperClosure">
-      <directory>./tests</directory>
+    <testsuite name="SuperClosure Unit Tests">
+      <directory>./tests/Unit</directory>
     </testsuite>
   </testsuites>
 

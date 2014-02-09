@@ -31,14 +31,11 @@ class ClosureLocatorVisitor extends \PHPParser_NodeVisitorAbstract
     public function __construct($reflection)
     {
         $this->reflection = $reflection;
-    }
-
-    public function beforeTraverse(array $nodes)
-    {
         $this->location = new ClosureLocation(array(
             'directory' => dirname($this->reflection->getFileName()),
             'file'      => $this->reflection->getFileName(),
             'function'  => $this->reflection->getName(),
+            'line'      => $this->reflection->getStartLine(),
         ));
     }
 
@@ -62,7 +59,8 @@ class ClosureLocatorVisitor extends \PHPParser_NodeVisitorAbstract
 
         // Locate the node of the closure
         if ($node instanceof \PHPParser_Node_Expr_Closure) {
-            if ($node->getAttribute('startLine') == $this->reflection->getStartLine()) {
+            if (!is_object($node) || !is_object($this->location)) {var_dump($node, $this->location);die;}
+            if ($node->getAttribute('startLine') == $this->location->line) {
                 if ($this->closureNode) {
                     $line = $this->location->file . ':' . $node->getAttribute('startLine');
                     throw new ClosureParsingException("Two closures were declared on the same line ({$line}) of code. "

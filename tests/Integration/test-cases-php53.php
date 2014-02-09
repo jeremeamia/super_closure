@@ -61,7 +61,7 @@ $closure = function () {
 };
 
 $addTestCase($closure, array(), $astParser, 'test-cases-php53.php');
-$addTestCase($closure, array(), $tokenParser, 'SerializableClosure.php(93) : eval()\'d code', false);
+$addTestCase($closure, array(), $tokenParser, 'SerializableClosure.php(99) : eval()\'d code', false);
 
 //=============================================================================
 // 6. Twofer

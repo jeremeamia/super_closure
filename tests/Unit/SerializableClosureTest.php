@@ -55,13 +55,13 @@ class SerializableClosureTest extends UnitTestBase
     /**
      * @covers \SuperClosure\SerializableClosure::fetchSerializableData
      */
-    public function testSerializationThrowsExceptionOnParsingErrors()
+    public function testSerializationIsNullOnParsingErrors()
     {
-        $this->setExpectedException('SuperClosure\ClosureSerializationException');
-
         $closure = function () {};function () {};
         $sc = new SerializableClosure($closure);
-        serialize($sc);
+        $serialization = serialize($sc);
+
+        $this->assertEquals('N;', $serialization);
     }
 
     /**

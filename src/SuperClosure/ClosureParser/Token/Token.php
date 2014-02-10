@@ -55,15 +55,23 @@ class Token
      * @param string   $code
      * @param int|null $value
      * @param int|null $line
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($code, $value = null, $line = null)
     {
-        $this->code = $code;
-        $this->line = $line;
-        if (isset($value)) {
-            $this->value = $value;
-            $this->name = token_name($value);
+        if ($line && !is_int($line)) {
+            throw new \InvalidArgumentException('The line number must be an integer or null.');
         }
+
+        if ($value && !is_int($value)) {
+            throw new \InvalidArgumentException('The token value must be an integer or null.');
+        }
+
+        $this->code = $code;
+        $this->value = $value;
+        $this->line = $line;
+        $this->name = $value ? token_name($value) : null;
     }
 
     /**

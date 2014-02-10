@@ -39,6 +39,7 @@ class SerializableClosureTest extends UnitTestBase
     }
 
     /**
+     * @covers \SuperClosure\SerializableClosure::serialize
      * @covers \SuperClosure\SerializableClosure::fetchSerializableData
      */
     public function testSerializationWithInnerClosures()
@@ -53,6 +54,7 @@ class SerializableClosureTest extends UnitTestBase
     }
 
     /**
+     * @covers \SuperClosure\SerializableClosure::serialize
      * @covers \SuperClosure\SerializableClosure::fetchSerializableData
      */
     public function testSerializationIsNullOnParsingErrors()

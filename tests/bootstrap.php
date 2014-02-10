@@ -12,3 +12,4 @@ $loader->add('SuperClosure\\Test\\Integration', __DIR__ . '/Integration');
 
 // Hack for now because loader does not seem to work
 require __DIR__ . '/Unit/UnitTestBase.php';
+require __DIR__ . '/Unit/ClosureParser/ConcreteClosureParser.php';

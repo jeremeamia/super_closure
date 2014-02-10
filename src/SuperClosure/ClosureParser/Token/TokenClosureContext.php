@@ -8,15 +8,17 @@ use SuperClosure\ClosureParser\AbstractClosureContext;
 class TokenClosureContext extends AbstractClosureContext
 {
     /**
-     * @var array
+     * @var Token[]
      */
     protected $tokens;
 
     /**
      * @param string          $code
      * @param array           $variables
-     * @param array           $tokens
+     * @param Token[]         $tokens
      * @param ClosureBinding  $binding
+     *
+     * @throws \InvalidArgumentException if the tokens array is not an array of only Token objects
      */
     public function __construct(
         $code,
@@ -24,12 +26,20 @@ class TokenClosureContext extends AbstractClosureContext
         array $tokens,
         ClosureBinding $binding = null
     ) {
+        // Validate tokens array
+        array_walk($tokens, function ($value) {
+            if (!$value instanceof Token) {
+                throw new \InvalidArgumentException('The tokens array must consist of Token objects.');
+            }
+        });
+
+        // Construct the context
         parent::__construct($code, $variables, $binding);
         $this->tokens = $tokens;
     }
 
     /**
-     * @return array
+     * @return Token[]
      */
     public function getTokens()
     {

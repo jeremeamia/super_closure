@@ -25,8 +25,7 @@ class ClosureParserFactory
     public function create(array $options = array())
     {
         // Build an options array from the default options and provided options
-        $options = $options + $this->defaultOptions;
-        $options = new Options($options);
+        $options = new Options($options + $this->defaultOptions);
 
         // Use the AST parser if requiring features that only the AST parser provides
         if ($options[Options::HANDLE_MAGIC_CONSTANTS] || $options[Options::HANDLE_CLASS_NAMES]) {

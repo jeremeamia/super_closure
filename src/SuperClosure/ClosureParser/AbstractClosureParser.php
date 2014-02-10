@@ -18,7 +18,7 @@ abstract class AbstractClosureParser implements ClosureParserInterface
     {
         $this->options = $this->getDefaultOptions();
         if ($options) {
-            $this->options->merge($options);
+            $this->options->exchangeArray($options->getArrayCopy() + $this->options->getArrayCopy());
         }
     }
 

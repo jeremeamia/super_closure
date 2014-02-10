@@ -4,7 +4,6 @@ namespace SuperClosure\ClosureParser\Token;
 
 use SuperClosure\ClosureParser\AbstractClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;
-use SuperClosure\ClosureParser\ClosureParserInterface as Parser;
 use SuperClosure\ClosureParser\Options;
 
 /**
@@ -46,6 +45,7 @@ class TokenParser extends AbstractClosureParser
      * @param \ReflectionFunction $closureReflection
      *
      * @return array an array of token representing the closure's code.
+     * @throws ClosureParsingException if the file does not exist (e.g., closure is from eval'd code)
      */
     protected function fetchTokens(\ReflectionFunction $closureReflection)
     {
@@ -107,8 +107,8 @@ class TokenParser extends AbstractClosureParser
      *
      * @param array $tokens
      *
-     * @throws \RuntimeException on invalid code.
      * @return string The code representing the function.
+     * @throws ClosureParsingException on invalid code.
      */
     protected function validateTokens(array $tokens)
     {

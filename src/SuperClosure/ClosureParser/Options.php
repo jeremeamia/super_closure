@@ -2,7 +2,7 @@
 
 namespace SuperClosure\ClosureParser;
 
-class Options implements \ArrayAccess, \IteratorAggregate
+class Options extends \ArrayObject
 {
     const HANDLE_CLASS_NAMES      = 'handle_class_names';
     const HANDLE_CLOSURE_BINDINGS = 'handle_closure_bindings';
@@ -10,66 +10,17 @@ class Options implements \ArrayAccess, \IteratorAggregate
     const VALIDATE_TOKENS         = 'validate_tokens';
 
     /**
-     * @var array
-     */
-    protected static $defaultOptions = array(
-        self::HANDLE_CLOSURE_BINDINGS => true,
-        self::HANDLE_MAGIC_CONSTANTS  => true,
-        self::HANDLE_CLASS_NAMES      => true,
-        self::VALIDATE_TOKENS         => true,
-    );
-
-    /**
-     * @var array The internal array holding the options
-     */
-    protected $options;
-
-    /**
      * @param array $options
+     *
+     * @return Options
      */
-    public function __construct(array $options = array())
+    public static function fromDefaults(array $options = array())
     {
-        $this->options = $options + self::$defaultOptions;
-    }
-
-    /**
-     * @param Options $options
-     */
-    public function merge(Options $options)
-    {
-        $this->options = $options->toArray() + $this->options;
-    }
-
-    public function offsetExists($key)
-    {
-        return isset($this->options[$key]);
-    }
-
-    public function offsetGet($key)
-    {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
-    }
-
-    public function offsetSet($key, $value)
-    {
-        $this->options[$key] = $value;
-    }
-
-    public function offsetUnset($key)
-    {
-        $this->options[$key] = null;
-    }
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->options);
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->options;
+        return new self($options + array(
+            self::HANDLE_CLOSURE_BINDINGS => true,
+            self::HANDLE_MAGIC_CONSTANTS  => true,
+            self::HANDLE_CLASS_NAMES      => true,
+            self::VALIDATE_TOKENS         => true,
+        ));
     }
 }

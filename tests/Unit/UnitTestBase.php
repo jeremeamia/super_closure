@@ -56,4 +56,27 @@ abstract class UnitTestBase extends \PHPUnit_Framework_TestCase
 
         return $binding;
     }
+
+    /**
+     * @param string      $class
+     * @param string|null $type
+     * @param string|null $attribute
+     *
+     * @return \PHPParser_NodeAbstract
+     */
+    public function getMockParserNode($class, $type = null, $attribute = null)
+    {
+        $node = $this->getMockBuilder($class)
+            ->disableOriginalConstructor()
+            ->setMethods(array('getType', 'getAttribute'))
+            ->getMock();
+        $node->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue($attribute));
+        $node->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue($type));
+
+        return $node;
+    }
 }

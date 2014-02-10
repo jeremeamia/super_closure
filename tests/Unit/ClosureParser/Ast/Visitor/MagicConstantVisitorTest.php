@@ -1,26 +1,19 @@
 <?php
 
-namespace SuperClosure\Test\ClosureParser\Ast\Visitor;
+namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
 use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\Test\Unit\UnitTestBase;
 
 /**
  * @covers SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor
  */
-class MagicConstantVisitorTest extends \PHPUnit_Framework_TestCase
+class MagicConstantVisitorTest extends UnitTestBase
 {
     public function testDataFromClosureLocationGetsUsed()
     {
         $location = new ClosureLocation();
-        $location->class = '[class]';
-        $location->directory = '[directory]';
-        $location->file = '[file]';
-        $location->function = '[function]';
-        $location->line = '[line]';
-        $location->method = '[method]';
-        $location->namespace = '[namespace]';
-        $location->trait = '[trait]';
 
         $nodes = array(
             'PHPParser_Node_Scalar_LineConst'   => 'PHPParser_Node_Scalar_LNumber',
@@ -32,21 +25,11 @@ class MagicConstantVisitorTest extends \PHPUnit_Framework_TestCase
             'PHPParser_Node_Scalar_MethodConst' => 'PHPParser_Node_Scalar_String',
             'PHPParser_Node_Scalar_TraitConst'  => 'PHPParser_Node_Scalar_String',
             'PHPParser_Node_Scalar_String'      => 'PHPParser_Node_Scalar_String',
-
         );
 
         $visitor = new MagicConstantVisitor($location);
         foreach ($nodes as $originalNodeName => $resultNodeName) {
-            $mockNode = $this->getMockBuilder($originalNodeName)
-                ->disableOriginalConstructor()
-                ->setMethods(array('getType', 'getAttribute'))
-                ->getMock();
-            $mockNode->expects($this->any())
-                ->method('getAttribute')
-                ->will($this->returnValue(1));
-            $mockNode->expects($this->any())
-                ->method('getType')
-                ->will($this->returnValue(substr($originalNodeName, 15)));
+            $mockNode = $this->getMockParserNode($originalNodeName, substr($originalNodeName, 15), 1);
             $resultNode = $visitor->leaveNode($mockNode) ?: $mockNode;
             $this->assertInstanceOf($resultNodeName, $resultNode);
         }

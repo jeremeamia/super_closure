@@ -1,13 +1,14 @@
 <?php
 
-namespace SuperClosure\Test\Visitor;
+namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
+use SuperClosure\Test\Unit\UnitTestBase;
 
 /**
  * @covers SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor
  */
-class ClosureLocatorVisitorTest extends \PHPUnit_Framework_TestCase
+class ClosureLocatorVisitorTest extends UnitTestBase
 {
     public function testClosureNodeIsDiscoveredByVisitor()
     {
@@ -57,5 +58,23 @@ class ClosureLocatorVisitorTest extends \PHPUnit_Framework_TestCase
             array_unshift($expectedLocationKeys, 'class');
         }
         $this->assertEquals($expectedLocationKeys, array_keys($actualLocationKeys));
+    }
+
+    public function testCanDetermineClassOrTraitInfo()
+    {
+        $closure = function () {};
+        $closureFinder = new ClosureLocatorVisitor(new \ReflectionFunction($closure));
+        $closureFinder->getLocation()->namespace = __NAMESPACE__;
+
+        $closureFinder->getLocation()->class = 'FooClass';
+        $closureFinder->afterTraverse(array());
+        $class = $closureFinder->getLocation()->class;
+        $this->assertEquals(__NAMESPACE__ . '\FooClass', $class);
+
+        $closureFinder->getLocation()->class = null;
+        $closureFinder->getLocation()->trait = 'FooTrait';
+        $closureFinder->afterTraverse(array());
+        $trait = $closureFinder->getLocation()->trait;
+        $this->assertEquals(__NAMESPACE__ . '\FooTrait', $trait);
     }
 }

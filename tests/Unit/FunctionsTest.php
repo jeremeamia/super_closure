@@ -5,6 +5,9 @@ namespace SuperClosure\Test\Unit;
 use SuperClosure;
 use SuperClosure\ClosureParser\Options;
 
+/**
+ * @coversNothing
+ */
 class FunctionsTest extends UnitTestBase
 {
     public function testSimpleSerializationWithTurboMode()

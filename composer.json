@@ -18,7 +18,7 @@
         "nikic/php-parser": "~0.9"
     },
     "require-dev": {
-        "phpunit/phpunit": "~3.7"
+        "phpunit/phpunit": "~4.0"
     },
     "autoload": {
         "psr-4": {"SuperClosure\\": "src/SuperClosure/"},

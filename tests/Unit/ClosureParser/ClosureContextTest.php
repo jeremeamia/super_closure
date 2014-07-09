@@ -2,15 +2,15 @@
 
 namespace SuperClosure\Test\Unit\ClosureParser;
 
-use SuperClosure\ClosureParser\AbstractClosureContext;
+use SuperClosure\ClosureParser\ClosureContext;
 use SuperClosure\Test\Unit\UnitTestBase;
 
-class ConcreteClosureContext extends AbstractClosureContext {}
+class ConcreteClosureContext extends ClosureContext {}
 
 /**
- * @covers \SuperClosure\ClosureParser\AbstractClosureContext
+ * @covers \SuperClosure\ClosureParser\ClosureContext
  */
-class AbstractClosureContextTest extends UnitTestBase
+class ClosureContextTest extends UnitTestBase
 {
     public function testCanGetDataFromContext()
     {

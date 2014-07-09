@@ -3,9 +3,9 @@
 namespace SuperClosure\ClosureParser\Token;
 
 use SuperClosure\ClosureBinding;
-use SuperClosure\ClosureParser\AbstractClosureContext;
+use SuperClosure\ClosureParser\ClosureContext;
 
-class TokenClosureContext extends AbstractClosureContext
+class TokenClosureContext extends ClosureContext
 {
     /**
      * @var Token[]

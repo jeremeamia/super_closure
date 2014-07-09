@@ -3,17 +3,9 @@ filter:
         - src/
 
 before_commands:
+    - 'composer self-update'
     - 'composer install --no-interaction --prefer-source --dev'
 
 tools:
     sensiolabs_security_checker: true
-    php_code_coverage:
-        test_command: vendor/bin/phpunit
-        config_path: phpunit.xml
-    php_hhvm:
-        config:
-            unknown_class: true
-            unknown_base_class: true
-            unknown_function: true
-            unknown_object_method: true
-            unknown_trait: true
+    php_code_coverage: true

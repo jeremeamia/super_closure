@@ -3,8 +3,8 @@
 namespace SuperClosure\Test\Unit;
 
 use SuperClosure\ClosureBinding;
-use SuperClosure\ClosureParser\ClosureContextInterface;
-use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\ClosureContext;
+use SuperClosure\ClosureParser\ClosureParser;
 
 abstract class UnitTestBase extends \PHPUnit_Framework_TestCase
 {
@@ -16,11 +16,13 @@ abstract class UnitTestBase extends \PHPUnit_Framework_TestCase
      * @param array  $variables
      * @param null   $binding
      *
-     * @return ClosureContextInterface
+     * @return ClosureContext
      */
     public function getMockClosureContext($code = '', $variables = array(), $binding = null)
     {
-        $context = $this->getMock('SuperClosure\\ClosureParser\\ClosureContextInterface');
+        $context = $this->getMockBuilder('SuperClosure\\ClosureParser\\ClosureContext')
+            ->disableOriginalConstructor()
+            ->getMock();
         $context->expects($this->any())->method('getCode')->will($this->returnValue($code));
         $context->expects($this->any())->method('getVariables')->will($this->returnValue($variables));
         $context->expects($this->any())->method('getBinding')->will($this->returnValue($binding));
@@ -29,17 +31,17 @@ abstract class UnitTestBase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ClosureContextInterface $context
+     * @param ClosureContext $context
      *
-     * @return ClosureParserInterface
+     * @return ClosureParser
      */
-    public function getMockClosureParser(ClosureContextInterface $context = null)
+    public function getMockClosureParser(ClosureContext $context = null)
     {
         if (!$context) {
             $context = $this->getMockClosureContext();
         }
 
-        $parser = $this->getMock('SuperClosure\\ClosureParser\\ClosureParserInterface');
+        $parser = $this->getMock('SuperClosure\\ClosureParser\\ClosureParser');
         $parser->expects($this->any())->method('parse')->will($this->returnValue($context));
 
         return $parser;

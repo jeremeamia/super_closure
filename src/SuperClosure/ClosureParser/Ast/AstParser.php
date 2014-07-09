@@ -2,80 +2,76 @@
 
 namespace SuperClosure\ClosureParser\Ast;
 
-use SuperClosure\ClosureParser\AbstractClosureParser;
+use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;
 use SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
 use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
 use PHPParser_Node_Expr_Closure as ClosureAst;
-use SuperClosure\ClosureParser\Options;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
  * ClosureParser uses the fabulous nikic/php-parser library which creates abstract syntax trees (AST) of the code.
  */
-class AstParser extends AbstractClosureParser
+class AstParser extends ClosureParser
 {
-    public function getDefaultOptions()
-    {
-        return new Options(array(
-            Options::HANDLE_CLOSURE_BINDINGS => true,
-            Options::HANDLE_MAGIC_CONSTANTS  => true,
-            Options::HANDLE_CLASS_NAMES      => true,
-        ));
-    }
+    protected static $defaultOptions = array(
+        self::HANDLE_CLOSURE_BINDINGS => true,
+        self::HANDLE_MAGIC_CONSTANTS  => true,
+        self::HANDLE_CLASS_NAMES      => true,
+    );
 
     public function parse($closure)
     {
         // Prepare the closure and reflection objects for parsing
         $closure = $this->prepareClosure($closure);
-        $closureReflection = $closure->getReflection();
+        $reflection = $closure->getReflection();
 
-        // Find the first closure defined in the AST that is on the line where the closure is located
-        $closureLocator = $this->locateClosure($closureReflection);
-        if (!($closureAst = $closureLocator->getClosureNode())) {
+        // Find the closure defined in the AST
+        $locator = $this->locateClosure($reflection);
+        if (!($ast = $locator->getClosureNode())) {
             // @codeCoverageIgnoreStart
             throw new ClosureParsingException('The closure was not found within the abstract syntax tree.');
             // @codeCoverageIgnoreEnd
         }
 
         // Do a second traversal through the closure's AST to apply additional transformations
-        $closureLocation = $closureLocator->getLocation();
-        if ($this->options[Options::HANDLE_MAGIC_CONSTANTS]) {
+        $location = $locator->getLocation();
+        if ($this->options[self::HANDLE_MAGIC_CONSTANTS]) {
             // Resolve additional nodes by making a second pass through just the closure's nodes
-            $closureTraverser = new \PHPParser_NodeTraverser();
-            $closureTraverser->addVisitor(new MagicConstantVisitor($closureLocation));
-            $closureAst = $closureTraverser->traverse(array($closureAst));
-            $closureAst = $closureAst[0];
+            $traverser = new \PHPParser_NodeTraverser();
+            $traverser->addVisitor(new MagicConstantVisitor($location));
+            $ast = $traverser->traverse(array($ast));
+            $ast = $ast[0];
         }
 
         // Get and return closure context data
-        $astPrinter = new \PHPParser_PrettyPrinter_Default();
-        $closureCode = $astPrinter->prettyPrint(array($closureAst));
-        $closureVariables = $this->determineVariables($closureAst, $closureReflection);
-        $closureBinding = $this->options[Options::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
+        $printer = new \PHPParser_PrettyPrinter_Default();
+        $code = $printer->prettyPrint(array($ast));
+        $variables = $this->determineVariables($ast, $reflection);
+        $binding = $this->options[self::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
 
-        return new AstClosureContext($closureCode, $closureVariables, $closureAst, $closureLocation, $closureBinding);
+        return new AstClosureContext($code, $variables, $ast, $location, $binding);
     }
 
     /**
      * Loads the PHP file, parses the code, and produces an abstract syntax tree (AST) of the code
      *
-     * @param \ReflectionFunction $closureReflection
+     * @param \ReflectionFunction $reflection
      *
      * @return ClosureLocatorVisitor
      * @throws ClosureParsingException if there is an issue while parsing the file to find the closure
      */
-    private function locateClosure(\ReflectionFunction $closureReflection)
+    private function locateClosure(\ReflectionFunction $reflection)
     {
         try {
-            $closureLocator = new ClosureLocatorVisitor($closureReflection);
-            $fileAst = $this->getFileAst($closureReflection);
+            $locator = new ClosureLocatorVisitor($reflection);
+            $fileAst = $this->getFileAst($reflection);
 
             $fileTraverser = new \PHPParser_NodeTraverser();
-            if ($this->options[Options::HANDLE_CLASS_NAMES]) {
+            if ($this->options[self::HANDLE_CLASS_NAMES]) {
                 $fileTraverser->addVisitor(new \PHPParser_NodeVisitor_NameResolver);
             }
-            $fileTraverser->addVisitor($closureLocator);
+            $fileTraverser->addVisitor($locator);
             $fileTraverser->traverse($fileAst);
         } catch (\PHPParser_Error $e) {
             // @codeCoverageIgnoreStart
@@ -83,18 +79,18 @@ class AstParser extends AbstractClosureParser
             // @codeCoverageIgnoreEnd
         }
 
-        return $closureLocator;
+        return $locator;
     }
 
     /**
-     * @param \ReflectionFunction $closureReflection
+     * @param \ReflectionFunction $reflection
      *
      * @throws ClosureParsingException
      * @return \PHPParser_Node[]
      */
-    private function getFileAst(\ReflectionFunction $closureReflection)
+    private function getFileAst(\ReflectionFunction $reflection)
     {
-        $fileName = $closureReflection->getFileName();
+        $fileName = $reflection->getFileName();
         if (!file_exists($fileName)) {
             throw new ClosureParsingException("The file containing the closure, \"{$fileName}\" did not exist.");
         }
@@ -111,28 +107,28 @@ class AstParser extends AbstractClosureParser
      * variables", "static variables", or "closed upon variables", "context" of the closure.
      *
      * @param ClosureAst          $closureAst
-     * @param \ReflectionFunction $closureReflection
+     * @param \ReflectionFunction $reflection
      *
      * @return array
      */
-    private function determineVariables(ClosureAst $closureAst, \ReflectionFunction $closureReflection)
+    private function determineVariables(ClosureAst $closureAst, \ReflectionFunction $reflection)
     {
         // Get the variable names defined in the AST
-        $variableNames = array_map(function ($variableNode) {
-            return $variableNode->var;
+        $varNames = array_map(function ($varNode) {
+            return $varNode->var;
         }, $closureAst->uses);
 
         // Get the variable names and values using reflection
-        $variableValues = $closureReflection->getStaticVariables();
+        $varValues = $reflection->getStaticVariables();
 
-        // Combine the two arrays to create a canonical hash of variable names and values
-        $variables = array();
-        foreach ($variableNames as $name) {
-            if (isset($variableValues[$name])) {
-                $variables[$name] = $variableValues[$name];
+        // Combine the names and values to create the canonical set of variables
+        $vars = array();
+        foreach ($varNames as $name) {
+            if (isset($varValues[$name])) {
+                $vars[$name] = $varValues[$name];
             }
         }
 
-        return $variables;
+        return $vars;
     }
 }

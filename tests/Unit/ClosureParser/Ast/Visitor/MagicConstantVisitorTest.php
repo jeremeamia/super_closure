@@ -3,7 +3,7 @@
 namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
-use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use SuperClosure\Test\Unit\UnitTestBase;
 
 /**

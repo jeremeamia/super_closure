@@ -2,7 +2,7 @@
 
 namespace SuperClosure\Test\Integration;
 
-use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\Token\TokenParser as TokenParser;
 use SuperClosure\ClosureParser\Ast\AstParser as AstParser;
 use SuperClosure\SerializableClosure;
@@ -17,7 +17,7 @@ class ClosureSerializationTest extends \PHPUnit_Framework_TestCase
         $addTestCase = function (
             $closure,
             array $args,
-            ClosureParserInterface $parser,
+            ClosureParser $parser,
             $result,
             $matches = true
         ) use (&$testCases) {

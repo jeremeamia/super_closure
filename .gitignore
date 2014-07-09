@@ -1,6 +1,5 @@
 .idea/*
 vendor/*
-build/*
 coverage/*
 .DS_Store
 cache.properties

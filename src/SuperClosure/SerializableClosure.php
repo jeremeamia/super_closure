@@ -2,19 +2,19 @@
 
 namespace SuperClosure;
 
-use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\Ast\AstParser as DefaultClosureParser;
-use SuperClosure\ClosureParser\ClosureParsingException;
 
 /**
- * This class allows you to do the impossible: serialize closures! With the combined power of lexical parsing, the
- * Reflection API, and infamous eval function, you can serialize a closure, unserialize it in a different PHP process,
- * and execute it. It's like function teleportation!
+ * This class allows you to do the impossible: serialize closures! With the
+ * combined power of lexical parsing, the Reflection API, and the infamous eval
+ * function, you can serialize a closure, unserialize it in a different PHP
+ * process, and execute it. It's like function teleportation!
  */
 class SerializableClosure extends SuperClosure implements \Serializable
 {
     /**
-     * @var ClosureParserInterface The closure parser that will be used to determine the closure's context
+     * @var ClosureParser The closure parser that will be used to determine the closure's context
      */
     protected $closureParser;
 
@@ -29,10 +29,10 @@ class SerializableClosure extends SuperClosure implements \Serializable
     protected $variables;
 
     /**
-     * @param \Closure               $closure
-     * @param ClosureParserInterface $closureParser
+     * @param \Closure      $closure
+     * @param ClosureParser $closureParser
      */
-    public function __construct(\Closure $closure, ClosureParserInterface $closureParser = null)
+    public function __construct(\Closure $closure, ClosureParser $closureParser = null)
     {
         parent::__construct($closure);
 
@@ -69,7 +69,7 @@ class SerializableClosure extends SuperClosure implements \Serializable
         try {
             // Prepare the data for serialization
             $this->fetchSerializableData();
-        } catch (SuperClosureException $e) {
+        } catch (\Exception $e) {
             // Note: The serialize() method cannot throw exceptions and must return string or null
             return null;
         }
@@ -96,9 +96,11 @@ class SerializableClosure extends SuperClosure implements \Serializable
         extract($this->variables);
 
         // Evaluate the code to recreate the Closure
-        @eval("\$this->closure = {$this->code};");
+        @eval("\$this->closure = {$this->code};"); // HERE BE DRAGONS!
         if (!$this->closure instanceof \Closure) {
-            throw new ClosureUnserializationException('The serialized closure was corrupted and cannot be unserialized.');
+            throw new ClosureUnserializationException(
+                'The serialized closure was corrupted and cannot be unserialized.'
+            );
         }
 
         // Rebind the closure to its former $this object and scope (or to null, if there was no binding serialized)

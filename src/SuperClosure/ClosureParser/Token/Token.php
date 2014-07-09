@@ -3,9 +3,10 @@
 namespace SuperClosure\ClosureParser\Token;
 
 /**
- * The Token object is an object-oriented abstraction representing a single item from the results of the get_token_all()
- * function, which is part of PHP tokenizer, or lexical scanner. There are also many convenience methods revolved around
- * the token's identity.
+ * The Token object is an object-oriented abstraction representing a single item
+ * from the results of the get_token_all() function, which is part of PHP
+ * tokenizer, or lexical scanner. There are also many convenience methods
+ * revolved around the token's identity.
  *
  * @link http://us2.php.net/manual/en/tokens.php
  */

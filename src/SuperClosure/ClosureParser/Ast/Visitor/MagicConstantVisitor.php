@@ -2,14 +2,20 @@
 
 namespace SuperClosure\ClosureParser\Ast\Visitor;
 
-use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use PHPParser_Node_Scalar_LNumber as NumberNode;
 use PHPParser_Node_Scalar_String as StringNode;
+use PHPParser_Node as AstNode;
+use PHPParser_NodeVisitorAbstract as NodeVisitor;
+
 
 /**
- * This is a visitor that resolves magic constants (e.g., __FILE__) to their intended values within a closure's AST
+ * This is a visitor that resolves magic constants (e.g., __FILE__) to their
+ * intended values within a closure's AST.
+ *
+ * @internal
  */
-class MagicConstantVisitor extends \PHPParser_NodeVisitorAbstract
+class MagicConstantVisitor extends NodeVisitor
 {
     /**
      * @var array
@@ -17,14 +23,14 @@ class MagicConstantVisitor extends \PHPParser_NodeVisitorAbstract
     protected $location;
 
     /**
-     * @param ClosureLocation $location
+     * @param \SuperClosure\ClosureParser\Ast\ClosureLocation $location
      */
     public function __construct(ClosureLocation $location)
     {
         $this->location = $location;
     }
 
-    public function leaveNode(\PHPParser_Node $node)
+    public function leaveNode(AstNode $node)
     {
         switch ($node->getType()) {
             case 'Scalar_LineConst' :

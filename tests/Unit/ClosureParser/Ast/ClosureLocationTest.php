@@ -1,12 +1,12 @@
 <?php
 
-namespace SuperClosure\Test\Unit\ClosureParser;
+namespace SuperClosure\Test\Unit\ClosureParser\Ast;
 
-use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use SuperClosure\Test\Unit\UnitTestBase;
 
 /**
- * @covers \SuperClosure\ClosureParser\ClosureLocation
+ * @covers \SuperClosure\ClosureParser\Ast\ClosureLocation
  */
 class ClosureLocationTest extends UnitTestBase
 {

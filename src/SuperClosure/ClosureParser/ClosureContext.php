@@ -4,7 +4,7 @@ namespace SuperClosure\ClosureParser;
 
 use SuperClosure\ClosureBinding;
 
-abstract class AbstractClosureContext implements ClosureContextInterface
+abstract class ClosureContext
 {
     /**
      * @var string

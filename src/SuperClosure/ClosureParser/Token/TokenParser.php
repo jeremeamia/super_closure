@@ -2,63 +2,59 @@
 
 namespace SuperClosure\ClosureParser\Token;
 
-use SuperClosure\ClosureParser\AbstractClosureParser;
+use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;
-use SuperClosure\ClosureParser\Options;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
  * ClosureParser uses the fabulous nikic/php-parser library which creates abstract syntax trees (AST) of the code.
  */
-class TokenParser extends AbstractClosureParser
+class TokenParser extends ClosureParser
 {
-    public function getDefaultOptions()
-    {
-        return new Options(array(
-            Options::VALIDATE_TOKENS         => true,
-            Options::HANDLE_CLOSURE_BINDINGS => true,
-        ));
-    }
+    protected static $defaultOptions = array(
+        self::VALIDATE_TOKENS         => true,
+        self::HANDLE_CLOSURE_BINDINGS => true,
+    );
 
     public function parse($closure)
     {
         $closure = $this->prepareClosure($closure);
-        $closureReflection = $closure->getReflection();
-        $closureTokens = $this->fetchTokens($closureReflection);
+        $reflection = $closure->getReflection();
+        $tokens = $this->fetchTokens($reflection);
 
         // Only validate the tokens if configured to do so
-        if ($this->options[Options::VALIDATE_TOKENS]) {
-            $closureTokens = $this->validateTokens($closureTokens);
+        if ($this->options[self::VALIDATE_TOKENS]) {
+            $tokens = $this->validateTokens($tokens);
         }
 
-        $closureCode = implode('', $closureTokens);
-        $closureVariables = $this->determineVariables($closureReflection, $closureTokens);
-        $closureBinding = $this->options[Options::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
+        $code = implode('', $tokens);
+        $variables = $this->determineVariables($reflection, $tokens);
+        $binding = $this->options[self::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
 
-        return new TokenClosureContext($closureCode, $closureVariables, $closureTokens, $closureBinding);
+        return new TokenClosureContext($code, $variables, $tokens, $binding);
     }
 
     /**
      * Creates a tokenizer representing the code that is the best candidate for representing the function. It uses
      * reflection to find the file and lines of the code and then puts that code into the tokenizer.
      *
-     * @param \ReflectionFunction $closureReflection
+     * @param \ReflectionFunction $reflection
      *
      * @return array an array of token representing the closure's code.
      * @throws ClosureParsingException if the file does not exist (e.g., closure is from eval'd code)
      */
-    protected function fetchTokens(\ReflectionFunction $closureReflection)
+    protected function fetchTokens(\ReflectionFunction $reflection)
     {
         // Load the file containing the code for the function
-        $fileName = $closureReflection->getFileName();
+        $fileName = $reflection->getFileName();
         if (!file_exists($fileName)) {
             throw new ClosureParsingException("The file containing the closure, \"{$fileName}\" did not exist.");
         }
         $file = new \SplFileObject($fileName);
 
         // Identify the first and last lines of the code for the function
-        $firstLine = $closureReflection->getStartLine();
-        $lastLine = $closureReflection->getEndLine();
+        $firstLine = $reflection->getStartLine();
+        $lastLine = $reflection->getEndLine();
 
         // Retrieve all of the lines that could contain code for the function
         $code = '';
@@ -75,6 +71,7 @@ class TokenParser extends AbstractClosureParser
         }
 
         // Get the tokens using the PHP tokenizer and then convert them to normalized Token objects
+        /** @var Token[] $tokens */
         $tokens = array_map(function($tokenData) {
             return Token::fromTokenData($tokenData);
         }, token_get_all($code));
@@ -105,7 +102,7 @@ class TokenParser extends AbstractClosureParser
     /**
      * Parses the code using the tokenizer and keeping track of matching braces.
      *
-     * @param array $tokens
+     * @param Token[] $tokens
      *
      * @return string The code representing the function.
      * @throws ClosureParsingException on invalid code.
@@ -145,8 +142,7 @@ class TokenParser extends AbstractClosureParser
 
         // Ensure that there are no other functions defined, as this would indicate ambiguity in the parsed code
         if ($remainingTokens = array_slice($tokens, $tokenIndex)) {
-            array_walk($remainingTokens, function ($token) {
-                /** @var $token Token */
+            array_walk($remainingTokens, function (Token $token) {
                 if ($token->matches(T_FUNCTION)) {
                     throw new ClosureParsingException('Multiple closures were declared on the same line of code. '
                         . 'Cannot determine which closure was the intended target.');
@@ -161,26 +157,25 @@ class TokenParser extends AbstractClosureParser
      * Does some additional tokenizing and reflection to determine the names and values of variables included in the
      * closure (or context) via "use" statement. For functions that are not closures, an empty array is returned.
      *
-     * @param \ReflectionFunction $closureReflection
-     * @param array           $tokens
+     * @param \ReflectionFunction $reflection
+     * @param Token[]             $tokens
      *
      * @return array The array of "used" variables in the closure (a.k.a the context).
      */
-    protected function determineVariables(\ReflectionFunction $closureReflection, array $tokens)
+    protected function determineVariables(\ReflectionFunction $reflection, array $tokens)
     {
         $context = array();
-        $variableNames = array();
+        $varNames = array();
         $insideUse = false;
 
         // Parse the variable names from the "use" construct by scanning tokens
-        /** @var $token Token */
         foreach ($tokens as $token) {
             if (!$insideUse && $token->matches(T_USE)) {
                 // Set the flag indicating that "use" construct has been reached
                 $insideUse = true;
             } elseif ($insideUse && $token->matches(T_VARIABLE)) {
                 // For variables found within the "use" construct, get the name
-                $variableNames[] = trim($token->getCode(), '$ ');
+                $varNames[] = trim($token->getCode(), '$ ');
             } elseif ($insideUse && $token->isClosingParenthesis()) {
                 // Finish once a closing parenthesis is encountered
                 break;
@@ -188,12 +183,12 @@ class TokenParser extends AbstractClosureParser
         }
 
         // Get the values of the variables that are closed upon in "use"
-        $variableValues = $closureReflection->getStaticVariables();
+        $varValues = $reflection->getStaticVariables();
 
         // Construct the context by combining the variable names and values
-        foreach ($variableNames as $variableName) {
-            if (isset($variableValues[$variableName])) {
-                $context[$variableName] = $variableValues[$variableName];
+        foreach ($varNames as $varName) {
+            if (isset($varValues[$varName])) {
+                $context[$varName] = $varValues[$varName];
             }
         }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace SuperClosure\ClosureParser;
+namespace SuperClosure\ClosureParser\Ast;
 
 /**
- * Simple object for storing the location information of a closure (e.g., file, class, etc.)
+ * Simple object for storing the location of a closure (e.g., file, class, etc.)
  */
 class ClosureLocation
 {
@@ -36,10 +36,21 @@ class ClosureLocation
      */
     public function __construct(array $data = array())
     {
+        static $vars = array(
+            'class',
+            'directory',
+            'file',
+            'function',
+            'line',
+            'method',
+            'namespace',
+            'trait',
+        );
+
         if ($data) {
-            foreach (array_keys(get_object_vars($this)) as $variable) {
-                if (isset($data[$variable])) {
-                    $this->{$variable} = $data[$variable];
+            foreach ($vars as $var) {
+                if (isset($data[$var])) {
+                    $this->{$var} = $data[$var];
                 }
             }
         }

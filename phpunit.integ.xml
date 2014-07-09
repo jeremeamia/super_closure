@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-  bootstrap="./tests/bootstrap.php"
-  processIsolation="false"
-  stopOnFailure="false"
-  syntaxCheck="false"
-  convertErrorsToExceptions="true"
-  convertNoticesToExceptions="true"
-  convertWarningsToExceptions="true"
-  testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
->
+<phpunit bootstrap="./tests/bootstrap.php">
 
   <testsuites>
-    <testsuite name="SuperClosure Unit Tests">
+    <testsuite name="SuperClosure Integration Tests">
       <directory>./tests/Integration</directory>
     </testsuite>
   </testsuites>

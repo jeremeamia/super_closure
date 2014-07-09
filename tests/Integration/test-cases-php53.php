@@ -1,11 +1,11 @@
 <?php
 
-use SuperClosure\ClosureParser\ClosureParserInterface;
+use SuperClosure\ClosureParser\ClosureParser;
 use Things\Queue;
 
 /** @var \Closure $addTestCase */
-/** @var ClosureParserInterface $astParser */
-/** @var ClosureParserInterface $tokenParser */
+/** @var ClosureParser $astParser */
+/** @var ClosureParser $tokenParser */
 
 //=============================================================================
 // 1. Basic closure
@@ -94,7 +94,7 @@ $closure = function () {
 };
 
 $addTestCase($closure, array(), $astParser, Queue::IT_MODE_DELETE);
-// CANNOT TEST TOKEN PARSER BECAUSE IT CAUSES A FATAL ERROR;
+// CANNOT TEST TOKEN PARSER BECAUSE IT CAUSES A FATAL ERROR IN THIS CASE.
 
 //=============================================================================
 // 9. Composed function

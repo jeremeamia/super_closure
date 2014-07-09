@@ -3,7 +3,7 @@
 namespace SuperClosure\Test\Unit\ClosureParser\Ast;
 
 use SuperClosure\ClosureParser\Ast\AstClosureContext;
-use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use SuperClosure\Test\Unit\UnitTestBase;
 
 /**
@@ -25,6 +25,6 @@ class AstClosureContextTest extends UnitTestBase
         );
 
         $this->assertInstanceOf('PHPParser_Node_Expr_Closure', $context->getAst());
-        $this->assertInstanceOf('SuperClosure\ClosureParser\ClosureLocation', $context->getLocation());
+        $this->assertInstanceOf('SuperClosure\ClosureParser\Ast\ClosureLocation', $context->getLocation());
     }
 }

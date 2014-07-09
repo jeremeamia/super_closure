@@ -3,11 +3,11 @@
 namespace SuperClosure\ClosureParser\Ast;
 
 use SuperClosure\ClosureBinding;
-use SuperClosure\ClosureParser\AbstractClosureContext;
-use SuperClosure\ClosureParser\ClosureLocation;
+use SuperClosure\ClosureParser\ClosureContext;
+use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use PHPParser_Node_Expr_Closure as ClosureAst;
 
-class AstClosureContext extends AbstractClosureContext
+class AstClosureContext extends ClosureContext
 {
     /**
      * @var ClosureAst

@@ -60,13 +60,17 @@ class SuperClosure
     }
 
     /**
-     * @param object        $object The object to which the given anonymous function should be bound, or `NULL` for the
-     *                              closure to be unbound. If a `ClosureBinding` object is provided, the information
-     *                              from the `ClosureBinding` will be used to do the internal `bindTo()`
-     * @param string|object $scope  The class scope to which associate the closure is to be associated, or "static"
-     *                              to keep the current one. If an object is given, the type of the object will be
-     *                              used instead. This determines the visibility of protected and private methods of
-     *                              the bound object.
+     * @param object        $object Object to which the closure should be bound,
+     *                              or `NULL` for the closure to be unbound. If
+     *                              a `ClosureBinding` object is provided, the
+     *                              information from the `ClosureBinding` will
+     *                              be used to do the internal `bindTo()`
+     * @param string|object $scope  The class scope to which associate the
+     *                              closure is to be associated, or "static" to
+     *                              keep the current one. If an object is given,
+     *                              the type of the object will be used instead.
+     *                              This determines the visibility of protected
+     *                              and private methods of the bound object.
      *
      * @return $this
      * @throws \RuntimeException

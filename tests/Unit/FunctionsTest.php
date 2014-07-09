@@ -22,19 +22,6 @@ class FunctionsTest extends UnitTestBase
         $this->assertEquals('foo', $closureAfter());
     }
 
-    public function testSimpleSerializationWithTraversableOptions()
-    {
-        $closureBefore = function() {return 'foo';};
-        $options = new Options(array(Options::HANDLE_CLOSURE_BINDINGS => false));
-        $serialization = SuperClosure\serialize($closureBefore, $options);
-        /** @var \SuperClosure\SerializableClosure $unserialization */
-        $unserialization = unserialize($serialization);
-        $closureAfter = $unserialization->getClosure();
-
-        $this->assertInstanceOf('Closure', $closureAfter);
-        $this->assertEquals('foo', $closureAfter());
-    }
-
     public function testSerializationWhenProvidingParser()
     {
         $parser = $this->getMockClosureParser();

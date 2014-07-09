@@ -12,6 +12,7 @@ before_script:
 
 script:
   - vendor/bin/phpunit
+  - vendor/bin/phpunit -c phpunit.integ.xml
 
 matrix:
   allow_failures:

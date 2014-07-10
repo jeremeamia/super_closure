@@ -77,7 +77,7 @@ class SuperClosure
      */
     public function bindTo($object, $scope = 'static')
     {
-        if (PHP_VERSION_ID < 50400) {
+        if (!Env::supportsBindings()) {
             // @codeCoverageIgnoreStart
             throw new \RuntimeException('Closure binding is a feature of PHP 5.4+.');
             // @codeCoverageIgnoreEnd

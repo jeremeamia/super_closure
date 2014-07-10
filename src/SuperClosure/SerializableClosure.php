@@ -104,7 +104,7 @@ class SerializableClosure extends SuperClosure implements \Serializable
         }
 
         // Rebind the closure to its former $this object and scope (or to null, if there was no binding serialized)
-        if (PHP_VERSION_ID >= 50400) {
+        if (Env::supportsBindings()) {
             $this->bindTo($this->binding);
         }
     }

@@ -8,8 +8,11 @@
   </testsuites>
 
   <filter>
-    <whitelist>
+    <whitelist processUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">./src/SuperClosure</directory>
+      <exclude>
+        <file>./src/SuperClosure/Env.php</file>
+      </exclude>
     </whitelist>
   </filter>
 

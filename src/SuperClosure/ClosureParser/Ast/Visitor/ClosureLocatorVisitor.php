@@ -10,6 +10,7 @@ use PHPParser_Node_Stmt_Class as ClassNode;
 use PHPParser_Node_Expr_Closure as ClosureNode;
 use PHPParser_Node as AstNode;
 use PHPParser_NodeVisitorAbstract as NodeVisitor;
+use SuperClosure\Env;
 
 /**
  * This is a visitor that extends the nikic/php-parser library and looks for a
@@ -109,7 +110,7 @@ class ClosureLocatorVisitor extends NodeVisitor
             $this->location->method = "{$this->location->trait}::{$this->location->function}";
         }
 
-        if (!$this->location->class && PHP_VERSION_ID >= 50400) {
+        if (!$this->location->class && Env::supportsBindings()) {
             // @codeCoverageIgnoreStart
             /** @var \ReflectionClass $closureScopeClass */
             $closureScopeClass = $this->reflection->getClosureScopeClass();

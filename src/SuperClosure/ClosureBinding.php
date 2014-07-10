@@ -44,7 +44,7 @@ class ClosureBinding
         }
 
         // Only closures in PHP 5.4+ have bindings
-        if (PHP_VERSION_ID < 50400) {
+        if (!Env::supportsBindings()) {
             // @codeCoverageIgnoreStart
             return new self(null, null);
             // @codeCoverageIgnoreEnd

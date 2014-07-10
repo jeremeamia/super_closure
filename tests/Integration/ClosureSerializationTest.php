@@ -34,7 +34,7 @@ class ClosureSerializationTest extends \PHPUnit_Framework_TestCase
             echo "Loaded PHP 5.3+ SuperClosure integration tests.\n";
         }
 
-        if (PHP_VERSION_ID > 50400) {
+        if (PHP_VERSION_ID > 50400 && !defined('HHVM_VERSION')) {
             include(__DIR__ . '/test-cases-php54.php');
             echo "Loaded PHP 5.4+ SuperClosure integration tests.\n";
         }

@@ -1,8 +1,7 @@
-<?php
-
-namespace SuperClosure\Test\Unit;
+<?php namespace SuperClosure\Test\Unit;
 
 use SuperClosure\ClosureBinding;
+use SuperClosure\Env;
 
 /**
  * Class ClosureBindingTest
@@ -33,7 +32,7 @@ class ClosureBindingTest extends UnitTestBase
         $closure = function () {};
         $binding = ClosureBinding::fromClosure($closure);
 
-        if (PHP_VERSION_ID >= 50400) {
+        if (Env::supportsBindings()) {
             $this->assertSame($this, $binding->getObject());
             $this->assertSame(get_class($this), $binding->getScope());
         } else {

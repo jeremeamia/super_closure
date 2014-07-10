@@ -3,6 +3,7 @@
 namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
+use SuperClosure\Env;
 use SuperClosure\Test\Unit\UnitTestBase;
 
 /**
@@ -54,7 +55,7 @@ class ClosureLocatorVisitorTest extends UnitTestBase
 
         $actualLocationKeys = array_filter(get_object_vars($closureFinder->getLocation()));
         $expectedLocationKeys = array('directory', 'file', 'function', 'line');
-        if (PHP_VERSION_ID >= 50400) {
+        if (Env::supportsBindings()) {
             array_unshift($expectedLocationKeys, 'class');
         }
         $this->assertEquals($expectedLocationKeys, array_keys($actualLocationKeys));

@@ -2,6 +2,7 @@
 
 namespace SuperClosure\Test\Unit;
 
+use SuperClosure\Env;
 use SuperClosure\SuperClosure;
 
 /**
@@ -47,7 +48,7 @@ class SuperClosureTest extends UnitTestBase
      */
     public function testBindToBehavior()
     {
-        if (PHP_VERSION_ID < 50400) {
+        if (!Env::supportsBindings()) {
             $this->markTestSkipped('This test requires PHP version 5.4 or later.');
         }
 

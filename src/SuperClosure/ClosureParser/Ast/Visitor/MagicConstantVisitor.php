@@ -1,13 +1,10 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Ast\Visitor;
+<?php namespace SuperClosure\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use PHPParser_Node_Scalar_LNumber as NumberNode;
 use PHPParser_Node_Scalar_String as StringNode;
 use PHPParser_Node as AstNode;
 use PHPParser_NodeVisitorAbstract as NodeVisitor;
-
 
 /**
  * This is a visitor that resolves magic constants (e.g., __FILE__) to their

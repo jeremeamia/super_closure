@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Ast;
+<?php namespace SuperClosure\ClosureParser\Ast;
 
 use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;

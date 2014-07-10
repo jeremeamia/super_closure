@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Token;
+<?php namespace SuperClosure\ClosureParser\Token;
 
 use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;
@@ -40,7 +38,7 @@ class TokenParser extends ClosureParser
      *
      * @param \ReflectionFunction $reflection
      *
-     * @return array an array of token representing the closure's code.
+     * @return array                   an array of token representing the closure's code.
      * @throws ClosureParsingException if the file does not exist (e.g., closure is from eval'd code)
      */
     protected function fetchTokens(\ReflectionFunction $reflection)
@@ -72,7 +70,7 @@ class TokenParser extends ClosureParser
 
         // Get the tokens using the PHP tokenizer and then convert them to normalized Token objects
         /** @var Token[] $tokens */
-        $tokens = array_map(function($tokenData) {
+        $tokens = array_map(function ($tokenData) {
             return Token::fromTokenData($tokenData);
         }, token_get_all($code));
         $count = count($tokens);
@@ -104,7 +102,7 @@ class TokenParser extends ClosureParser
      *
      * @param Token[] $tokens
      *
-     * @return string The code representing the function.
+     * @return string                  The code representing the function.
      * @throws ClosureParsingException on invalid code.
      */
     protected function validateTokens(array $tokens)

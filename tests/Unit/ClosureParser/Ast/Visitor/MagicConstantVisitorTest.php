@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
+<?php namespace SuperClosure\Test\Unit\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
 use SuperClosure\ClosureParser\Ast\ClosureLocation;

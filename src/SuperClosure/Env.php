@@ -1,10 +1,18 @@
-<?php
+<?php namespace SuperClosure;
 
-namespace SuperClosure;
-
+/**
+ * Used by various other classes to help provide PHP version-specific logic.
+ *
+ * @internal
+ */
 class Env
 {
     // @codeCoverageIgnoreStart
+    /**
+     * Determines if the current environment support Closure binding.
+     *
+     * @return bool
+     */
     public static function supportsBindings()
     {
         static $supportsBindings;

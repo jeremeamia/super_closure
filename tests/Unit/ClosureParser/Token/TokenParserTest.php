@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\Test\Unit\ClosureParser\Token;
+<?php namespace SuperClosure\Test\Unit\ClosureParser\Token;
 
 use SuperClosure\Test\Unit\UnitTestBase;
 

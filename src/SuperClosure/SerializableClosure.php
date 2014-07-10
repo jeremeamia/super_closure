@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure;
+<?php namespace SuperClosure;
 
 use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\Ast\AstParser as DefaultClosureParser;

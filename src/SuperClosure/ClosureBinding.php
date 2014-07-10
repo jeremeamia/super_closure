@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure;
+<?php namespace SuperClosure;
 
 /**
  * A value object representing the binding of a PHP Closure.

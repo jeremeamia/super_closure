@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Token;
+<?php namespace SuperClosure\ClosureParser\Token;
 
 /**
  * The Token object is an object-oriented abstraction representing a single item
@@ -44,6 +42,7 @@ class Token
             return new Token($tokenData);
         } elseif (is_array($tokenData)) {
             $tokenData = array_pad($tokenData, 3, null);
+
             return new Token($tokenData[1], $tokenData[0], $tokenData[2]);
         }
 

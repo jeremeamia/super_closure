@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure;
+<?php namespace SuperClosure;
 
 class SuperClosure
 {

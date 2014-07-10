@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\Test\Unit\ClosureParser\Ast;
+<?php namespace SuperClosure\Test\Unit\ClosureParser\Ast;
 
 use SuperClosure\ClosureParser\Ast\AstClosureContext;
 use SuperClosure\ClosureParser\Ast\ClosureLocation;

@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Ast\Visitor;
+<?php namespace SuperClosure\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use SuperClosure\ClosureParser\ClosureParsingException;
@@ -62,8 +60,7 @@ class ClosureLocatorVisitor extends NodeVisitor
             if ($node instanceof TraitNode) {
                 $this->location->trait = $node->name;
                 $this->location->class = null;
-            }
-            elseif ($node instanceof ClassNode) {
+            } elseif ($node instanceof ClassNode) {
                 $this->location->class = $node->name;
                 $this->location->trait = null;
             }
@@ -93,8 +90,7 @@ class ClosureLocatorVisitor extends NodeVisitor
             }
             if ($node instanceof TraitNode) {
                 $this->location->trait = null;
-            }
-            elseif ($node instanceof ClassNode) {
+            } elseif ($node instanceof ClassNode) {
                 $this->location->class = null;
             }
         }

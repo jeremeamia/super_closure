@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\Test\Integration;
+<?php namespace SuperClosure\Test\Integration;
 
 use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\Token\TokenParser as TokenParser;

@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Token;
+<?php namespace SuperClosure\ClosureParser\Token;
 
 use SuperClosure\ClosureBinding;
 use SuperClosure\ClosureParser\ClosureContext;
@@ -13,10 +11,10 @@ class TokenClosureContext extends ClosureContext
     protected $tokens;
 
     /**
-     * @param string          $code
-     * @param array           $variables
-     * @param Token[]         $tokens
-     * @param ClosureBinding  $binding
+     * @param string         $code
+     * @param array          $variables
+     * @param Token[]        $tokens
+     * @param ClosureBinding $binding
      *
      * @throws \InvalidArgumentException if the tokens array is not an array of only Token objects
      */

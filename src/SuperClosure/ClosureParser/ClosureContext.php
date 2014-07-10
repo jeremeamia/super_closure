@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser;
+<?php namespace SuperClosure\ClosureParser;
 
 use SuperClosure\ClosureBinding;
 

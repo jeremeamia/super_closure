@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\Test\Unit;
+<?php namespace SuperClosure\Test\Unit;
 
 use SuperClosure;
 use SuperClosure\ClosureParser\Options;

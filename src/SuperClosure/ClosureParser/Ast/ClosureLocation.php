@@ -1,6 +1,4 @@
-<?php
-
-namespace SuperClosure\ClosureParser\Ast;
+<?php namespace SuperClosure\ClosureParser\Ast;
 
 /**
  * Simple object for storing the location of a closure (e.g., file, class, etc.)

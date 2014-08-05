@@ -2,7 +2,8 @@
 
 [![Latest Stable Version](https://poser.pugx.org/jeremeamia/superclosure/v/stable.png)](https://packagist.org/packages/jeremeamia/superclosure)
 [![Total Downloads](https://poser.pugx.org/jeremeamia/superclosure/downloads.png)](https://packagist.org/packages/jeremeamia/superclosure)
-[![Build Status][1]][2]
+[![Build Status](https://travis-ci.org/jeremeamia/super_closure.svg?branch=multiple-parsers)][2]
+[![GitTip](http://img.shields.io/gittip/jeremeamia.svg)](https://www.gittip.com/jeremeamia)
 
 Have you ever seen this?
 

@@ -54,6 +54,73 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getContextFreeCode
+     */
+    public function testCanGetContextFreeCodeFromParser()
+    {
+        $context = 42;
+        $closure = function () use ($context) {
+            return $context * 2;
+        };
+
+        $expectedCode = "function () {\n    \$context = 42;\n    return \$context * 2;\n};";
+        $parser = new ClosureParser(new \ReflectionFunction($closure));
+        $actualCode = $parser->getContextFreeCode();
+
+        $this->assertEquals($expectedCode, $actualCode);
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getContextFreeCode
+     */
+    public function testRaisesErrorWhenClosureHasThis()
+    {
+        $this->setExpectedException(
+            'InvalidArgumentException',
+            'Closure has $this variable and cannot be context free'
+        );
+
+        $parser = new ClosureParser(new \ReflectionFunction(function () {
+            return $this->getCount();
+        }));
+        $parser->getContextFreeCode();
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getContextFreeCode
+     */
+    public function testRaisesErrorWhenClosureHasPassedByRefVars()
+    {
+        $this->setExpectedException(
+            'InvalidArgumentException',
+            'Variable "context" is passed by ref'
+        );
+
+        $context = 42;
+        $parser = new ClosureParser(new \ReflectionFunction(function () use (&$context) {
+            $context++;
+        }));
+        $parser->getContextFreeCode();
+    }
+
+    /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getContextFreeCode
+     */
+    public function testRaisesErrorWhenClosureHasNonScalarValuesPassedThroughUse()
+    {
+        $this->setExpectedException(
+            'InvalidArgumentException',
+            'Only scalar values and arrays are allowed'
+        );
+
+        $context = new \stdClass();
+        $parser = new ClosureParser(new \ReflectionFunction(function () use ($context) {
+            return $context;
+        }));
+        $parser->getContextFreeCode();
+    }
+
+    /**
      * @covers \Jeremeamia\SuperClosure\ClosureParser::getUsedVariables
      */
     public function testCanGetUsedVariablesFromParser()

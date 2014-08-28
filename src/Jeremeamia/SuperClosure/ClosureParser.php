@@ -4,6 +4,8 @@ namespace Jeremeamia\SuperClosure;
 
 use Jeremeamia\SuperClosure\Visitor\ClosureFinderVisitor;
 use Jeremeamia\SuperClosure\Visitor\MagicConstantVisitor;
+use Jeremeamia\SuperClosure\Visitor\ScalarValuesVisitor;
+use Jeremeamia\SuperClosure\Visitor\ThisVariableDetectorVisitor;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
@@ -173,6 +175,32 @@ class ClosureParser
         }
 
         return $this->code;
+    }
+
+    /**
+     * Returns context-free closure's code, i.e. code without "use" statement
+     * Otherwise throws \InvalidArgumentException
+     *
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public function getContextFreeCode()
+    {
+        $ast = $this->getClosureAbstractSyntaxTree();
+
+        $thisVariableDetector = new ThisVariableDetectorVisitor();
+
+        $traverser = new \PHPParser_NodeTraverser();
+        $traverser->addVisitor($thisVariableDetector);
+        $traverser->addVisitor(new ScalarValuesVisitor($this->getUsedVariables()));
+        $traverser->traverse(array($ast));
+
+        if ($thisVariableDetector->wasDetected()) {
+            throw new \InvalidArgumentException('Closure has $this variable and cannot be context free');
+        }
+
+        $printer = new \PHPParser_PrettyPrinter_Default();
+        return $printer->prettyPrint(array($ast));
     }
 
     /**

@@ -9,27 +9,32 @@ use SuperClosure\Test\Unit\UnitTestBase;
  */
 class MagicConstantVisitorTest extends UnitTestBase
 {
-    public function testDataFromClosureLocationGetsUsed()
+    public function classNameProvider()
+    {
+        return array(
+            array('PhpParser\Node\Scalar\MagicConst\Class_', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\Dir', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\File', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\Function_', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\Line', 'PhpParser\Node\Scalar\LNumber'),
+            array('PhpParser\Node\Scalar\MagicConst\Method', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\Namespace_', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\MagicConst\Trait_', 'PhpParser\Node\Scalar\String'),
+            array('PhpParser\Node\Scalar\String', 'PhpParser\Node\Scalar\String'),
+        );
+    }
+
+    /**
+     * @dataProvider classNameProvider
+     */
+    public function testDataFromClosureLocationGetsUsed($original, $result)
     {
         $location = new ClosureLocation();
-
-        $nodes = array(
-            'PhpParser\Node\Scalar\MagicConst\Class_'     => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\Dir'        => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\File'       => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\Function_'  => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\Line'       => 'PhpParser\Node\Scalar\LNumber',
-            'PhpParser\Node\Scalar\MagicConst\Method'     => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\Namespace_' => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\MagicConst\Trait_'     => 'PhpParser\Node\Scalar\String',
-            'PhpParser\Node\Scalar\String'                => 'PhpParser\Node\Scalar\String',
-        );
-
         $visitor = new MagicConstantVisitor($location);
-        foreach ($nodes as $originalNodeName => $resultNodeName) {
-            $mockNode = $this->getMockParserNode($originalNodeName, substr($originalNodeName, 15), 1);
-            $resultNode = $visitor->leaveNode($mockNode) ?: $mockNode;
-            $this->assertInstanceOf($resultNodeName, $resultNode);
-        }
+
+        $node = $this->getMockParserNode($original, strtr(substr(rtrim($original, '_'), 15), '\\', '_'));
+        $resultNode = $visitor->leaveNode($node) ?: $node;
+
+        $this->assertInstanceOf($result, $resultNode);
     }
 }

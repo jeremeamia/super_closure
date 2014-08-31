@@ -30,21 +30,21 @@ class MagicConstantVisitor extends NodeVisitor
     public function leaveNode(AstNode $node)
     {
         switch ($node->getType()) {
-            case 'Scalar\MagicConst\Class_' :
+            case 'Scalar_MagicConst_Class' :
                 return new StringNode($this->location->class);
-            case 'Scalar\MagicConst\Dir' :
+            case 'Scalar_MagicConst_Dir' :
                 return new StringNode($this->location->directory);
-            case 'Scalar\MagicConst\File' :
+            case 'Scalar_MagicConst_File' :
                 return new StringNode($this->location->file);
-            case 'Scalar\MagicConst\Function_' :
+            case 'Scalar_MagicConst_Function' :
                 return new StringNode($this->location->function);
-            case 'Scalar\MagicConst\Line' :
+            case 'Scalar_MagicConst_Line' :
                 return new NumberNode($node->getAttribute('startLine'));
-            case 'Scalar\MagicConst\Method' :
+            case 'Scalar_MagicConst_Method' :
                 return new StringNode($this->location->method);
-            case 'Scalar\MagicConst\Namespace_' :
+            case 'Scalar_MagicConst_Namespace' :
                 return new StringNode($this->location->namespace);
-            case 'Scalar\MagicConst\Trait_' :
+            case 'Scalar_MagicConst_Trait' :
                 return new StringNode($this->location->trait);
         }
     }

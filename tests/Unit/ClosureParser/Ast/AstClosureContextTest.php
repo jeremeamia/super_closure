@@ -11,8 +11,8 @@ class AstClosureContextTest extends UnitTestBase
 {
     public function testCanGetDataFromContext()
     {
-        /** @var \PHPParser_Node_Expr_Closure $ast */
-        $ast = $this->getMockParserNode('PHPParser_Node_Expr_Closure');
+        /** @var \PhpParser\Node\Expr\Closure $ast */
+        $ast = $this->getMockParserNode('PhpParser\Node\Expr\Closure');
 
         $context = new AstClosureContext(
             '',
@@ -22,7 +22,7 @@ class AstClosureContextTest extends UnitTestBase
             $this->getMockClosureBinding()
         );
 
-        $this->assertInstanceOf('PHPParser_Node_Expr_Closure', $context->getAst());
+        $this->assertInstanceOf('PhpParser\Node\Expr\Closure', $context->getAst());
         $this->assertInstanceOf('SuperClosure\ClosureParser\Ast\ClosureLocation', $context->getLocation());
     }
 }

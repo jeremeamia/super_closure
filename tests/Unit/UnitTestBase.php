@@ -62,7 +62,7 @@ abstract class UnitTestBase extends \PHPUnit_Framework_TestCase
      * @param string|null $type
      * @param string|null $attribute
      *
-     * @return \PHPParser_NodeAbstract
+     * @return \PhpParser\NodeAbstract
      */
     public function getMockParserNode($class, $type = null, $attribute = null)
     {

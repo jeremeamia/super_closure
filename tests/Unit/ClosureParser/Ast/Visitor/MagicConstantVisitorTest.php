@@ -14,15 +14,15 @@ class MagicConstantVisitorTest extends UnitTestBase
         $location = new ClosureLocation();
 
         $nodes = array(
-            'PHPParser_Node_Scalar_LineConst'   => 'PHPParser_Node_Scalar_LNumber',
-            'PHPParser_Node_Scalar_FileConst'   => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_DirConst'    => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_FuncConst'   => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_NSConst'     => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_ClassConst'  => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_MethodConst' => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_TraitConst'  => 'PHPParser_Node_Scalar_String',
-            'PHPParser_Node_Scalar_String'      => 'PHPParser_Node_Scalar_String',
+            'PhpParser\Node\Scalar\MagicConst\Class_'     => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\Dir'        => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\File'       => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\Function_'  => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\Line'       => 'PhpParser\Node\Scalar\LNumber',
+            'PhpParser\Node\Scalar\MagicConst\Method'     => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\Namespace_' => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\MagicConst\Trait_'     => 'PhpParser\Node\Scalar\String',
+            'PhpParser\Node\Scalar\String'                => 'PhpParser\Node\Scalar\String',
         );
 
         $visitor = new MagicConstantVisitor($location);

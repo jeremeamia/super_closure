@@ -1,10 +1,10 @@
 <?php namespace SuperClosure\ClosureParser\Ast\Visitor;
 
 use SuperClosure\ClosureParser\Ast\ClosureLocation;
-use PHPParser_Node_Scalar_LNumber as NumberNode;
-use PHPParser_Node_Scalar_String as StringNode;
-use PHPParser_Node as AstNode;
-use PHPParser_NodeVisitorAbstract as NodeVisitor;
+use PhpParser\Node\Scalar\LNumber as NumberNode;
+use PhpParser\Node\Scalar\String as StringNode;
+use PhpParser\Node as AstNode;
+use PhpParser\NodeVisitorAbstract as NodeVisitor;
 
 /**
  * This is a visitor that resolves magic constants (e.g., __FILE__) to their
@@ -30,21 +30,21 @@ class MagicConstantVisitor extends NodeVisitor
     public function leaveNode(AstNode $node)
     {
         switch ($node->getType()) {
-            case 'Scalar_LineConst' :
-                return new NumberNode($node->getAttribute('startLine'));
-            case 'Scalar_FileConst' :
-                return new StringNode($this->location->file);
-            case 'Scalar_DirConst' :
-                return new StringNode($this->location->directory);
-            case 'Scalar_FuncConst' :
-                return new StringNode($this->location->function);
-            case 'Scalar_NSConst' :
-                return new StringNode($this->location->namespace);
-            case 'Scalar_ClassConst' :
+            case 'Scalar\MagicConst\Class_' :
                 return new StringNode($this->location->class);
-            case 'Scalar_MethodConst' :
+            case 'Scalar\MagicConst\Dir' :
+                return new StringNode($this->location->directory);
+            case 'Scalar\MagicConst\File' :
+                return new StringNode($this->location->file);
+            case 'Scalar\MagicConst\Function_' :
+                return new StringNode($this->location->function);
+            case 'Scalar\MagicConst\Line' :
+                return new NumberNode($node->getAttribute('startLine'));
+            case 'Scalar\MagicConst\Method' :
                 return new StringNode($this->location->method);
-            case 'Scalar_TraitConst' :
+            case 'Scalar\MagicConst\Namespace_' :
+                return new StringNode($this->location->namespace);
+            case 'Scalar\MagicConst\Trait_' :
                 return new StringNode($this->location->trait);
         }
     }

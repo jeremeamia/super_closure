@@ -14,7 +14,7 @@ class ClosureLocatorVisitorTest extends UnitTestBase
         $closure = function () {}; $startLine = __LINE__;
         $reflectedClosure = new \ReflectionFunction($closure);
         $closureFinder = new ClosureLocatorVisitor($reflectedClosure);
-        $closureNode = new \PHPParser_Node_Expr_Closure(array(), array('startLine' => $startLine));
+        $closureNode = new \PhpParser\Node\Expr\Closure(array(), array('startLine' => $startLine));
         $closureFinder->enterNode($closureNode);
 
         $this->assertSame($closureNode, $closureFinder->getClosureNode());
@@ -26,8 +26,8 @@ class ClosureLocatorVisitorTest extends UnitTestBase
 
         $closure = function () {}; function () {}; $startLine = __LINE__;
         $closureFinder = new ClosureLocatorVisitor(new \ReflectionFunction($closure));
-        $closureFinder->enterNode(new \PHPParser_Node_Expr_Closure(array(), array('startLine' => $startLine)));
-        $closureFinder->enterNode(new \PHPParser_Node_Expr_Closure(array(), array('startLine' => $startLine)));
+        $closureFinder->enterNode(new \PhpParser\Node\Expr\Closure(array(), array('startLine' => $startLine)));
+        $closureFinder->enterNode(new \PhpParser\Node\Expr\Closure(array(), array('startLine' => $startLine)));
     }
 
     public function testCalculatesClosureLocation()
@@ -37,15 +37,15 @@ class ClosureLocatorVisitorTest extends UnitTestBase
 
         $closureFinder->beforeTraverse(array());
 
-        $node = new \PHPParser_Node_Stmt_Namespace(new \PHPParser_Node_Name(array('Foo', 'Bar')));
+        $node = new \PhpParser\Node\Stmt\Namespace_(new \PhpParser\Node\Name(array('Foo', 'Bar')));
         $closureFinder->enterNode($node);
         $closureFinder->leaveNode($node);
 
-        $node = new \PHPParser_Node_Stmt_Trait('Fizz');
+        $node = new \PhpParser\Node\Stmt\Trait_('Fizz');
         $closureFinder->enterNode($node);
         $closureFinder->leaveNode($node);
 
-        $node = new \PHPParser_Node_Stmt_Class('Buzz');
+        $node = new \PhpParser\Node\Stmt\Class_('Buzz');
         $closureFinder->enterNode($node);
         $closureFinder->leaveNode($node);
 

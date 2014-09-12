@@ -168,7 +168,7 @@ class ClosureParser
     {
         if (!$this->code) {
             // Use the pretty printer to print the closure code from the AST
-            $printer = new \PHPParser_PrettyPrinter_Default();
+            $printer = new \PhpParser\PrettyPrinter\Standard();
             $this->code = $printer->prettyPrint(array($this->getClosureAbstractSyntaxTree()));
         }
 

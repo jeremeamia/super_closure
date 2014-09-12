@@ -3,8 +3,8 @@
 namespace Jeremeamia\SuperClosure\Visitor;
 
 use Jeremeamia\SuperClosure\ClosureLocation;
-use PHPParser_Node_Scalar_LNumber as NumberNode;
-use PHPParser_Node_Scalar_String as StringNode;
+use PhpParser\Node\Scalar\LNumber as NumberNode;
+use PhpParser\Node\Scalar\String as StringNode;
 
 /**
  * This is a visitor that resolves magic constants (e.g., __FILE__) to their intended values within a closure's AST
@@ -29,21 +29,21 @@ class MagicConstantVisitor extends \PHPParser_NodeVisitorAbstract
     public function leaveNode(\PHPParser_Node $node)
     {
         switch ($node->getType()) {
-            case 'Scalar_LineConst' :
+            case 'Scalar_MagicConst_Line' :
                 return new NumberNode($node->getAttribute('startLine'));
-            case 'Scalar_FileConst' :
+            case 'Scalar_MagicConst_File' :
                 return new StringNode($this->location->file);
-            case 'Scalar_DirConst' :
+            case 'Scalar_MagicConst_Dir' :
                 return new StringNode($this->location->directory);
-            case 'Scalar_FuncConst' :
+            case 'Scalar_MagicConst_Function' :
                 return new StringNode($this->location->function);
-            case 'Scalar_NSConst' :
+            case 'Scalar_MagicConst_Namespace' :
                 return new StringNode($this->location->namespace);
-            case 'Scalar_ClassConst' :
+            case 'Scalar_MagicConst_Class' :
                 return new StringNode($this->location->class);
-            case 'Scalar_MethodConst' :
+            case 'Scalar_MagicConst_Method' :
                 return new StringNode($this->location->method);
-            case 'Scalar_TraitConst' :
+            case 'Scalar_MagicConst_Trait' :
                 return new StringNode($this->location->trait);
         }
     }

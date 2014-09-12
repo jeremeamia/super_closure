@@ -46,7 +46,7 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
     public function testCanGetCodeFromParser()
     {
         $closure = function () {};
-        $expectedCode = "function () {\n    \n};";
+        $expectedCode = "function () {\n};";
         $parser = new ClosureParser(new \ReflectionFunction($closure));
         $actualCode = $parser->getCode();
 

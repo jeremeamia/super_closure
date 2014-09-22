@@ -4,7 +4,7 @@ use SuperClosure\ClosureParser\ClosureParser;
 use SuperClosure\ClosureParser\ClosureParsingException;
 use SuperClosure\ClosureParser\Ast\Visitor\ClosureLocatorVisitor;
 use SuperClosure\ClosureParser\Ast\Visitor\MagicConstantVisitor;
-use PHPParser_Node_Expr_Closure as ClosureAst;
+use PhpParser\Node\Expr\Closure as ClosureAst;
 
 /**
  * Parses a closure from its reflection such that the code and used (closed upon) variables are accessible. The
@@ -36,14 +36,14 @@ class AstParser extends ClosureParser
         $location = $locator->getLocation();
         if ($this->options[self::HANDLE_MAGIC_CONSTANTS]) {
             // Resolve additional nodes by making a second pass through just the closure's nodes
-            $traverser = new \PHPParser_NodeTraverser();
+            $traverser = new \PhpParser\NodeTraverser();
             $traverser->addVisitor(new MagicConstantVisitor($location));
             $ast = $traverser->traverse(array($ast));
             $ast = $ast[0];
         }
 
         // Get and return closure context data
-        $printer = new \PHPParser_PrettyPrinter_Default();
+        $printer = new \PhpParser\PrettyPrinter\Standard();
         $code = $printer->prettyPrint(array($ast));
         $variables = $this->determineVariables($ast, $reflection);
         $binding = $this->options[self::HANDLE_CLOSURE_BINDINGS] ? $closure->getBinding() : null;
@@ -65,13 +65,13 @@ class AstParser extends ClosureParser
             $locator = new ClosureLocatorVisitor($reflection);
             $fileAst = $this->getFileAst($reflection);
 
-            $fileTraverser = new \PHPParser_NodeTraverser();
+            $fileTraverser = new \PhpParser\NodeTraverser();
             if ($this->options[self::HANDLE_CLASS_NAMES]) {
-                $fileTraverser->addVisitor(new \PHPParser_NodeVisitor_NameResolver);
+                $fileTraverser->addVisitor(new \PhpParser\NodeVisitor\NameResolver);
             }
             $fileTraverser->addVisitor($locator);
             $fileTraverser->traverse($fileAst);
-        } catch (\PHPParser_Error $e) {
+        } catch (\PhpParser\Error $e) {
             // @codeCoverageIgnoreStart
             throw new ClosureParsingException('There was an error parsing the file containing the closure.', 0, $e);
             // @codeCoverageIgnoreEnd
@@ -84,7 +84,7 @@ class AstParser extends ClosureParser
      * @param \ReflectionFunction $reflection
      *
      * @throws ClosureParsingException
-     * @return \PHPParser_Node[]
+     * @return \PhpParser\Node[]
      */
     private function getFileAst(\ReflectionFunction $reflection)
     {
@@ -94,7 +94,7 @@ class AstParser extends ClosureParser
         }
 
         $fileContents = file_get_contents($fileName);
-        $parser = new \PHPParser_Parser(new \PHPParser_Lexer_Emulative);
+        $parser = new \PhpParser\Parser(new \PhpParser\Lexer\Emulative);
         $fileAst = $parser->parse($fileContents);
 
         return $fileAst;

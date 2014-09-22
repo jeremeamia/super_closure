@@ -2,12 +2,12 @@
 
 use SuperClosure\ClosureParser\Ast\ClosureLocation;
 use SuperClosure\ClosureParser\ClosureParsingException;
-use PHPParser_Node_Stmt_Namespace as NamespaceNode;
-use PHPParser_Node_Stmt_Trait as TraitNode;
-use PHPParser_Node_Stmt_Class as ClassNode;
-use PHPParser_Node_Expr_Closure as ClosureNode;
-use PHPParser_Node as AstNode;
-use PHPParser_NodeVisitorAbstract as NodeVisitor;
+use PhpParser\Node\Stmt\Namespace_ as NamespaceNode;
+use PhpParser\Node\Stmt\Trait_ as TraitNode;
+use PhpParser\Node\Stmt\Class_ as ClassNode;
+use PhpParser\Node\Expr\Closure as ClosureNode;
+use PhpParser\Node as AstNode;
+use PhpParser\NodeVisitorAbstract as NodeVisitor;
 use SuperClosure\Env;
 
 /**

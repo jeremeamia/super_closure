@@ -4,6 +4,7 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
   - hhvm
 
 before_script:
@@ -13,8 +14,3 @@ before_script:
 script:
   - vendor/bin/phpunit
   - vendor/bin/phpunit -c phpunit.integ.xml
-
-matrix:
-  allow_failures:
-    - php: hhvm
-  fast_finish: true

@@ -2,7 +2,7 @@
 
 use SuperClosure\ClosureBinding;
 use SuperClosure\ClosureParser\ClosureContext;
-use PHPParser_Node_Expr_Closure as ClosureAst;
+use PhpParser\Node\Expr\Closure as ClosureAst;
 
 class AstClosureContext extends ClosureContext
 {

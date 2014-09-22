@@ -21,7 +21,15 @@
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {
-        "psr-4": {"SuperClosure\\": "src/SuperClosure/"},
+        "psr-4": {
+            "SuperClosure\\": "src/SuperClosure/"
+        },
         "files": ["src/functions.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SuperClosure\\Test\\Unit\\": "tests/Unit/",
+            "SuperClosure\\Test\\Integration\\": "tests/Integration/"
+        }
     }
 }

@@ -69,6 +69,21 @@ class ClosureParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Jeremeamia\SuperClosure\ClosureParser::getUsedVariables
+     */
+    public function testCanGetUsedVariablesWhenOneIsNullFromParser()
+    {
+        $foo = null;
+        $bar = 2;
+        $closure = function () use ($foo, $bar) {};
+        $expectedVars = array('foo' => null, 'bar' => 2);
+        $parser = new ClosureParser(new \ReflectionFunction($closure));
+        $actualVars = $parser->getUsedVariables();
+
+        $this->assertEquals($expectedVars, $actualVars);
+    }
+
+    /**
      * @covers \Jeremeamia\SuperClosure\ClosureParser::clearCache
      */
     public function testCanClearCache()

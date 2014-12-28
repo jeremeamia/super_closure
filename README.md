@@ -77,16 +77,13 @@ generally more robust solution that takes advantage of the fabulous [nikic/php-p
 
 ## Installation
 
-To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
-config file.
-```javascript
-{
-    "require": {
-        "jeremeamia/superclosure": "~1.0"
-    }
-}
+To install the Super Closure library in your project using Composer run the following command:
+
+```bash
+composer require jeremeamia/superclosure
 ```
-Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for
+
+Please visit the [Composer homepage][7] for
 more information about how to use Composer.
 
 ## Why Would I Need To Serialize Closures?

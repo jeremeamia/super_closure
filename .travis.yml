@@ -8,7 +8,6 @@ php:
 
 sudo: false
 
-install:
-  - travis_retry composer install --no-interaction --prefer-source
+install: travis_retry composer install --no-interaction --prefer-source
 
 script: vendor/bin/phpunit --testsuite=integ

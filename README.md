@@ -2,7 +2,8 @@
 
 [![Latest Stable Version](https://poser.pugx.org/jeremeamia/superclosure/v/stable.png)](https://packagist.org/packages/jeremeamia/superclosure)
 [![Total Downloads](https://poser.pugx.org/jeremeamia/superclosure/downloads.png)](https://packagist.org/packages/jeremeamia/superclosure)
-[![Build Status][1]][2]
+[![Build Status](https://travis-ci.org/jeremeamia/super_closure.svg?branch=multiple-parsers)][2]
+[![GitTip](http://img.shields.io/gittip/jeremeamia.svg)](https://www.gittip.com/jeremeamia)
 
 Have you ever seen this?
 
@@ -15,8 +16,6 @@ even though it is not "allowed" by PHP, the Super Closure library ([jeremeamia/s
 I'm not joking, *you really can serialize a PHP closure*!
 
 ```php
-<?php
-
 require 'vendor/autoload.php';
 
 use SuperClosure\SerializableClosure;
@@ -80,13 +79,13 @@ generally more robust solution that takes advantage of the fabulous [nikic/php-p
 
 To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
 config file.
-
-    {
-        "require": {
-            "jeremeamia/superclosure": "~1.0"
-        }
+```javascript
+{
+    "require": {
+        "jeremeamia/superclosure": "~1.0"
     }
-
+}
+```
 Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][7] for
 more information about how to use Composer.
 

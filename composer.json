@@ -14,14 +14,21 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4",
         "nikic/php-parser": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
     },
     "autoload": {
-        "psr-4": {"SuperClosure\\": "src/SuperClosure/"},
-        "files": ["src/functions.php"]
+        "psr-4": {
+            "SuperClosure\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SuperClosure\\Test\\Unit\\": "tests/Unit/",
+            "SuperClosure\\Test\\Integration\\": "tests/Integration/"
+        }
     }
 }

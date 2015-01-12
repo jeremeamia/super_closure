@@ -30,5 +30,10 @@
             "SuperClosure\\Test\\Unit\\": "tests/Unit/",
             "SuperClosure\\Test\\Integration\\": "tests/Integration/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
     }
 }

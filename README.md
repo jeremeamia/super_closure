@@ -79,10 +79,10 @@ generally more robust solution that takes advantage of the fabulous [nikic/php-p
 
 To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
 config file.
-```javascript
+```json
 {
     "require": {
-        "jeremeamia/superclosure": "~1.0"
+        "jeremeamia/superclosure": "~2.0"
     }
 }
 ```

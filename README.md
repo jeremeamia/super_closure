@@ -53,6 +53,7 @@ that takes advantage of the fabulous [nikic/php-parser][6] library.
   statement)
 * Handles closures with a binding (i.e., that reference `$this` or `self` in the
   function body)
+* Handles recursive closures… _yeah, really_
 * Allows you to get the code, context, and binding of a closure
 * Offers 2 techniques for analyzing the closure's code.
     1. **Abstract syntax tree (AST)**

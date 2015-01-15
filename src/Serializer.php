@@ -5,6 +5,8 @@ use SuperClosure\Analyzer\ClosureAnalyzer;
 
 class Serializer
 {
+    const RECURSION = "\0RECURSION\0";
+
     private static $dataToKeep = [
         'code'    => true,
         'context' => true,
@@ -57,9 +59,6 @@ class Serializer
         // Use the closure analyzer to get data about the closure.
         $data = $this->analyzer->analyze($closure);
 
-//        unset($data['ast'], $data['tokens'], $data['reflection']);
-//        var_dump($data);
-
         // If the closure data is getting retrieved solely for the purpose of
         // serializing the closure, then make some modifications to the data.
         if ($forSerialization) {
@@ -74,7 +73,9 @@ class Serializer
             // Wrap any other closures within the context.
             foreach ($data['context'] as &$value) {
                 if ($value instanceof \Closure) {
-                    $value = new SerializableClosure($value, $this);
+                    $value = ($value === $closure)
+                        ? self::RECURSION
+                        : new SerializableClosure($value, $this);
                 }
             }
 

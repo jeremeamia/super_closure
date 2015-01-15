@@ -97,8 +97,13 @@ class SerializableClosure implements \Serializable
         // Simulate the original context the closure was created in.
         extract($_data['context'], EXTR_OVERWRITE);
 
-        // Evaluate the code to recreate the closure
-        @eval("\$this->closure = {$_data['code']};");
+        // Evaluate the code to recreate the closure.
+        if ($_fn = array_search(Serializer::RECURSION, $_data['context'], true)) {
+            @eval("\${$_fn} = {$_data['code']};");
+            $this->closure = $$_fn;
+        } else {
+            @eval("\$this->closure = {$_data['code']};");
+        }
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
                 'The closure was corrupted and cannot be unserialized.'

@@ -126,6 +126,16 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertAllEquals(10, $results);
     }
 
+    public function testSerializeRecursiveClosure()
+    {
+        $factorial = function ($num) use (&$factorial) {
+            return $num <= 1 ? 1 : $num * $factorial($num - 1);
+        };
+
+        $results = $this->getResults($factorial, [5]);
+        $this->assertAllEquals(120, $results);
+    }
+
     private function getResults(\Closure $closure, array $args = [])
     {
         $results = ['original' => call_user_func_array($closure, $args)];

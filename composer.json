@@ -28,7 +28,7 @@
     "autoload-dev": {
         "psr-4": {
             "SuperClosure\\Test\\Unit\\": "tests/Unit/",
-            "SuperClosure\\Test\\Integration\\": "tests/Integration/"
+            "SuperClosure\\Test\\Integ\\": "tests/Integ/"
         }
     },
     "extra": {

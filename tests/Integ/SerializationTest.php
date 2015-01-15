@@ -1,55 +1,171 @@
 <?php namespace SuperClosure\Test\Integ;
 
+use SuperClosure\Analyzer\AstAnalyzer;
+use SuperClosure\Analyzer\TokenAnalyzer;
+use SuperClosure\SerializableClosure;
 use SuperClosure\Serializer;
+use SuperClosure\Test\Integ\Fixture\Collection;
+use SuperClosure\Test\Integ\Fixture\Foo;
 
 class SerializationTest extends \PHPUnit_Framework_TestCase
 {
-    private function getBeforeAndAfter(
-        $analyzer,
-        \Closure $closure,
-        array $args,
-        $includeBinding = false
-    ) {
-        $analyzer = 'SuperClosure\\Analyzer\\' . ucwords($analyzer) . 'Analyzer';
-        $serializer = new Serializer([
-            Serializer::OPT_ANALYZER    => new $analyzer,
-            Serializer::OPT_INC_BINDING => $includeBinding
-        ]);
-
-        $before = call_user_func_array($closure, $args);
-        $serialized = $serializer->serialize($closure);
-        $unserialized = $serializer->unserialize($serialized);
-        $after = call_user_func_array($unserialized, $args);
-
-        return [$before, $after];
-    }
-
-    public function testBasicClosure()
+    public function testSerializeBasicClosure()
     {
-        $c = function ($a, $b) {
+        $closure = function ($a, $b) {
             return $a + $b;
         };
 
-        list($b, $a) = $this->getBeforeAndAfter('ast', $c, [4, 7]);
-        $this->assertEquals(11, $b);
-        $this->assertEquals(11, $a);
-        list($b, $a) = $this->getBeforeAndAfter('token', $c, [4, 7]);
-        $this->assertEquals(11, $b);
-        $this->assertEquals(11, $a);
+        $results = $this->getResults($closure, [4, 7]);
+        $this->assertAllEquals(11, $results);
     }
 
-    public function testClosureWithUseStatement()
+    public function testSerializeBasicClosureViaClosureWrapping()
+    {
+        $closure = function ($a, $b) {
+            return $a + $b;
+        };
+        $serializableClosure = new SerializableClosure($closure);
+        $results = [];
+        $results[] = $serializableClosure(1, 2);
+        $serialized = serialize($serializableClosure);
+        $unserialized = unserialize($serialized);
+        /** @var callable $unserialized */
+        $results[] = $unserialized(1, 2);
+
+        $this->assertAllEquals(3, $results);
+    }
+
+    public function testSerializeClosureWithUseStatement()
     {
         $operand = 8;
-        $c = function ($num) use ($operand) {
+        $closure = function ($num) use ($operand) {
             return $num + $operand;
         };
 
-        list($b, $a) = $this->getBeforeAndAfter('ast', $c, [7]);
-        $this->assertEquals(15, $b);
-        $this->assertEquals(15, $a);
-        list($b, $a) = $this->getBeforeAndAfter('token', $c, [7]);
-        $this->assertEquals(15, $b);
-        $this->assertEquals(15, $a);
+        $results = $this->getResults($closure, [7]);
+        $this->assertAllEquals(15, $results);
+    }
+
+    public function testSerializeClosureThatUsesAnotherClosure()
+    {
+        $otherClosure = function ($n) {return $n + 2;};
+        $closure = function ($n) use ($otherClosure) {
+            return $otherClosure($n + 5);
+        };
+
+        $results = $this->getResults($closure, [8]);
+        $this->assertAllEquals(15, $results);
+    }
+
+    public function testSerializeAOneLineClosure()
+    {
+        $c = $d = 5;
+        $closure = function($a,$b)use($c,$d){return$a+$b+$c+$d;};
+
+        $results = $this->getResults($closure, [2, 8]);
+        $this->assertAllEquals(20, $results);
+    }
+
+    public function testSerializeClosureAndPreserveMagicConstants()
+    {
+        $closure = function () {
+            return basename(__FILE__);
+        };
+
+        $results = $this->getResults($closure);
+        $this->assertEquals('SerializationTest.php', $results['original']);
+        $this->assertEquals('SerializationTest.php', $results['ast']);
+        // Doesn't work with the TokenAnalyzer.
+        $this->assertStringEndsWith('eval()\'d code', $results['token']);
+    }
+
+    public function testSerializeClosureAndMakeClassNamesFullyQualified()
+    {
+        $closure = function (Collection $collection) {
+            return iterator_to_array($collection);
+        };
+
+        $results = $this->getResults($closure, [new Collection(['foo', 'bar'])]);
+        $this->assertEquals(['foo', 'bar'], $results['original']);
+        $this->assertEquals(['foo', 'bar'], $results['ast']);
+        // Doesn't work with the TokenAnalyzer.
+        $this->assertStringEndsWith('ERROR', $results['token']);
+    }
+
+    public function testCannotSerializeClosureWhenOneTheSameLineAsAnother()
+    {
+        $closure = function($a){return$a;};function($b){return$b;};
+
+        $results = $this->getResults($closure, [5]);
+        $this->assertEquals(5, $results['original']);
+        $this->assertEquals('ERROR', $results['ast']);
+        $this->assertEquals('ERROR', $results['token']);
+    }
+
+    public function testSerializeClosureWithComposition()
+    {
+        $inc = function ($n) {return $n + 1;};
+        $dec = function ($n) {return $n - 1;};
+        $compose = function ($f1, $f2) {
+            return function ($n) use ($f1, $f2) {
+                return $f2($f1($n));
+            };
+        };
+        $closure = $compose($compose($compose($inc, $inc), $dec), $inc);
+
+        $results = $this->getResults($closure, [2]);
+        $this->assertAllEquals(4, $results);
+    }
+
+    public function testSerializeClosureWithBinding()
+    {
+        $foo = new Foo(10);
+        $closure = $foo->getClosure();
+
+        $results = $this->getResults($closure, [], true);
+        $this->assertAllEquals(10, $results);
+    }
+
+    private function getResults(
+        \Closure $closure,
+        array $args = [],
+        $includeBinding = false
+    ) {
+        $results = [
+            'original' => call_user_func_array($closure, $args)
+        ];
+
+        try {
+            $serializer = new Serializer([
+                Serializer::OPT_ANALYZER    => new AstAnalyzer(),
+                Serializer::OPT_INC_BINDING => $includeBinding
+            ]);
+            $serialized = $serializer->serialize($closure);
+            $unserialized = $serializer->unserialize($serialized);
+            $results['ast'] = call_user_func_array($unserialized, $args);
+        } catch (\Exception $e) {
+            $results['ast'] = 'ERROR';
+        }
+
+        try {
+            $serializer = new Serializer([
+                Serializer::OPT_ANALYZER    => new TokenAnalyzer(),
+                Serializer::OPT_INC_BINDING => $includeBinding
+            ]);
+            $serialized = $serializer->serialize($closure);
+            $unserialized = $serializer->unserialize($serialized);
+            $results['token'] = call_user_func_array($unserialized, $args);
+        } catch (\Exception $e) {
+            $results['token'] = 'ERROR';
+        }
+
+        return $results;
+    }
+
+    private function assertAllEquals($expected, array $actuals)
+    {
+        foreach ($actuals as $actual) {
+            $this->assertEquals($expected, $actual);
+        }
     }
 }

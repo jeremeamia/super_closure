@@ -1,6 +1,5 @@
 <?php namespace SuperClosure\Analyzer\Visitor;
 
-use SuperClosure\Analyzer\ClosureLocation;
 use SuperClosure\Exception\ClosureAnalysisException;
 use PhpParser\Node\Stmt\Namespace_ as NamespaceNode;
 use PhpParser\Node\Stmt\Trait_ as TraitNode;
@@ -15,22 +14,16 @@ use PhpParser\NodeVisitorAbstract as NodeVisitor;
  *
  * @internal
  */
-class ClosureLocatorVisitor extends NodeVisitor
+final class ClosureLocatorVisitor extends NodeVisitor
 {
-    /**
-     * @var \ReflectionFunction
-     */
-    protected $reflection;
+    /** @var \ReflectionFunction */
+    private $reflection;
 
-    /**
-     * @var ClosureNode
-     */
-    protected $closureNode;
+    /** @var ClosureNode */
+    public $closureNode;
 
-    /**
-     * @var  ClosureLocation
-     */
-    protected $location;
+    /** @var array */
+    public $location;
 
     /**
      * @param \ReflectionFunction $reflection
@@ -114,21 +107,5 @@ class ClosureLocatorVisitor extends NodeVisitor
             $closureScopeClass = $this->reflection->getClosureScopeClass();
             $this->location['class'] = $closureScopeClass ? $closureScopeClass->getName() : null;
         }
-    }
-
-    /**
-     * @return ClosureNode
-     */
-    public function getClosureNode()
-    {
-        return $this->closureNode;
-    }
-
-    /**
-     * @return ClosureLocation
-     */
-    public function getLocation()
-    {
-        return $this->location;
     }
 }

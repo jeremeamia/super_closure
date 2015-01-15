@@ -60,18 +60,7 @@ class SerializableClosure implements \Serializable
     public function serialize()
     {
         try {
-            // Get data about the closure needed to serialize it.
-            $code = $context = $binding = null;
-            extract($this->serializer->analyze($this->closure), EXTR_IF_EXISTS);
-
-            // Wrap closures within the context, so they are serializable too.
-            foreach ($context as &$value) {
-                if ($value instanceof \Closure) {
-                    $value = new SerializableClosure($value, $this->serializer);
-                }
-            }
-
-            return serialize([$code, $context, $binding, $this->serializer]);
+            return serialize($this->serializer->getClosureData($this->closure, true));
         } catch (\Exception $e) {
             trigger_error(
                 'Serialization of closure failed: ' . $e->getMessage(),
@@ -102,13 +91,14 @@ class SerializableClosure implements \Serializable
     public function unserialize($serialized)
     {
         // Unserialize the data we need to reconstruct the SuperClosure.
-        list($_code, $_context, $_binding, $this->serializer) = \unserialize($serialized);
+        $_data = \unserialize($serialized);
+        $this->serializer = $_data['serializer'];
 
         // Simulate the original context the closure was created in.
-        extract($_context, EXTR_OVERWRITE);
+        extract($_data['context'], EXTR_OVERWRITE);
 
         // Evaluate the code to recreate the closure
-        @eval("\$this->closure = {$_code};");
+        @eval("\$this->closure = {$_data['code']};");
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
                 'The closure was corrupted and cannot be unserialized.'
@@ -117,9 +107,6 @@ class SerializableClosure implements \Serializable
 
         // Rebind the closure to its former $this object and scope, if defined,
         // otherwise, bind to null so it's not bound to SerializableClosure.
-        $this->closure = $this->closure->bindTo(
-            $_binding ? $_binding['object'] : null,
-            $_binding ? $_binding['scope'] : 'static'
-        );
+        $this->closure = $this->closure->bindTo($_data['binding'], $_data['scope']);
     }
 }

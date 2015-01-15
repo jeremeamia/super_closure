@@ -28,9 +28,9 @@ $increment = $increMaker->getIncrementFn();
 echo $increment(6) . "\n";
 //> 11
 
-$binding = $serializer->analyze($increment)['binding'];
-assert($binding['object'] === $increMaker);
-assert($binding['scope'] === 'IncreMaker');
+$data = $serializer->getClosureData($increment);
+assert($data['binding'] === $increMaker);
+assert($data['scope'] === 'IncreMaker');
 
 $serialized = $serializer->serialize($increment);
 echo $serialized . "\n";

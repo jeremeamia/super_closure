@@ -6,22 +6,13 @@ use SuperClosure\Exception\ClosureAnalysisException;
  * Uses reflection and tokenization to analyze a closure and determine its
  * code and context.
  */
-class TokenAnalyzer implements ClosureAnalyzer
+class TokenAnalyzer extends ClosureAnalyzer
 {
-    public function analyze(\ReflectionFunction $reflection)
+    public function determineCode(array &$data)
     {
-        $tokens = $this->fetchTokens($reflection);
-        $tokens = $this->validateTokens($tokens);
-
-        $code = implode('', $tokens);
-        list($context, $hasRefs) = $this->determineContext($reflection, $tokens);
-
-        return [
-            'code'    => $code,
-            'context' => $context,
-            'tokens'  => $tokens,
-            'hasRefs' => $hasRefs,
-        ];
+        $data['tokens'] = $this->fetchTokens($data['reflection']);
+        $data['code'] = implode('', $data['tokens']);
+        $data['hasThis'] = (strpos($data['code'], '$this') !== false);
     }
 
     /**
@@ -88,8 +79,9 @@ class TokenAnalyzer implements ClosureAnalyzer
             }
         }
 
-        // Return only the tokens
-        return array_slice($tokens, $start, $end - $start + 1);
+        $tokens = array_slice($tokens, $start, $end - $start + 1);
+
+        return $this->validateTokens($tokens);
     }
 
     /**
@@ -139,18 +131,7 @@ class TokenAnalyzer implements ClosureAnalyzer
         return $validTokens;
     }
 
-    /**
-     * Does some additional tokenizing and reflection to determine the names and
-     * values of variables included in the closure (or context) via "use"
-     * statement. For functions that are not closures, an empty array is
-     * returned.
-     *
-     * @param \ReflectionFunction $reflection
-     * @param Token[]             $tokens
-     *
-     * @return array the closure's context.
-     */
-    private function determineContext(\ReflectionFunction $reflection, array $tokens)
+    protected function determineContext(array &$data)
     {
         $context = [];
         $varNames = [];
@@ -158,7 +139,8 @@ class TokenAnalyzer implements ClosureAnalyzer
         $refs = 0;
 
         // Parse the variable names from the "use" construct by scanning tokens.
-        foreach ($tokens as $token) {
+        /** @var $token Token */
+        foreach ($data['tokens'] as $token) {
             if (!$insideUse && $token->matches(T_USE)) {
                 // Set flag indicating that "use" construct has been reached.
                 $insideUse = true;
@@ -174,7 +156,7 @@ class TokenAnalyzer implements ClosureAnalyzer
         }
 
         // Get the values of the variables that are closed upon in "use".
-        $varValues = $reflection->getStaticVariables();
+        $varValues = $data['reflection']->getStaticVariables();
 
         // Construct the context by combining the variable names and values.
         foreach ($varNames as $varName) {
@@ -183,6 +165,7 @@ class TokenAnalyzer implements ClosureAnalyzer
             }
         }
 
-        return [$context, $refs > 0];
+        $data['context'] = $context;
+        $data['hasRefs'] = ($refs > 0);
     }
 }

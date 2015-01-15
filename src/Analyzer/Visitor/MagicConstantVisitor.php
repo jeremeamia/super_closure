@@ -11,12 +11,10 @@ use PhpParser\NodeVisitorAbstract as NodeVisitor;
  *
  * @internal
  */
-class MagicConstantVisitor extends NodeVisitor
+final class MagicConstantVisitor extends NodeVisitor
 {
-    /**
-     * @var array
-     */
-    protected $location;
+    /** @var array */
+    private $location;
 
     /**
      * @param array $location

@@ -5,36 +5,22 @@ use SuperClosure\Analyzer\ClosureAnalyzer;
 
 class Serializer
 {
-    const OPT_ANALYZER = 'analyzer';
-    const OPT_INC_BINDING = 'include_binding';
-
-    /** @var array */
-    protected static $defaultOptions = [
-        self::OPT_ANALYZER    => null,
-        self::OPT_INC_BINDING => true,
+    private static $dataToKeep = [
+        'code'    => true,
+        'context' => true,
+        'binding' => true,
+        'scope'   => true
     ];
-
-    /** @var array */
-    private $options;
 
     /** @var ClosureAnalyzer */
     private $analyzer;
 
     /**
-     * @param array $options
-     *
-     * @throws \InvalidArgumentException
+     * @param ClosureAnalyzer $analyzer
      */
-    public function __construct(array $options = [])
+    public function __construct(ClosureAnalyzer $analyzer = null)
     {
-        $this->options = $options + self::$defaultOptions;
-
-        $this->analyzer = $this->options[self::OPT_ANALYZER] ?: new DefaultAnalyzer;
-        if (!$this->analyzer instanceof ClosureAnalyzer) {
-            throw new \InvalidArgumentException(
-                'The "analyzer" option must be an instance of ClosureAnalyzer.'
-            );
-        }
+        $this->analyzer = $analyzer ?: new DefaultAnalyzer;
     }
 
     /**
@@ -62,14 +48,39 @@ class Serializer
 
     /**
      * @param \Closure $closure
+     * @param bool     $forSerialization
      *
-     * @return array
+     * @return \Closure
      */
-    public function analyze(\Closure $closure)
+    public function getClosureData(\Closure $closure, $forSerialization = false)
     {
-        $reflection = new \ReflectionFunction($closure);
-        $data = $this->analyzer->analyze($reflection);
-        $data['binding'] = $this->getClosureBinding($reflection);
+        // Use the closure analyzer to get data about the closure.
+        $data = $this->analyzer->analyze($closure);
+
+//        unset($data['ast'], $data['tokens'], $data['reflection']);
+//        var_dump($data);
+
+        // If the closure data is getting retrieved solely for the purpose of
+        // serializing the closure, then make some modifications to the data.
+        if ($forSerialization) {
+            // If there is no reference to the binding, don't serialize it.
+            if (!$data['hasThis']) {
+                $data['binding'] = null;
+            }
+
+            // Remove data about the closure that does not get serialized.
+            $data = array_intersect_key($data, self::$dataToKeep);
+
+            // Wrap any other closures within the context.
+            foreach ($data['context'] as &$value) {
+                if ($value instanceof \Closure) {
+                    $value = new SerializableClosure($value, $this);
+                }
+            }
+
+            // Include the serializer in the data for serialization.
+            $data['serializer'] = $this;
+        }
 
         return $data;
     }
@@ -77,21 +88,25 @@ class Serializer
     /**
      * @param mixed $data
      */
-    public function wrapClosures(&$data)
+    public function wrapClosuresWithin(&$data)
     {
         // Wrap any closures, and apply wrapClosures to their bound objects.
         if ($data instanceof \Closure) {
             $reflection = new \ReflectionFunction($data);
-            $binding = $this->getClosureBinding($reflection);
-            if ($binding && $binding['object']) {
-                $this->wrapClosures($binding['object']);
-                $data->bindTo($binding['object'], $binding['scope']);
+            if ($binding = $reflection->getClosureThis()) {
+                $this->wrapClosuresWithin($binding);
+                if ($scope = $reflection->getClosureScopeClass()) {
+                    $scope = $scope->getName();
+                } else {
+                    $scope = 'static';
+                }
+                $data->bindTo($binding, $scope);
             }
-            $data = new SerializableClosure($data, $this);
+            $data = new SerializableClosure($data, $this->analyzer);
         // Apply wrapClosures to all values in arrays.
         } elseif (is_array($data) || $data instanceof \stdClass) {
             foreach ($data as &$value) {
-                $this->wrapClosures($value);
+                $this->wrapClosuresWithin($value);
             }
         // Apply wrapClosures() to all members of objects that don't already
         // have specific serialization handlers defined.
@@ -103,27 +118,10 @@ class Serializer
                         $property->setAccessible(true);
                     }
                     $value = $property->getValue($data);
-                    $this->wrapClosures($value);
+                    $this->wrapClosuresWithin($value);
                     $property->setValue($data, $value);
                 }
             }
         }
-    }
-
-    private function getClosureBinding(\ReflectionFunction $reflection)
-    {
-        if (!$this->options[self::OPT_INC_BINDING]) {
-            return null;
-        }
-
-        $binding = [
-            'object' => $reflection->getClosureThis(),
-            'scope'  => 'static'
-        ];
-        if ($scope = $reflection->getClosureScopeClass()) {
-            $binding['scope'] = $scope->getName();
-        }
-
-        return $binding;
     }
 }

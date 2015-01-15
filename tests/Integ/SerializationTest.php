@@ -126,20 +126,12 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertAllEquals(10, $results);
     }
 
-    private function getResults(
-        \Closure $closure,
-        array $args = [],
-        $includeBinding = false
-    ) {
-        $results = [
-            'original' => call_user_func_array($closure, $args)
-        ];
+    private function getResults(\Closure $closure, array $args = [])
+    {
+        $results = ['original' => call_user_func_array($closure, $args)];
 
         try {
-            $serializer = new Serializer([
-                Serializer::OPT_ANALYZER    => new AstAnalyzer(),
-                Serializer::OPT_INC_BINDING => $includeBinding
-            ]);
+            $serializer = new Serializer(new AstAnalyzer);
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['ast'] = call_user_func_array($unserialized, $args);
@@ -148,10 +140,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         }
 
         try {
-            $serializer = new Serializer([
-                Serializer::OPT_ANALYZER    => new TokenAnalyzer(),
-                Serializer::OPT_INC_BINDING => $includeBinding
-            ]);
+            $serializer = new Serializer(new TokenAnalyzer);
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['token'] = call_user_func_array($unserialized, $args);

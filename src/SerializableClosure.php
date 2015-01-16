@@ -16,6 +16,9 @@ class SerializableClosure implements \Serializable
     /** @var Serializer */
     private $serializer;
 
+    /** @var array */
+    private $temp;
+
     /**
      * @param \Closure   $closure
      * @param Serializer $serializer
@@ -77,12 +80,8 @@ class SerializableClosure implements \Serializable
      *
      * Unserializes the closure's data and recreates the closure using a
      * simulation of its original context. The used variables (context) are
-     * extracted into the scope prior to redefining the closure. If the
-     * closure's binding was serialized (PHP 5.4+), then the closure will also
-     * be rebound to its former object and scope.
-     *
-     * NOTE: HERE BE DRAGONS! The infamous `eval()` is used in this method to
-     * perform the unserialization/hydration work. Sorry, it is the only way.
+     * extracted into a fresh scope prior to redefining the closure. The
+     * closure is also rebound to its former object and scope.
      *
      * @param string $serialized
      *
@@ -90,28 +89,45 @@ class SerializableClosure implements \Serializable
      */
     public function unserialize($serialized)
     {
-        // Unserialize the data we need to reconstruct the SuperClosure.
-        $_data = \unserialize($serialized);
-        $this->serializer = $_data['serializer'];
-
-        // Simulate the original context the closure was created in.
-        extract($_data['context'], EXTR_OVERWRITE);
-
-        // Evaluate the code to recreate the closure.
-        if ($_fn = array_search(Serializer::RECURSION, $_data['context'], true)) {
-            @eval("\${$_fn} = {$_data['code']};");
-            $this->closure = $$_fn;
-        } else {
-            @eval("\$this->closure = {$_data['code']};");
-        }
+        // Unserialize the data and reconstruct the SuperClosure.
+        $this->temp = unserialize($serialized);
+        $this->serializer = $this->temp['serializer'];
+        $this->reconstructClosure();
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
-                'The closure was corrupted and cannot be unserialized.'
+                'The closure is corrupted and cannot be unserialized.'
             );
         }
 
         // Rebind the closure to its former $this object and scope, if defined,
         // otherwise, bind to null so it's not bound to SerializableClosure.
-        $this->closure = $this->closure->bindTo($_data['binding'], $_data['scope']);
+        $this->closure = $this->closure->bindTo(
+            $this->temp['binding'],
+            $this->temp['scope']
+        );
+
+        // Clear temp data used during unserialization.
+        unset($this->temp);
+    }
+
+    /**
+     * HERE BE DRAGONS!
+     *
+     * The infamous `eval()` is used in this method, along with `extract()`,
+     * the error suppression operator, and variable variables (i.e., double
+     * dollar signs) to perform the unserialization work. I'm sorry, world!
+     */
+    private function reconstructClosure()
+    {
+        // Simulate the original context the closure was created in.
+        extract($this->temp['context'], EXTR_OVERWRITE);
+
+        // Evaluate the code to recreate the closure.
+        if ($_fn = array_search(Serializer::RECURSION, $this->temp['context'], true)) {
+            @eval("\${$_fn} = {$this->temp['code']};");
+            $this->closure = $$_fn;
+        } else {
+            @eval("\$this->closure = {$this->temp['code']};");
+        }
     }
 }

@@ -3,20 +3,21 @@
 use SuperClosure\Exception\ClosureUnserializationException;
 
 /**
- * This class allows you to do the impossible: serialize closures! With the
- * combined power of lexical parsing, the Reflection API, and the infamous
- * `eval()` function, you can serialize a closure, unserialize it in a different
- * PHP process, and execute it. It's like function teleportation!
+ * This class acts as a wrapper for a closure, and allows it to be serialized.
+ *
+ * With the combined power of the Reflection API, code parsing, and the infamous
+ * `eval()` function, you can serialize a closure, unserialize it somewhere
+ * else (even a different PHP process), and execute it.
  */
 class SerializableClosure implements \Serializable
 {
-    /** @var \Closure */
+    /** @var \Closure Closure being wrapped for serialization. */
     private $closure;
 
-    /** @var Serializer */
+    /** @var Serializer Serializer object doing the serialization work. */
     private $serializer;
 
-    /** @var array */
+    /** @var array Temporary data container used during unserialization. */
     private $temp;
 
     /**
@@ -30,6 +31,8 @@ class SerializableClosure implements \Serializable
     }
 
     /**
+     * Return the original closure object.
+     *
      * @return \Closure
      */
     public function getClosure()
@@ -38,7 +41,7 @@ class SerializableClosure implements \Serializable
     }
 
     /**
-     * Delegate the Closure invocation to the actual closure object.
+     * Delegates the closure invocation to the actual closure object.
      *
      * Important Notes:
      *
@@ -56,7 +59,7 @@ class SerializableClosure implements \Serializable
     }
 
     /**
-     * Serialize the code and context of the closure.
+     * Serializes the code and context of the closure.
      *
      * @return string
      */
@@ -76,7 +79,7 @@ class SerializableClosure implements \Serializable
     }
 
     /**
-     * Unserializes the Closure.
+     * Unserializes the closure.
      *
      * Unserializes the closure's data and recreates the closure using a
      * simulation of its original context. The used variables (context) are

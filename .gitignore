@@ -1,6 +1,6 @@
 .idea/*
 vendor/*
-coverage/*
+build/artifacts/*
 .DS_Store
 cache.properties
 composer.phar

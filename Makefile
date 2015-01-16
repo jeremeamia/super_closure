@@ -14,3 +14,6 @@ coverage-show:
 
 integ:
 	vendor/bin/phpunit --debug --testsuite=integ $(TEST)
+
+travis:
+	vendor/bin/phpunit

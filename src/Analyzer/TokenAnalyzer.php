@@ -10,162 +10,106 @@ class TokenAnalyzer extends ClosureAnalyzer
 {
     public function determineCode(array &$data)
     {
-        $data['tokens'] = $this->fetchTokens($data['reflection']);
+        $this->determineTokens($data);
         $data['code'] = implode('', $data['tokens']);
         $data['hasThis'] = (strpos($data['code'], '$this') !== false);
     }
 
-    /**
-     * Creates a tokenizer representing the code that is the best candidate for
-     * representing the function. It uses reflection to find the file and lines
-     * of the code and then puts that code into the tokenizer.
-     *
-     * @param \ReflectionFunction $reflection
-     *
-     * @return array                    tokens representing the closure's code.
-     * @throws ClosureAnalysisException if the file does not exist.
-     */
-    private function fetchTokens(\ReflectionFunction $reflection)
+    private function determineTokens(array &$data)
+    {
+        $potential = $this->determinePotentialTokens($data['reflection']);
+        $braceLevel = $index = $step = $insideUse = 0;
+        $data['tokens'] = $data['context'] = [];
+
+        foreach ($potential as $token) {
+            $token = new Token($token);
+            switch ($step) {
+                // Handle tokens before the function declaration.
+                case 0:
+                    if ($token->matches(T_FUNCTION)) {
+                        $data['tokens'][] = $token;
+                        $step++;
+                    }
+                    break;
+                // Handle tokens inside the function signature.
+                case 1:
+                    $data['tokens'][] = $token;
+                    if ($insideUse) {
+                        if ($token->matches('&')) {
+                            $data['hasRefs'] = true;
+                        } elseif ($token->matches(T_VARIABLE)) {
+                            $varName = trim($token->getCode(), '$ ');
+                            $data['context'][$varName] = null;
+                        }
+                    } elseif ($token->matches(T_USE)) {
+                        $insideUse++;
+                    }
+                    if ($token->isOpeningBrace()) {
+                        $step++;
+                        $braceLevel++;
+                    }
+                    break;
+                // Handle tokens inside the function body.
+                case 2:
+                    $data['tokens'][] = $token;
+                    if ($token->isOpeningBrace()) {
+                        $braceLevel++;
+                    } elseif ($token->isClosingBrace()) {
+                        $braceLevel--;
+                        if ($braceLevel === 0) {
+                            $step++;
+                        }
+                    }
+                    break;
+                // Handle tokens after the function declaration.
+                case 3:
+                    if ($token->matches(T_FUNCTION)) {
+                        throw new ClosureAnalysisException('Multiple closures '
+                            . 'were declared on the same line of code. Could '
+                            . 'determine which closure was the intended target.'
+                        );
+                    }
+                    break;
+            }
+        }
+    }
+
+    private function determinePotentialTokens(\ReflectionFunction $reflection)
     {
         // Load the file containing the code for the function.
         $fileName = $reflection->getFileName();
-        if (!file_exists($fileName)) {
+        if (!is_readable($fileName)) {
             throw new ClosureAnalysisException(
-                "The file containing the closure, \"{$fileName}\" did not exist."
+                "Cannot read the file containing the closure: \"{$fileName}\"."
             );
         }
-        $file = new \SplFileObject($fileName);
 
-        // Identify the first and last lines of the code for the function.
-        $firstLine = $reflection->getStartLine();
-        $lastLine = $reflection->getEndLine();
-
-        // Retrieve all of the lines that could contain code for the function.
         $code = '';
-        $file->seek($firstLine - 1);
-        while ($file->key() < $lastLine) {
+        $file = new \SplFileObject($fileName);
+        $file->seek($reflection->getStartLine() - 1);
+        while ($file->key() < $reflection->getEndLine()) {
             $code .= $file->current();
             $file->next();
         }
-        $code = trim($code);
 
-        // Add a php opening tag if not already included.
+        $code = trim($code);
         if (strpos($code, '<?php') !== 0) {
             $code = "<?php\n" . $code;
         }
 
-        // Get the PHP tokenizer's tokens and normalize them to Token objects.
-        /** @var Token[] $tokens */
-        $tokens = array_map(function ($tokenData) {
-            return new Token($tokenData);
-        }, token_get_all($code));
-        $count = count($tokens);
-
-        // Determine which token is most likely the beginning of the closure.
-        $start = 0;
-        for ($i = 0; $i < $count; $i++) {
-            if ($tokens[$i]->matches(T_FUNCTION)) {
-                $start = $i;
-                break;
-            }
-        }
-
-        // Determine which token is most likely the end of the closure.
-        $end = 0;
-        for ($i = $count - 1; $i >= 0; $i--) {
-            if ($tokens[$i]->matches('}')) {
-                $end = $i;
-                break;
-            }
-        }
-
-        $tokens = array_slice($tokens, $start, $end - $start + 1);
-
-        return $this->validateTokens($tokens);
-    }
-
-    /**
-     * Parses the code using the tokenizer and keeping track of matching braces.
-     *
-     * @param Token[] $tokens
-     *
-     * @return string                  The code representing the function.
-     * @throws ClosureAnalysisException on invalid code.
-     */
-    private function validateTokens(array $tokens)
-    {
-        $validTokens = [];
-        $tokenIndex = 0;
-        $braceLevel = 0;
-        $parsingComplete = false;
-
-        // Parse the code looking for the end of the function.
-        while (!$parsingComplete) {
-            $token = $tokens[$tokenIndex++];
-
-            // Collect all the tokens within the function's code block.
-            if ($token->isOpeningBrace()) {
-                $braceLevel++;
-            } elseif ($token->isClosingBrace()) {
-                $braceLevel--;
-                if ($braceLevel === 0) {
-                    $parsingComplete = true;
-                }
-            }
-
-            $validTokens[] = $token;
-        }
-
-        // Ensure that there are no other functions defined, as this would
-        // indicate ambiguity in the parsed code.
-        if ($remainingTokens = array_slice($tokens, $tokenIndex)) {
-            array_walk($remainingTokens, function (Token $token) {
-                if ($token->matches(T_FUNCTION)) {
-                    throw new ClosureAnalysisException('Multiple closures were '
-                        . 'declared on the same line of code. Cannot determine '
-                        . 'which closure was the intended target.');
-                }
-            });
-        }
-
-        return $validTokens;
+        return token_get_all($code);
     }
 
     protected function determineContext(array &$data)
     {
-        $context = [];
-        $varNames = [];
-        $insideUse = false;
-        $refs = 0;
-
-        // Parse the variable names from the "use" construct by scanning tokens.
-        /** @var $token Token */
-        foreach ($data['tokens'] as $token) {
-            if (!$insideUse && $token->matches(T_USE)) {
-                // Set flag indicating that "use" construct has been reached.
-                $insideUse = true;
-            } elseif ($insideUse && $token->matches('&')) {
-                $refs++;
-            } elseif ($insideUse && $token->matches(T_VARIABLE)) {
-                // For variables found within the "use" construct, get the name.
-                $varNames[] = trim($token->getCode(), '$ ');
-            } elseif ($insideUse && $token->isClosingParenthesis()) {
-                // Finish once a closing parenthesis is encountered.
-                break;
-            }
-        }
-
         // Get the values of the variables that are closed upon in "use".
-        $varValues = $data['reflection']->getStaticVariables();
+        $values = $data['reflection']->getStaticVariables();
 
         // Construct the context by combining the variable names and values.
-        foreach ($varNames as $varName) {
-            if (isset($varValues[$varName])) {
-                $context[$varName] = $varValues[$varName];
+        foreach ($data['context'] as $name => &$value) {
+            if (isset($values[$name])) {
+                $value = $values[$name];
             }
         }
-
-        $data['context'] = $context;
-        $data['hasRefs'] = ($refs > 0);
     }
 }

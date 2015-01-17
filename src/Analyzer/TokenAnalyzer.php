@@ -35,11 +35,11 @@ class TokenAnalyzer extends ClosureAnalyzer
                 case 1:
                     $data['tokens'][] = $token;
                     if ($insideUse) {
-                        if ($token->matches('&')) {
-                            $data['hasRefs'] = true;
-                        } elseif ($token->matches(T_VARIABLE)) {
+                        if ($token->matches(T_VARIABLE)) {
                             $varName = trim($token->getCode(), '$ ');
                             $data['context'][$varName] = null;
+                        } elseif ($token->matches('&')) {
+                            $data['hasRefs'] = true;
                         }
                     } elseif ($token->matches(T_USE)) {
                         $insideUse++;

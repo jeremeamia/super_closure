@@ -125,20 +125,26 @@ should choose the fastest analyzer that supports the features you need.
       <td>--</td>
     </tr>
     <tr>
-      <th>Performance</th>
-      <th><em>Slow</em></th>
-      <th><em>Fast</em></th>
+      <td>Performance</td>
+      <td><em>Slow</em></td>
+      <td><em>Fast</em></td>
     </tr>
   </tbody>
 </table>
 
-You can choose the analyzer you want to use when you instantiate the `Serializer`.
+You can choose the analyzer you want to use when you instantiate the
+`Serializer`. If you do not specify one, the `AstAnalyzer` is used by default,
+since it has the most capabilities.
 
 ```php
 use SuperClosure\Serializer;
 use SuperClosure\Analyzer\AstAnalyzer;
 use SuperClosure\Analyzer\TokenAnalyzer;
 
+// Use the default analyzer.
+$serializer = new Serializer();
+
+// Explicitly choose an analyzer.
 $serializer = new Serializer(new AstAnalyzer());
 // OR
 $serializer = new Serializer(new TokenAnalyzer());

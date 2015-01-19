@@ -17,30 +17,26 @@ message from your friendly, neighborhood PHP Runtime:
 > Uncaught exception 'Exception' with message 'Serialization of 'Closure' is
 > not allowed'
 
-However, even though it is not "allowed" by PHP, the SuperClosure library—
-[jeremeamia/superclosure][3] on Packagist—makes it **possible** to circumvent
-this seemingly arbitrary limitation.
+However, even though it is not "allowed" by PHP, the SuperClosure library makes
+it **possible** to circumvent this limitation.
 
 ```php
-require 'vendor/autoload.php';
+use SuperClosure\Serializer;
 
-$serializer = new SuperClosure\Serializer()
+$serializer = new Serializer()
 
 $greeting = 'Hello';
 $hello = function ($name = 'World') use ($greeting) {
     echo "{$greeting}, {$name}!\n";
 };
 
-$hello();
-//> Hello, World!
 $hello('Jeremy');
 //> Hello, Jeremy!
 
-$serialized = $serializer->serialize($helloWorld);
+$serialized = $serializer->serialize($hello);
+
 $unserialized = $serializer->unserialize($serialized);
 
-$unserialized();
-//> Hello, World!
 $unserialized('Jeremy');
 //> Hello, Jeremy!
 ```
@@ -48,6 +44,12 @@ $unserialized('Jeremy');
 Yep, pretty cool, right?
 
 ### Features
+
+SuperClosure comes with two different "Closure Analyzers", which each support
+different features regarding the serialization of closures. The `TokenAnalyzer`
+is not as robust as the `AstAnalyzer`, but it is around 25 times faster. Using
+the table below, and keeping in mind what your closure's code looks like, you
+should choose the fastest analyzer that supports the features you need.
 
 <table>
   <thead>
@@ -122,15 +124,25 @@ Yep, pretty cool, right?
       <td>Yes</td>
       <td>--</td>
     </tr>
-  </tbody>
-  <tfoot>
     <tr>
       <th>Performance</th>
       <th><em>Slow</em></th>
       <th><em>Fast</em></th>
     </tr>
-  </tfoot>
+  </tbody>
 </table>
+
+You can choose the analyzer you want to use when you instantiate the `Serializer`.
+
+```php
+use SuperClosure\Serializer;
+use SuperClosure\Analyzer\AstAnalyzer;
+use SuperClosure\Analyzer\TokenAnalyzer;
+
+$serializer = new Serializer(new AstAnalyzer());
+// OR
+$serializer = new Serializer(new TokenAnalyzer());
+```
 
 ### Caveats
 
@@ -175,12 +187,16 @@ create a whole class for a job that might be really simple.
 
 ## Tell me more about how this came about
 
-It all started way back in the beginning of 2010 when PHP 5.3 was starting to
-gain traction. I wrote a blog post called [Extending PHP 5.3 Closures with
-Serialization and Reflection][4] on my former employers' blog, [HTMList][5],
-showing how it can be done. Since then I've made a few iterations on the code,
-and this most recent iteration brings with it a generally more robust solution
-that takes advantage of the fabulous [nikic/php-parser][6] library.
+It all started  back in the beginning of 2010 when PHP 5.3 was starting to
+gain traction. I set out to prove that serializing a closure could be done,
+despite that PHP wouldn't let me do it. I wrote a blog post called [Extending
+PHP 5.3 Closures with Serialization and Reflection][4] on my former employers'
+blog, [HTMList][5], showing how it could be done. I also released the code on
+GitHub.
+
+Since then, I've made a few iterations on the code, and the most recent
+iterations have been more robust, thanks to the usage of the fabulous
+[nikic/php-parser][6] library.
 
 ## Who is using SuperClosure?
 

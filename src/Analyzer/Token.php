@@ -1,10 +1,8 @@
 <?php namespace SuperClosure\Analyzer;
 
 /**
- * The Token object is an object-oriented abstraction representing a single item
- * from the results of the `get_token_all()` function, which is part of PHP
- * tokenizer, or lexical scanner. There are also many convenience methods
- * revolved around the token's identity.
+ * A Token object is a normalized token from the result of the `get_token_all()`
+ * function, which is part of PHP tokenizer, or lexical scanner.
  *
  * @link http://us2.php.net/manual/en/tokens.php
  */
@@ -92,56 +90,13 @@ class Token
     }
 
     /**
-     * Determines whether the token is an opening brace.
-     *
-     * @return bool True if the token is an opening brace.
-     */
-    public function isOpeningBrace()
-    {
-        return ($this->code === '{'
-            || $this->name === 'T_CURLY_OPEN'
-            || $this->name === 'T_DOLLAR_OPEN_CURLY_BRACES'
-        );
-    }
-
-    /**
-     * Determines whether the token is an closing brace.
-     *
-     * @return bool True if the token is an closing brace.
-     */
-    public function isClosingBrace()
-    {
-        return ($this->code === '}');
-    }
-
-    /**
-     * Determines whether the token is an opening parenthesis.
-     *
-     * @return bool True if the token is an opening parenthesis.
-     */
-    public function isOpeningParenthesis()
-    {
-        return ($this->code === '(');
-    }
-
-    /**
-     * Determines whether the token is an closing parenthesis.
-     *
-     * @return bool True if the token is an closing parenthesis.
-     */
-    public function isClosingParenthesis()
-    {
-        return ($this->code === ')');
-    }
-
-    /**
      * Determines if the token's value/code is equal to the specified value.
      *
      * @param mixed $value The value to check.
      *
      * @return bool True if the token is equal to the value.
      */
-    public function matches($value)
+    public function is($value)
     {
         return ($this->code === $value || $this->value === $value);
     }

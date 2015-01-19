@@ -133,4 +133,14 @@ class SerializableClosure implements \Serializable
             @eval("\$this->closure = {$this->temp['code']};");
         }
     }
+
+    /**
+     * Returns closure data for `var_dump()`.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return $this->serializer->getClosureData($this->closure);
+    }
 }

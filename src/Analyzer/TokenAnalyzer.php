@@ -26,7 +26,7 @@ class TokenAnalyzer extends ClosureAnalyzer
             switch ($step) {
                 // Handle tokens before the function declaration.
                 case 0:
-                    if ($token->matches(T_FUNCTION)) {
+                    if ($token->is(T_FUNCTION)) {
                         $data['tokens'][] = $token;
                         $step++;
                     }
@@ -35,16 +35,16 @@ class TokenAnalyzer extends ClosureAnalyzer
                 case 1:
                     $data['tokens'][] = $token;
                     if ($insideUse) {
-                        if ($token->matches(T_VARIABLE)) {
-                            $varName = trim($token->getCode(), '$ ');
+                        if ($token->is(T_VARIABLE)) {
+                            $varName = trim($token, '$ ');
                             $data['context'][$varName] = null;
-                        } elseif ($token->matches('&')) {
+                        } elseif ($token->is('&')) {
                             $data['hasRefs'] = true;
                         }
-                    } elseif ($token->matches(T_USE)) {
+                    } elseif ($token->is(T_USE)) {
                         $insideUse++;
                     }
-                    if ($token->isOpeningBrace()) {
+                    if ($token->is('{')) {
                         $step++;
                         $braceLevel++;
                     }
@@ -52,9 +52,9 @@ class TokenAnalyzer extends ClosureAnalyzer
                 // Handle tokens inside the function body.
                 case 2:
                     $data['tokens'][] = $token;
-                    if ($token->isOpeningBrace()) {
+                    if ($token->is('{')) {
                         $braceLevel++;
-                    } elseif ($token->isClosingBrace()) {
+                    } elseif ($token->is('}')) {
                         $braceLevel--;
                         if ($braceLevel === 0) {
                             $step++;
@@ -63,7 +63,7 @@ class TokenAnalyzer extends ClosureAnalyzer
                     break;
                 // Handle tokens after the function declaration.
                 case 3:
-                    if ($token->matches(T_FUNCTION)) {
+                    if ($token->is(T_FUNCTION)) {
                         throw new ClosureAnalysisException('Multiple closures '
                             . 'were declared on the same line of code. Could '
                             . 'determine which closure was the intended target.'

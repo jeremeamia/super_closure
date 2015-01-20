@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 $greeting = 'Hello';
 $helloWorld = function ($name = 'World') use ($greeting) {
@@ -12,7 +12,7 @@ $helloWorld();
 $helloWorld('Jeremy');
 //> Hello, Jeremy!
 
-$serializer = new SuperClosure\Serializer;
+$serializer = new SuperClosure\Serializer();
 $serialized = $serializer->serialize($helloWorld);
 $unserialized = $serializer->unserialize($serialized);
 

@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
+
+namespace SuperClosure\Analyzer;
 
 use SuperClosure\Exception\ClosureAnalysisException;
 
@@ -7,8 +9,9 @@ abstract class ClosureAnalyzer
     /**
      * @param \Closure $closure
      *
-     * @return array
      * @throws ClosureAnalysisException
+     *
+     * @return array
      */
     public function analyze(\Closure $closure)
     {

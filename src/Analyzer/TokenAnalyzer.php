@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
+
+namespace SuperClosure\Analyzer;
 
 use SuperClosure\Exception\ClosureAnalysisException;
 
@@ -65,8 +67,8 @@ class TokenAnalyzer extends ClosureAnalyzer
                 case 3:
                     if ($token->is(T_FUNCTION)) {
                         throw new ClosureAnalysisException('Multiple closures '
-                            . 'were declared on the same line of code. Could '
-                            . 'determine which closure was the intended target.'
+                            .'were declared on the same line of code. Could '
+                            .'determine which closure was the intended target.'
                         );
                     }
                     break;
@@ -94,7 +96,7 @@ class TokenAnalyzer extends ClosureAnalyzer
 
         $code = trim($code);
         if (strpos($code, '<?php') !== 0) {
-            $code = "<?php\n" . $code;
+            $code = "<?php\n".$code;
         }
 
         return token_get_all($code);

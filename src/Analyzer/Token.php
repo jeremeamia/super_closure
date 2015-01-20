@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
+
+namespace SuperClosure\Analyzer;
 
 /**
  * A Token object is a normalized token from the result of the `get_token_all()`
@@ -9,22 +11,30 @@
 class Token
 {
     /**
-     * @var string The token name.
+     * The token name.
+     *
+     * @var string
      */
     private $name;
 
     /**
-     * @var int|null The token's integer value.
+     * The token's integer value.
+     *
+     * @var int|null
      */
     private $value;
 
     /**
-     * @var string The parsed code of the token.
+     * The parsed code of the token.
+     *
+     * @var string
      */
     private $code;
 
     /**
-     * @var int|null The line number of the token in the original code.
+     * The line number of the token in the original code.
+     *
+     * @var int|null
      */
     private $line;
 

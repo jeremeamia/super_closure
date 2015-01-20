@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Test\Integ\Fixture;
+<?php
+
+namespace SuperClosure\Test\Integ\Fixture;
 
 class Foo
 {
@@ -11,7 +13,7 @@ class Foo
 
     public function getClosure()
     {
-        return function() {
+        return function () {
             return $this->bar;
         };
     }

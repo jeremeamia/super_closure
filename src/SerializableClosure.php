@@ -1,5 +1,10 @@
-<?php namespace SuperClosure;
+<?php
 
+namespace SuperClosure;
+
+use Closure;
+use Exception;
+use Serializable;
 use SuperClosure\Exception\ClosureUnserializationException;
 
 /**
@@ -9,31 +14,45 @@ use SuperClosure\Exception\ClosureUnserializationException;
  * `eval()` function, you can serialize a closure, unserialize it somewhere
  * else (even a different PHP process), and execute it.
  */
-class SerializableClosure implements \Serializable
+class SerializableClosure implements Serializable
 {
-    /** @var \Closure Closure being wrapped for serialization. */
+    /**
+     * The Closure being wrapped for serialization.
+     *
+     * @var Closure Closure being wrapped for serialization.
+     */
     private $closure;
 
-    /** @var Serializer Serializer object doing the serialization work. */
+    /**
+     * The Serializer object doing the serialization work.
+     *
+     * @var Serializer
+     */
     private $serializer;
 
-    /** @var array Temporary data container used during unserialization. */
+    /**
+     * The temporary data container used during unserialization.
+     *
+     * @var array
+     */
     private $temp;
 
     /**
-     * @param \Closure   $closure
+     * Create a new serializable closure instance.
+     *
+     * @param Closure    $closure
      * @param Serializer $serializer
      */
-    public function __construct(\Closure $closure, Serializer $serializer = null)
+    public function __construct(Closure $closure, Serializer $serializer = null)
     {
         $this->closure = $closure;
-        $this->serializer = $serializer ?: new Serializer;
+        $this->serializer = $serializer ?: new Serializer();
     }
 
     /**
      * Return the original closure object.
      *
-     * @return \Closure
+     * @return Closure
      */
     public function getClosure()
     {
@@ -61,20 +80,20 @@ class SerializableClosure implements \Serializable
     /**
      * Serializes the code and context of the closure.
      *
-     * @return string
+     * @return string|null
      */
     public function serialize()
     {
         try {
             return serialize($this->serializer->getClosureData($this->closure, true));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             trigger_error(
-                'Serialization of closure failed: ' . $e->getMessage(),
+                'Serialization of closure failed: '.$e->getMessage(),
                 E_USER_NOTICE
             );
             // Note: The serialize() method of Serializable must return a string
             // or null and cannot throw exceptions.
-            return null;
+            return;
         }
     }
 
@@ -96,7 +115,7 @@ class SerializableClosure implements \Serializable
         $this->temp = unserialize($serialized);
         $this->serializer = $this->temp['serializer'];
         $this->reconstructClosure();
-        if (!$this->closure instanceof \Closure) {
+        if (!$this->closure instanceof Closure) {
             throw new ClosureUnserializationException(
                 'The closure is corrupted and cannot be unserialized.'
             );
@@ -114,6 +133,8 @@ class SerializableClosure implements \Serializable
     }
 
     /**
+     * Reconstruct the closure.
+     *
      * HERE BE DRAGONS!
      *
      * The infamous `eval()` is used in this method, along with `extract()`,

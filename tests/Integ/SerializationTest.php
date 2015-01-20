@@ -96,8 +96,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testCannotSerializeClosureWhenOneTheSameLineAsAnother()
     {
-        $closure = function ($a) {return$a;};
-        function ($b) {return$b;};
+        $closure = function ($a) {return$a;};function ($b) {return$b;};
 
         $results = $this->getResults($closure, [5]);
         $this->assertEquals(5, $results['original']);

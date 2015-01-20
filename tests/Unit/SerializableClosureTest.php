@@ -31,8 +31,7 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
     public function testSerializationTriggersNoticeOnBadClosure()
     {
         $formerLevel = error_reporting(-1);
-        $closure = function () {};
-        function () {};
+        $closure = function () {};function () {};
         $this->setExpectedException('PHPUnit_Framework_Error_Notice');
         $sc = new SerializableClosure($closure, $this->getMockSerializer(true));
         $serialization = serialize($sc);
@@ -42,8 +41,7 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
     public function testSerializationReturnsNullOnBadClosure()
     {
         $formerLevel = error_reporting(0);
-        $closure = function () {};
-        function () {};
+        $closure = function () {};function () {};
         $sc = new SerializableClosure($closure, $this->getMockSerializer(true));
         $serialization = serialize($sc);
         $this->assertEquals('N;', $serialization);

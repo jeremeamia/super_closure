@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 class IncreMaker
 {
@@ -21,11 +21,11 @@ class IncreMaker
     }
 }
 
-$serializer = new SuperClosure\Serializer;
-$increMaker = (new IncreMaker)->setStep(5);
+$serializer = new SuperClosure\Serializer();
+$increMaker = (new IncreMaker())->setStep(5);
 $increment = $increMaker->getIncrementFn();
 
-echo $increment(6) . "\n";
+echo $increment(6)."\n";
 //> 11
 
 $data = $serializer->getClosureData($increment);
@@ -33,8 +33,8 @@ assert($data['binding'] === $increMaker);
 assert($data['scope'] === 'IncreMaker');
 
 $serialized = $serializer->serialize($increment);
-echo $serialized . "\n";
+echo $serialized."\n";
 $unserialized = $serializer->unserialize($serialized);
 
-echo $unserialized(6) . "\n";
+echo $unserialized(6)."\n";
 //> 11

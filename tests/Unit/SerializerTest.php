@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Test\Unit;
+<?php
+
+namespace SuperClosure\Test\Unit;
 
 use SuperClosure\Analyzer\ClosureAnalyzer;
 use SuperClosure\Analyzer\TokenAnalyzer;
@@ -25,6 +27,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $adjustment = 2;
         $fn = function ($n) use (&$fn, $adjustment) {
             $result = $n > 1 ? $n * $fn($n - 1) : 1;
+
             return $result + $adjustment;
         };
 

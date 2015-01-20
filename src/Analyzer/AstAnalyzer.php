@@ -1,15 +1,17 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
 
-use SuperClosure\Analyzer\Visitor\ThisDetectorVisitor;
-use SuperClosure\Exception\ClosureAnalysisException;
-use SuperClosure\Analyzer\Visitor\ClosureLocatorVisitor;
-use SuperClosure\Analyzer\Visitor\MagicConstantVisitor;
-use PhpParser\NodeTraverser;
-use PhpParser\PrettyPrinter\Standard as NodePrinter;
+namespace SuperClosure\Analyzer;
+
 use PhpParser\Error as ParserError;
+use PhpParser\Lexer\Emulative as EmulativeLexer;
+use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser as CodeParser;
-use PhpParser\Lexer\Emulative as EmulativeLexer;
+use PhpParser\PrettyPrinter\Standard as NodePrinter;
+use SuperClosure\Analyzer\Visitor\ClosureLocatorVisitor;
+use SuperClosure\Analyzer\Visitor\MagicConstantVisitor;
+use SuperClosure\Analyzer\Visitor\ThisDetectorVisitor;
+use SuperClosure\Exception\ClosureAnalysisException;
 
 /**
  * Uses reflection and AST-based code parser to analyze a closure and determine
@@ -28,14 +30,14 @@ class AstAnalyzer extends ClosureAnalyzer
 
         // Make a second pass through the AST, but only through the closure's
         // nodes, to resolve any magic constants to literal values.
-        $traverser = new NodeTraverser;
+        $traverser = new NodeTraverser();
         $traverser->addVisitor(new MagicConstantVisitor($data['location']));
-        $traverser->addVisitor($thisDetector = new ThisDetectorVisitor);
+        $traverser->addVisitor($thisDetector = new ThisDetectorVisitor());
         $data['ast'] = $traverser->traverse([$data['ast']])[0];
         $data['hasThis'] = $thisDetector->detected;
 
         // Bounce the updated AST down to a string representation of the code.
-        $data['code'] = (new NodePrinter)->prettyPrint([$data['ast']]);
+        $data['code'] = (new NodePrinter())->prettyPrint([$data['ast']]);
     }
 
     /**
@@ -51,8 +53,8 @@ class AstAnalyzer extends ClosureAnalyzer
             $locator = new ClosureLocatorVisitor($data['reflection']);
             $fileAst = $this->getFileAst($data['reflection']);
 
-            $fileTraverser = new NodeTraverser;
-            $fileTraverser->addVisitor(new NameResolver);
+            $fileTraverser = new NodeTraverser();
+            $fileTraverser->addVisitor(new NameResolver());
             $fileTraverser->addVisitor($locator);
             $fileTraverser->traverse($fileAst);
         } catch (ParserError $e) {
@@ -82,13 +84,15 @@ class AstAnalyzer extends ClosureAnalyzer
      *
      * @param array $data
      */
-    protected function determineContext(array &$data) {
+    protected function determineContext(array &$data)
+    {
         // Get the variable names defined in the AST
         $refs = 0;
         $vars = array_map(function ($node) use (&$refs) {
             if ($node->byRef) {
                 $refs++;
             }
+
             return $node->var;
         }, $data['ast']->uses);
         $data['hasRefs'] = ($refs > 0);
@@ -108,6 +112,7 @@ class AstAnalyzer extends ClosureAnalyzer
      * @param \ReflectionFunction $reflection
      *
      * @throws ClosureAnalysisException
+     *
      * @return \PhpParser\Node[]
      */
     private function getFileAst(\ReflectionFunction $reflection)
@@ -119,7 +124,7 @@ class AstAnalyzer extends ClosureAnalyzer
             );
         }
 
-        $parser = new CodeParser(new EmulativeLexer);
+        $parser = new CodeParser(new EmulativeLexer());
 
         return $parser->parse(file_get_contents($fileName));
     }

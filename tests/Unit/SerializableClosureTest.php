@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Test\Unit;
+<?php
+
+namespace SuperClosure\Test\Unit;
 
 use SuperClosure\Exception\ClosureAnalysisException;
 use SuperClosure\SerializableClosure;
@@ -70,7 +72,7 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
 
         if ($error) {
             $serializer->method('getClosureData')->willThrowException(
-                new ClosureAnalysisException
+                new ClosureAnalysisException()
             );
         } else {
             $serializer->method('getClosureData')->willReturn([

@@ -1,5 +1,11 @@
-<?php namespace SuperClosure;
+<?php
 
+namespace SuperClosure;
+
+use Closure;
+use Serializable;
+use ReflectionFunction;
+use ReflectionObject;
 use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
 
@@ -7,38 +13,53 @@ class Serializer
 {
     const RECURSION = "\0RECURSION\0";
 
+    /**
+     * The data that should be kept.
+     *
+     * @var array
+     */
     private static $dataToKeep = [
         'code'    => true,
         'context' => true,
         'binding' => true,
-        'scope'   => true
+        'scope'   => true,
     ];
 
-    /** @var ClosureAnalyzer */
+    /**
+     * The closure analyzer instance.
+     *
+     * @var ClosureAnalyzer
+     */
     private $analyzer;
 
     /**
-     * @param ClosureAnalyzer $analyzer
+     * Create a new serializer instance.
+     *
+     * @param ClosureAnalyzer|null $analyzer
      */
     public function __construct(ClosureAnalyzer $analyzer = null)
     {
-        $this->analyzer = $analyzer ?: new DefaultAnalyzer;
+        $this->analyzer = $analyzer ?: new DefaultAnalyzer();
     }
 
     /**
-     * @param \Closure $closure
+     * Serialize the given closure.
+     *
+     * @param Closure $closure
      *
      * @return string
      */
-    public function serialize(\Closure $closure)
+    public function serialize(Closure $closure)
     {
         return serialize(new SerializableClosure($closure, $this));
     }
 
     /**
+     * Unserialize the given serialized closure.
+     *
      * @param string $serialized
      *
-     * @return \Closure
+     * @return Closure
      */
     public function unserialize($serialized)
     {
@@ -49,12 +70,14 @@ class Serializer
     }
 
     /**
-     * @param \Closure $closure
-     * @param bool     $forSerialization
+     * Get the closure data for the given closure.
      *
-     * @return \Closure
+     * @param Closure $closure
+     * @param bool    $forSerialization
+     *
+     * @return Closure
      */
-    public function getClosureData(\Closure $closure, $forSerialization = false)
+    public function getClosureData(Closure $closure, $forSerialization = false)
     {
         // Use the closure analyzer to get data about the closure.
         $data = $this->analyzer->analyze($closure);
@@ -72,7 +95,7 @@ class Serializer
 
             // Wrap any other closures within the context.
             foreach ($data['context'] as &$value) {
-                if ($value instanceof \Closure) {
+                if ($value instanceof Closure) {
                     $value = ($value === $closure)
                         ? self::RECURSION
                         : new SerializableClosure($value, $this);
@@ -87,13 +110,15 @@ class Serializer
     }
 
     /**
+     * Wrap all nested closures.
+     *
      * @param mixed $data
      */
     public function wrapClosuresWithin(&$data)
     {
         // Wrap any closures, and apply wrapClosures to their bound objects.
-        if ($data instanceof \Closure) {
-            $reflection = new \ReflectionFunction($data);
+        if ($data instanceof Closure) {
+            $reflection = new ReflectionFunction($data);
             if ($binding = $reflection->getClosureThis()) {
                 $this->wrapClosuresWithin($binding);
                 if ($scope = $reflection->getClosureScopeClass()) {
@@ -111,8 +136,8 @@ class Serializer
             }
         // Apply wrapClosures() to all members of objects that don't already
         // have specific serialization handlers defined.
-        } elseif (is_object($data) && !$data instanceof \Serializable) {
-            $reflection = new \ReflectionObject($data);
+        } elseif (is_object($data) && !$data instanceof Serializable) {
+            $reflection = new ReflectionObject($data);
             if (!$reflection->hasMethod('__sleep')) {
                 foreach ($reflection->getProperties() as $property) {
                     if ($property->isPrivate() || $property->isProtected()) {

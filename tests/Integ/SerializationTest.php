@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Test\Integ;
+<?php
+
+namespace SuperClosure\Test\Integ;
 
 use SuperClosure\Analyzer\AstAnalyzer;
 use SuperClosure\Analyzer\TokenAnalyzer;
@@ -60,7 +62,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
     public function testSerializeAOneLineClosure()
     {
         $c = $d = 5;
-        $closure = function($a,$b)use($c,$d){return$a+$b+$c+$d;};
+        $closure = function ($a, $b) use ($c, $d) {return$a+$b+$c+$d;};
 
         $results = $this->getResults($closure, [2, 8]);
         $this->assertAllEquals(20, $results);
@@ -94,7 +96,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testCannotSerializeClosureWhenOneTheSameLineAsAnother()
     {
-        $closure = function($a){return$a;};function($b){return$b;};
+        $closure = function ($a) {return$a;};function ($b) {return$b;};
 
         $results = $this->getResults($closure, [5]);
         $this->assertEquals(5, $results['original']);
@@ -141,7 +143,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $results = ['original' => call_user_func_array($closure, $args)];
 
         try {
-            $serializer = new Serializer(new AstAnalyzer);
+            $serializer = new Serializer(new AstAnalyzer());
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['ast'] = call_user_func_array($unserialized, $args);
@@ -150,7 +152,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         }
 
         try {
-            $serializer = new Serializer(new TokenAnalyzer);
+            $serializer = new Serializer(new TokenAnalyzer());
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['token'] = call_user_func_array($unserialized, $args);

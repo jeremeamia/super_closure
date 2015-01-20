@@ -1,12 +1,14 @@
-<?php namespace SuperClosure\Analyzer\Visitor;
+<?php
 
-use SuperClosure\Exception\ClosureAnalysisException;
+namespace SuperClosure\Analyzer\Visitor;
+
+use PhpParser\Node as AstNode;
+use PhpParser\Node\Expr\Closure as ClosureNode;
+use PhpParser\Node\Stmt\Class_ as ClassNode;
 use PhpParser\Node\Stmt\Namespace_ as NamespaceNode;
 use PhpParser\Node\Stmt\Trait_ as TraitNode;
-use PhpParser\Node\Stmt\Class_ as ClassNode;
-use PhpParser\Node\Expr\Closure as ClosureNode;
-use PhpParser\Node as AstNode;
 use PhpParser\NodeVisitorAbstract as NodeVisitor;
+use SuperClosure\Exception\ClosureAnalysisException;
 
 /**
  * This is a visitor that extends the nikic/php-parser library and looks for a
@@ -66,10 +68,10 @@ final class ClosureLocatorVisitor extends NodeVisitor
         if ($node instanceof ClosureNode) {
             if ($node->getAttribute('startLine') == $this->location['line']) {
                 if ($this->closureNode) {
-                    $line = $this->location['file'] . ':' . $node->getAttribute('startLine');
-                    throw new ClosureAnalysisException( "Two closures were "
-                        . "declared on the same line ({$line}) of code. Cannot "
-                        . "determine which closure was the intended target.");
+                    $line = $this->location['file'].':'.$node->getAttribute('startLine');
+                    throw new ClosureAnalysisException("Two closures were "
+                        ."declared on the same line ({$line}) of code. Cannot "
+                        ."determine which closure was the intended target.");
                 } else {
                     $this->closureNode = $node;
                 }
@@ -95,10 +97,10 @@ final class ClosureLocatorVisitor extends NodeVisitor
     public function afterTraverse(array $nodes)
     {
         if ($this->location['class']) {
-            $this->location['class'] = $this->location['namespace'] . '\\' . $this->location['class'];
+            $this->location['class'] = $this->location['namespace'].'\\'.$this->location['class'];
             $this->location['method'] = "{$this->location['class']}::{$this->location['function']}";
         } elseif ($this->location['trait']) {
-            $this->location['trait'] = $this->location['namespace'] . '\\' . $this->location['trait'];
+            $this->location['trait'] = $this->location['namespace'].'\\'.$this->location['trait'];
             $this->location['method'] = "{$this->location['trait']}::{$this->location['function']}";
         }
 

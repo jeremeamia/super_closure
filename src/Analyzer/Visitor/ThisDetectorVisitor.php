@@ -1,4 +1,6 @@
-<?php namespace SuperClosure\Analyzer\Visitor;
+<?php
+
+namespace SuperClosure\Analyzer\Visitor;
 
 use PhpParser\Node as AstNode;
 use PhpParser\Node\Expr\Variable as VariableNode;

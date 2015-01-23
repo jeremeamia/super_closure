@@ -3,6 +3,10 @@
 use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
 
+/**
+ * Serializer is used to serialize Closure objects, abstracting away all the
+ * details, impossibilities, and scary things that happen within.
+ */
 class Serializer implements SerializerInterface
 {
     /** @var string Special value marking a recursive reference to a closure. */
@@ -82,34 +86,27 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * Recursively traverses and wraps all Closure objects within the value
-     * provided in order to make the value (which is assumed to contain
-     * closures) serializable.
+     * Recursively traverses and wraps all Closure objects within the value.
      *
-     * @param mixed $data Any data that contains closures.
+     * NOTE: THIS METHOD MAY NOT WORK IN ALL SITUATIONS, SO BE CAREFUL.
+     *
+     * @param mixed $data Any variable that contains closures.
      */
     public static function wrapClosures(&$data, SerializerInterface $serializer)
     {
-        // Wrap any closures, and apply wrapClosures() to their bound objects.
         if ($data instanceof \Closure) {
             $reflection = new \ReflectionFunction($data);
             if ($binding = $reflection->getClosureThis()) {
                 self::wrapClosures($binding, $serializer);
-                if ($scope = $reflection->getClosureScopeClass()) {
-                    $scope = $scope->getName();
-                } else {
-                    $scope = 'static';
-                }
-                $data->bindTo($binding, $scope);
+                $scope = $reflection->getClosureScopeClass();
+                $scope = $scope ? $scope->getName() : 'static';
+                $data = $data->bindTo($binding, $scope);
             }
             $data = new SerializableClosure($data, $serializer);
-        // Apply wrapClosures() to all values in arrays.
-        } elseif (is_array($data) || $data instanceof \stdClass) {
+        } elseif (is_array($data) || $data instanceof \stdClass || $data instanceof \Traversable) {
             foreach ($data as &$value) {
                 self::wrapClosures($value, $serializer);
             }
-        // Apply wrapClosures() to all members of objects that don't already
-        // have specific serialization handlers defined.
         } elseif (is_object($data) && !$data instanceof \Serializable) {
             $reflection = new \ReflectionObject($data);
             if (!$reflection->hasMethod('__sleep')) {

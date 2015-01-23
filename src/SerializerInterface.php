@@ -1,8 +1,7 @@
 <?php namespace SuperClosure;
 
 /**
- * Serializer is used to serialize Closure objects, abstracting away all the
- * details, impossibilities, and scary things that happen within.
+ * Interface for a serializer that is used to serialize Closure objects.
  */
 interface SerializerInterface
 {

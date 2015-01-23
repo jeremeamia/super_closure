@@ -1,6 +1,5 @@
 <?php namespace SuperClosure\Test\Unit;
 
-use SuperClosure\Analyzer\ClosureAnalyzer;
 use SuperClosure\Analyzer\TokenAnalyzer;
 use SuperClosure\Serializer;
 
@@ -48,21 +47,45 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(in_array(Serializer::RECURSION, $data['context']));
         $this->assertNull($data['binding']);
         $this->assertEquals(__CLASS__, $data['scope']);
-        $this->assertArrayNotHasKey('tokens', $data);
+        $this->assertArrayNotHasKey('reflection', $data);
         $this->assertArrayHasKey('serializer', $data);
     }
 
-    /**
-     * @return ClosureAnalyzer
-     */
-    private function getMockAnalyzer(array $data)
+    public function testWrappingClosuresWithinVariables()
     {
-        $analyzer = $this->getMockBuilder('SuperClosure\Analyzer\ClosureAnalyzer')
-            ->setMethods(['analyze'])
-            ->getMockForAbstractClass();
+        $serializer = new Serializer(
+            $this->getMockForAbstractClass('SuperClosure\Analyzer\ClosureAnalyzer')
+        );
 
-        $analyzer->method('analyze')->willReturn($data);
+        $value1 = function () {};
+        Serializer::wrapClosures($value1, $serializer);
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $value1);
 
-        return $analyzer;
+        $value2 = ['fn' => function () {}];
+        Serializer::wrapClosures($value2, $serializer);
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $value2['fn']);
+
+        $value3 = new \stdClass;
+        $value3->fn = function () {};
+        Serializer::wrapClosures($value3, $serializer);
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $value3->fn);
+
+        $value4 = new \ArrayObject([function () {}]);
+        Serializer::wrapClosures($value4, $serializer);
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $value4[0]);
+
+        $thing = new Serializer();
+        $fn = function () {return $this->analyzer;};
+
+        $value5 = $fn->bindTo($thing, 'SuperClosure\Serializer');
+        Serializer::wrapClosures($value5, $serializer);
+        $reflection = new \ReflectionFunction($value5->getClosure());
+        $this->assertSame($thing, $reflection->getClosureThis());
+        $this->assertEquals(get_class($thing), $reflection->getClosureScopeClass()->getName());
+
+        $value6 = $fn->bindTo($thing);
+        Serializer::wrapClosures($value6, $serializer);
+        $reflection = new \ReflectionFunction($value6->getClosure());
+        $this->assertEquals(__CLASS__, $reflection->getClosureScopeClass()->getName());
     }
 }

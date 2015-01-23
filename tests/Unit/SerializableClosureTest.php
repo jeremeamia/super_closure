@@ -57,6 +57,21 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testUnserializationFailsIfClosureCorrupt()
+    {
+        $serialized = file_get_contents(__DIR__ . '/serialized-corrupt.txt');
+        $this->setExpectedException('SuperClosure\Exception\ClosureUnserializationException');
+        unserialize($serialized);
+    }
+
+    public function testUnserializationWorksForRecursiveClosures()
+    {
+        $serialized = file_get_contents(__DIR__ . '/serialized-recursive.txt');
+        /** @var \Closure $unserialized */
+        $unserialized = unserialize($serialized);
+        $this->assertEquals(120, $unserialized(5));
+    }
+
     /**
      * @param bool $error
      *

@@ -1,4 +1,4 @@
-# PHP SuperClosure
+# PHP SuperClosure – Version 2
 
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]

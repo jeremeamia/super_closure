@@ -70,9 +70,11 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         Serializer::wrapClosures($value3, $serializer);
         $this->assertInstanceOf('SuperClosure\SerializableClosure', $value3->fn);
 
-        $value4 = new \ArrayObject([function () {}]);
-        Serializer::wrapClosures($value4, $serializer);
-        $this->assertInstanceOf('SuperClosure\SerializableClosure', $value4[0]);
+        if (!defined('HHVM_VERSION')) {
+            $value4 = new \ArrayObject([function () {}]);
+            Serializer::wrapClosures($value4, $serializer);
+            $this->assertInstanceOf('SuperClosure\SerializableClosure', $value4[0]);
+        }
 
         $thing = new Serializer();
         $fn = function () {return $this->analyzer;};

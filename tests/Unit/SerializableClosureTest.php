@@ -53,7 +53,7 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $sc = new SerializableClosure($closure, $serializer);
         $this->assertEquals(
             $sc->__debugInfo(),
-            $serializer->getClosureData($closure)
+            $serializer->getData($closure)
         );
     }
 
@@ -65,15 +65,15 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
     private function getMockSerializer($error = false)
     {
         $serializer = $this->getMockBuilder('SuperClosure\Serializer')
-            ->setMethods(['getClosureData'])
+            ->setMethods(['getData'])
             ->getMock();
 
         if ($error) {
-            $serializer->method('getClosureData')->willThrowException(
+            $serializer->method('getData')->willThrowException(
                 new ClosureAnalysisException
             );
         } else {
-            $serializer->method('getClosureData')->willReturn([
+            $serializer->method('getData')->willReturn([
                 'code'       => 'function () {};',
                 'context'    => [],
                 'binding'    => null,

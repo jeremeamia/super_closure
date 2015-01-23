@@ -14,18 +14,20 @@ class SerializableClosure implements \Serializable
     /** @var \Closure Closure being wrapped for serialization. */
     private $closure;
 
-    /** @var Serializer Serializer object doing the serialization work. */
+    /** @var SerializerInterface Serializer doing the serialization work. */
     private $serializer;
 
     /** @var array Temporary data container used during unserialization. */
     private $temp;
 
     /**
-     * @param \Closure   $closure
-     * @param Serializer $serializer
+     * @param \Closure            $closure
+     * @param SerializerInterface $serializer
      */
-    public function __construct(\Closure $closure, Serializer $serializer = null)
-    {
+    public function __construct(
+        \Closure $closure,
+        SerializerInterface $serializer = null
+    ) {
         $this->closure = $closure;
         $this->serializer = $serializer ?: new Serializer;
     }
@@ -59,14 +61,15 @@ class SerializableClosure implements \Serializable
     }
 
     /**
-     * Serializes the code and context of the closure.
+     * Serializes the code, context, and binding of the closure.
      *
      * @return string
+     * @see http://php.net/manual/en/serializable.serialize.php
      */
     public function serialize()
     {
         try {
-            return serialize($this->serializer->getClosureData($this->closure, true));
+            return serialize($this->serializer->getData($this->closure, true));
         } catch (\Exception $e) {
             trigger_error(
                 'Serialization of closure failed: ' . $e->getMessage(),
@@ -89,6 +92,7 @@ class SerializableClosure implements \Serializable
      * @param string $serialized
      *
      * @throws ClosureUnserializationException
+     * @see http://php.net/manual/en/serializable.unserialize.php
      */
     public function unserialize($serialized)
     {
@@ -141,6 +145,6 @@ class SerializableClosure implements \Serializable
      */
     public function __debugInfo()
     {
-        return $this->serializer->getClosureData($this->closure);
+        return $this->serializer->getData($this->closure);
     }
 }

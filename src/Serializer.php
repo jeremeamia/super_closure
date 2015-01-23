@@ -3,10 +3,12 @@
 use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
 
-class Serializer
+class Serializer implements SerializerInterface
 {
+    /** @var string Special value marking a recursive reference to a closure. */
     const RECURSION = "\0RECURSION\0";
 
+    /** @var array Keys of closure data required for serialization. */
     private static $dataToKeep = [
         'code'    => true,
         'context' => true,
@@ -26,9 +28,7 @@ class Serializer
     }
 
     /**
-     * @param \Closure $closure
-     *
-     * @return string
+     * @inheritDoc
      */
     public function serialize(\Closure $closure)
     {
@@ -36,9 +36,7 @@ class Serializer
     }
 
     /**
-     * @param string $serialized
-     *
-     * @return \Closure
+     * @inheritDoc
      */
     public function unserialize($serialized)
     {
@@ -49,12 +47,9 @@ class Serializer
     }
 
     /**
-     * @param \Closure $closure
-     * @param bool     $forSerialization
-     *
-     * @return \Closure
+     * @inheritDoc
      */
-    public function getClosureData(\Closure $closure, $forSerialization = false)
+    public function getData(\Closure $closure, $forSerialization = false)
     {
         // Use the closure analyzer to get data about the closure.
         $data = $this->analyzer->analyze($closure);
@@ -87,15 +82,19 @@ class Serializer
     }
 
     /**
-     * @param mixed $data
+     * Recursively traverses and wraps all Closure objects within the value
+     * provided in order to make the value (which is assumed to contain
+     * closures) serializable.
+     *
+     * @param mixed $data Any data that contains closures.
      */
-    public function wrapClosuresWithin(&$data)
+    public static function wrapClosures(&$data, SerializerInterface $serializer)
     {
-        // Wrap any closures, and apply wrapClosures to their bound objects.
+        // Wrap any closures, and apply wrapClosures() to their bound objects.
         if ($data instanceof \Closure) {
             $reflection = new \ReflectionFunction($data);
             if ($binding = $reflection->getClosureThis()) {
-                $this->wrapClosuresWithin($binding);
+                self::wrapClosures($binding, $serializer);
                 if ($scope = $reflection->getClosureScopeClass()) {
                     $scope = $scope->getName();
                 } else {
@@ -103,11 +102,11 @@ class Serializer
                 }
                 $data->bindTo($binding, $scope);
             }
-            $data = new SerializableClosure($data, $this->analyzer);
-        // Apply wrapClosures to all values in arrays.
+            $data = new SerializableClosure($data, $serializer);
+        // Apply wrapClosures() to all values in arrays.
         } elseif (is_array($data) || $data instanceof \stdClass) {
             foreach ($data as &$value) {
-                $this->wrapClosuresWithin($value);
+                self::wrapClosures($value, $serializer);
             }
         // Apply wrapClosures() to all members of objects that don't already
         // have specific serialization handlers defined.
@@ -119,7 +118,7 @@ class Serializer
                         $property->setAccessible(true);
                     }
                     $value = $property->getValue($data);
-                    $this->wrapClosuresWithin($value);
+                    self::wrapClosures($value, $serializer);
                     $property->setValue($data, $value);
                 }
             }

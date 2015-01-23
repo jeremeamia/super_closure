@@ -31,7 +31,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $serializer = new Serializer(new TokenAnalyzer());
 
         // Test getting full closure data.
-        $data = $serializer->getClosureData($fn);
+        $data = $serializer->getData($fn);
         $this->assertCount(8, $data);
         $this->assertInstanceOf('ReflectionFunction', $data['reflection']);
         $this->assertGreaterThan(0, strpos($data['code'], '$adjustment'));
@@ -43,7 +43,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $data['tokens']);
 
         // Test getting serializable closure data.
-        $data = $serializer->getClosureData($fn, true);
+        $data = $serializer->getData($fn, true);
         $this->assertCount(5, $data);
         $this->assertTrue(in_array(Serializer::RECURSION, $data['context']));
         $this->assertNull($data['binding']);

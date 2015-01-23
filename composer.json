@@ -1,7 +1,7 @@
 {
     "name": "jeremeamia/superclosure",
     "type": "library",
-    "description": "Serialize Closures, including their context",
+    "description": "Serialize Closure objects, including their context and binding",
     "keywords": ["closure", "serialize", "serializable", "function", "parser", "tokenizer", "lambda"],
     "homepage": "https://github.com/jeremeamia/super_closure",
     "license": "MIT",
@@ -9,7 +9,7 @@
         {
             "name": "Jeremy Lindblom",
             "email": "jeremeamia@gmail.com",
-            "homepage": "http://webjeremy.com",
+            "homepage": "https://github.com/jeremeamia",
             "role": "Developer"
         }
     ],
@@ -18,7 +18,8 @@
         "nikic/php-parser": "~1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.0",
+        "codeclimate/php-test-reporter": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -27,8 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "SuperClosure\\Test\\Unit\\": "tests/Unit/",
-            "SuperClosure\\Test\\Integ\\": "tests/Integ/"
+            "SuperClosure\\Test\\": "tests/"
         }
     },
     "extra": {

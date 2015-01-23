@@ -2,7 +2,8 @@
 
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]
-![Apache 2 License](https://img.shields.io/packagist/l/jeremeamia/superclosure.svg?style=flat)
+[![MIT License](https://img.shields.io/packagist/l/jeremeamia/superclosure.svg?style=flat)][10]
+[![Code Climate](https://codeclimate.com/github/jeremeamia/super_closure/badges/gpa.svg)][11]
 [![GratiPay](http://img.shields.io/gratipay/jeremeamia.svg?style=flat)](https://www.gittip.com/jeremeamia)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jeremeamia/super_closure)
 
@@ -223,3 +224,5 @@ iterations have been more robust, thanks to the usage of the fabulous
 [7]:  http://getcomposer.org
 [8]:  http://vimeo.com/64703617
 [9]:  http://www.userscape.com
+[10]: https://github.com/jeremeamia/super_closure/blob/master/LICENSE.md
+[11]: https://codeclimate.com/github/jeremeamia/super_closure)

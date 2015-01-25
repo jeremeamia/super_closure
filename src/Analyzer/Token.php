@@ -1,32 +1,34 @@
 <?php namespace SuperClosure\Analyzer;
 
 /**
- * A Token object is a normalized token from the result of the `get_token_all()`
- * function, which is part of PHP tokenizer, or lexical scanner.
+ * A Token object represents and individual token parsed from PHP code.
+ *
+ * Each Token object is a normalized token created from the result of the
+ * `get_token_all()`. function, which is part of PHP's tokenizer.
  *
  * @link http://us2.php.net/manual/en/tokens.php
  */
 class Token
 {
     /**
-     * @var string The token name.
+     * @var string The token name. Always null for literal tokens.
      */
-    private $name;
+    public $name;
 
     /**
-     * @var int|null The token's integer value.
+     * @var int|null The token's integer value. Always null for literal tokens.
      */
-    private $value;
+    public $value;
 
     /**
-     * @var string The parsed code of the token.
+     * @var string The PHP code of the token.
      */
-    private $code;
+    public $code;
 
     /**
      * @var int|null The line number of the token in the original code.
      */
-    private $line;
+    public $line;
 
     /**
      * Constructs a token object.
@@ -47,46 +49,6 @@ class Token
         $this->value = $value;
         $this->line = $line;
         $this->name = $value ? token_name($value) : null;
-    }
-
-    /**
-     * Get the token name.
-     *
-     * @return string The token name. Always null for literal tokens.
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get the token's integer value. Always null for literal tokens.
-     *
-     * @return int|null The token value.
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * Get the token's PHP code as a string.
-     *
-     * @return string The token code
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * Get the line where the token was defined. Always null for literal tokens.
-     *
-     * @return int|null The line number.
-     */
-    public function getLine()
-    {
-        return $this->line;
     }
 
     /**

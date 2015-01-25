@@ -100,10 +100,11 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
             );
         } else {
             $serializer->method('getData')->willReturn([
-                'code'       => 'function () {};',
-                'context'    => [],
-                'binding'    => null,
-                'scope'      => 'static',
+                'code'     => 'function () {};',
+                'context'  => [],
+                'binding'  => null,
+                'scope'    => null,
+                'isStatic' => false,
             ]);
         }
 

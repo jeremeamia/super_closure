@@ -136,6 +136,16 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertAllEquals(120, $results);
     }
 
+    public function testSerializeStaticClosure()
+    {
+        $closure = static function () {
+            return 10;
+        };
+
+        $results = $this->getResults($closure, [], true);
+        $this->assertAllEquals(10, $results);
+    }
+
     private function getResults(\Closure $closure, array $args = [])
     {
         $results = ['original' => call_user_func_array($closure, $args)];

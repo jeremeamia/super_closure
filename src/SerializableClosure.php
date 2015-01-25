@@ -122,12 +122,13 @@ class SerializableClosure implements \Serializable
             );
         }
 
-        // Rebind the closure to its former $this object and scope, if defined,
-        // otherwise, bind to null so it's not bound to SerializableClosure.
-        $this->closure = $this->closure->bindTo(
-            $this->data['binding'],
-            $this->data['scope']
-        );
+        // Rebind the closure to its former binding, if it's not static.
+        if (!$this->data['isStatic']) {
+            $this->closure = $this->closure->bindTo(
+                $this->data['binding'],
+                $this->data['scope']
+            );
+        }
     }
 
     /**

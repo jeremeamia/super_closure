@@ -24,10 +24,11 @@ class Serializer implements SerializerInterface
      * @var array
      */
     private static $dataToKeep = [
-        'code'    => true,
-        'context' => true,
-        'binding' => true,
-        'scope'   => true
+        'code'     => true,
+        'context'  => true,
+        'binding'  => true,
+        'scope'    => true,
+        'isStatic' => true,
     ];
 
     /**

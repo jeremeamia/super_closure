@@ -16,13 +16,19 @@ use PhpParser\NodeVisitorAbstract as NodeVisitor;
  */
 final class ClosureLocatorVisitor extends NodeVisitor
 {
-    /** @var \ReflectionFunction */
+    /**
+     * @var \ReflectionFunction
+     */
     private $reflection;
 
-    /** @var ClosureNode */
+    /**
+     * @var ClosureNode
+     */
     public $closureNode;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $location;
 
     /**

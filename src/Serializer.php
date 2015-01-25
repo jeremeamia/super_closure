@@ -10,7 +10,7 @@ use SuperClosure\Analyzer\ClosureAnalyzer;
 class Serializer implements SerializerInterface
 {
     /** @var string Special value marking a recursive reference to a closure. */
-    const RECURSION = "\0RECURSION\0";
+    const RECURSION = "{{RECURSION}}";
 
     /** @var array Keys of closure data required for serialization. */
     private static $dataToKeep = [
@@ -77,9 +77,6 @@ class Serializer implements SerializerInterface
                         : new SerializableClosure($value, $this);
                 }
             }
-
-            // Include the serializer in the data for serialization.
-            $data['serializer'] = $this;
         }
 
         return $data;

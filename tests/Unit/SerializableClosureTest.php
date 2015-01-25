@@ -72,6 +72,17 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(120, $unserialized(5));
     }
 
+    public function testCanSerializeAndUnserializeMultipleTimes()
+    {
+        $closure = function () {};
+        $serializer = $this->getMockSerializer();
+        $sc = new SerializableClosure($closure, $serializer);
+        $s1 = serialize($sc);
+        $u1 = unserialize($s1);
+        $s2 = serialize($u1);
+        $this->assertEquals($s1, $s2);
+    }
+
     /**
      * @param bool $error
      *

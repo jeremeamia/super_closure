@@ -43,12 +43,11 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
 
         // Test getting serializable closure data.
         $data = $serializer->getData($fn, true);
-        $this->assertCount(5, $data);
+        $this->assertCount(4, $data);
         $this->assertTrue(in_array(Serializer::RECURSION, $data['context']));
         $this->assertNull($data['binding']);
         $this->assertEquals(__CLASS__, $data['scope']);
         $this->assertArrayNotHasKey('reflection', $data);
-        $this->assertArrayHasKey('serializer', $data);
     }
 
     public function testWrappingClosuresWithinVariables()

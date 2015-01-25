@@ -17,8 +17,8 @@ class SerializableClosure implements \Serializable
     /** @var SerializerInterface Serializer doing the serialization work. */
     private $serializer;
 
-    /** @var array Temporary data container used during unserialization. */
-    private $temp;
+    /** @var array Contains the data from unserialization. */
+    private $data;
 
     /**
      * @param \Closure            $closure
@@ -69,7 +69,8 @@ class SerializableClosure implements \Serializable
     public function serialize()
     {
         try {
-            return serialize($this->serializer->getData($this->closure, true));
+            $this->data = $this->data ?: $this->serializer->getData($this->closure, true);
+            return serialize($this->data);
         } catch (\Exception $e) {
             trigger_error(
                 'Serialization of closure failed: ' . $e->getMessage(),
@@ -97,8 +98,7 @@ class SerializableClosure implements \Serializable
     public function unserialize($serialized)
     {
         // Unserialize the data and reconstruct the SuperClosure.
-        $this->temp = unserialize($serialized);
-        $this->serializer = $this->temp['serializer'];
+        $this->data = unserialize($serialized);
         $this->reconstructClosure();
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
@@ -109,12 +109,9 @@ class SerializableClosure implements \Serializable
         // Rebind the closure to its former $this object and scope, if defined,
         // otherwise, bind to null so it's not bound to SerializableClosure.
         $this->closure = $this->closure->bindTo(
-            $this->temp['binding'],
-            $this->temp['scope']
+            $this->data['binding'],
+            $this->data['scope']
         );
-
-        // Clear temp data used during unserialization.
-        unset($this->temp);
     }
 
     /**
@@ -127,14 +124,14 @@ class SerializableClosure implements \Serializable
     private function reconstructClosure()
     {
         // Simulate the original context the closure was created in.
-        extract($this->temp['context'], EXTR_OVERWRITE);
+        extract($this->data['context'], EXTR_OVERWRITE);
 
         // Evaluate the code to recreate the closure.
-        if ($_fn = array_search(Serializer::RECURSION, $this->temp['context'], true)) {
-            @eval("\${$_fn} = {$this->temp['code']};");
+        if ($_fn = array_search(Serializer::RECURSION, $this->data['context'], true)) {
+            @eval("\${$_fn} = {$this->data['code']};");
             $this->closure = $$_fn;
         } else {
-            @eval("\$this->closure = {$this->temp['code']};");
+            @eval("\$this->closure = {$this->data['code']};");
         }
     }
 

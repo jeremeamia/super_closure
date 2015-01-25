@@ -8,13 +8,9 @@
       <directory>./tests/Integ</directory>
     </testsuite>
   </testsuites>
-
   <filter>
-    <whitelist>
-      <directory suffix=".php">./src/</directory>
-      <exclude>
-        <directory>./src/Exception</directory>
-      </exclude>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">./src</directory>
     </whitelist>
   </filter>
 </phpunit>

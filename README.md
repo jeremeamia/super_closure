@@ -19,12 +19,12 @@ message from your friendly, neighborhood PHP Runtime:
 > not allowed'
 
 However, even though it is not "allowed" by PHP, the SuperClosure library makes
-it **possible** to circumvent this limitation.
+it **possible** to circumvent this limitation. Here's the way you use it:
 
 ```php
 use SuperClosure\Serializer;
 
-$serializer = new Serializer()
+$serializer = new Serializer();
 
 $greeting = 'Hello';
 $hello = function ($name = 'World') use ($greeting) {
@@ -35,7 +35,7 @@ $hello('Jeremy');
 //> Hello, Jeremy!
 
 $serialized = $serializer->serialize($hello);
-
+// ...
 $unserialized = $serializer->unserialize($serialized);
 
 $unserialized('Jeremy');
@@ -103,6 +103,14 @@ should choose the fastest analyzer that supports the features you need.
     </tr>
     <tr>
       <td>
+        Static closures (i.e, preserves the `static`-ness)<br>
+        <code>$fn = static function () {...};</code>
+      </td>
+      <td>Yes</td>
+      <td>--</td>
+    </tr>
+    <tr>
+      <td>
         Closures with class name in params<br>
         <code>$fn = function (Foo $foo) {...};</code>
       </td>
@@ -158,7 +166,8 @@ $serializer = new Serializer(new TokenAnalyzer());
    only exception to this is recursive closure references.
 2. If you have two closures defined on a single line (you shouldn't do this
    anyway), you will not be able to serialize either one since it is ambiguous
-   which closure's code should be parsed.
+   which closure's code should be parsed (they are anonymous functions after
+   all).
 3. **Warning**: The `eval()` function is required to unserialize the closure.
    This functions is considered dangerous by many, so you will have to evaluate
    what precautions you may need to take when using this library. Unfortunately,
@@ -225,4 +234,4 @@ iterations have been more robust, thanks to the usage of the fabulous
 [8]:  http://vimeo.com/64703617
 [9]:  http://www.userscape.com
 [10]: https://github.com/jeremeamia/super_closure/blob/master/LICENSE.md
-[11]: https://codeclimate.com/github/jeremeamia/super_closure)
+[11]: https://codeclimate.com/github/jeremeamia/super_closure

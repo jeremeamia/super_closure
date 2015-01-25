@@ -73,7 +73,7 @@ final class ClosureLocatorVisitor extends NodeVisitor
             if ($node->getAttribute('startLine') == $this->location['line']) {
                 if ($this->closureNode) {
                     $line = $this->location['file'] . ':' . $node->getAttribute('startLine');
-                    throw new ClosureAnalysisException( "Two closures were "
+                    throw new ClosureAnalysisException("Two closures were "
                         . "declared on the same line ({$line}) of code. Cannot "
                         . "determine which closure was the intended target.");
                 } else {

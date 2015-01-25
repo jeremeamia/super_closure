@@ -11,7 +11,7 @@ class Foo
 
     public function getClosure()
     {
-        return function() {
+        return function () {
             return $this->bar;
         };
     }

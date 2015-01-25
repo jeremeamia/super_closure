@@ -83,7 +83,8 @@ class AstAnalyzer extends ClosureAnalyzer
      *
      * @param array $data
      */
-    protected function determineContext(array &$data) {
+    protected function determineContext(array &$data)
+    {
         // Get the variable names defined in the AST
         $refs = 0;
         $vars = array_map(function ($node) use (&$refs) {

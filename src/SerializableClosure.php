@@ -11,18 +11,32 @@ use SuperClosure\Exception\ClosureUnserializationException;
  */
 class SerializableClosure implements \Serializable
 {
-    /** @var \Closure Closure being wrapped for serialization. */
+    /**
+     * The closure being wrapped for serialization.
+     *
+     * @var \Closure
+     */
     private $closure;
 
-    /** @var SerializerInterface Serializer doing the serialization work. */
+    /**
+     * The serializer doing the serialization work.
+     *
+     * @var SerializerInterface
+     */
     private $serializer;
 
-    /** @var array Contains the data from unserialization. */
+    /**
+     * The data from unserialization.
+     *
+     * @var array
+     */
     private $data;
 
     /**
-     * @param \Closure            $closure
-     * @param SerializerInterface $serializer
+     * Create a new serializable closure instance.
+     *
+     * @param \Closure                 $closure
+     * @param SerializerInterface|null $serializer
      */
     public function __construct(
         \Closure $closure,
@@ -63,8 +77,9 @@ class SerializableClosure implements \Serializable
     /**
      * Serializes the code, context, and binding of the closure.
      *
-     * @return string
      * @see http://php.net/manual/en/serializable.serialize.php
+     *
+     * @return string|null
      */
     public function serialize()
     {
@@ -90,10 +105,11 @@ class SerializableClosure implements \Serializable
      * extracted into a fresh scope prior to redefining the closure. The
      * closure is also rebound to its former object and scope.
      *
+     * @see http://php.net/manual/en/serializable.unserialize.php
+     *
      * @param string $serialized
      *
      * @throws ClosureUnserializationException
-     * @see http://php.net/manual/en/serializable.unserialize.php
      */
     public function unserialize($serialized)
     {
@@ -115,6 +131,8 @@ class SerializableClosure implements \Serializable
     }
 
     /**
+     * Reconstruct the closure.
+     *
      * HERE BE DRAGONS!
      *
      * The infamous `eval()` is used in this method, along with `extract()`,

@@ -3,8 +3,11 @@
 use SuperClosure\Exception\ClosureAnalysisException;
 
 /**
- * Uses reflection and tokenization to analyze a closure and determine its
- * code and context.
+ * This is the token based analyzer.
+ *
+ * We're using Uses reflection and tokenization to analyze a closure and
+ * determine its code and context. This is much faster than the AST based
+ * implementation.
  */
 class TokenAnalyzer extends ClosureAnalyzer
 {

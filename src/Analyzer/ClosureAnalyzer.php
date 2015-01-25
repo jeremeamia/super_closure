@@ -5,10 +5,13 @@ use SuperClosure\Exception\ClosureAnalysisException;
 abstract class ClosureAnalyzer
 {
     /**
+     * Analyzer a given closure.
+     *
      * @param \Closure $closure
      *
-     * @return array
      * @throws ClosureAnalysisException
+     *
+     * @return array
      */
     public function analyze(\Closure $closure)
     {

@@ -1,6 +1,6 @@
-.idea/*
-vendor/*
-build/*
+.idea
+vendor
+build
 .DS_Store
 cache.properties
 composer.phar

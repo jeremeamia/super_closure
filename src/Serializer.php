@@ -4,15 +4,25 @@ use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
 
 /**
- * Serializer is used to serialize Closure objects, abstracting away all the
- * details, impossibilities, and scary things that happen within.
+ * This is the serializer class used for serializing Closure objects.
+ *
+ * We're abstracting away all the details, impossibilities, and scary things
+ * that happen within.
  */
 class Serializer implements SerializerInterface
 {
-    /** @var string Special value marking a recursive reference to a closure. */
+    /**
+     * The special value marking a recursive reference to a closure.
+     *
+     * @var string
+     */
     const RECURSION = "{{RECURSION}}";
 
-    /** @var array Keys of closure data required for serialization. */
+    /**
+     * The keys of closure data required for serialization.
+     *
+     * @var array
+     */
     private static $dataToKeep = [
         'code'    => true,
         'context' => true,
@@ -20,11 +30,17 @@ class Serializer implements SerializerInterface
         'scope'   => true
     ];
 
-    /** @var ClosureAnalyzer */
+    /**
+     * The closure analyzer instance.
+     *
+     * @var ClosureAnalyzer
+     */
     private $analyzer;
 
     /**
-     * @param ClosureAnalyzer $analyzer
+     * Create a new serializer instance.
+     *
+     * @param ClosureAnalyzer|null $analyzer
      */
     public function __construct(ClosureAnalyzer $analyzer = null)
     {
@@ -88,6 +104,7 @@ class Serializer implements SerializerInterface
      * NOTE: THIS METHOD MAY NOT WORK IN ALL SITUATIONS, SO BE CAREFUL.
      *
      * @param mixed $data Any variable that contains closures.
+     * @param SerializerInterface $serializer The serializer to use.
      */
     public static function wrapClosures(&$data, SerializerInterface $serializer)
     {

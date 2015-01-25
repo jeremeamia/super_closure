@@ -12,11 +12,12 @@ use PhpParser\Parser as CodeParser;
 use PhpParser\Lexer\Emulative as EmulativeLexer;
 
 /**
- * Uses reflection and AST-based code parser to analyze a closure and determine
- * its code and context.
+ * This is the AST based analyzer.
  *
- * This analyzer uses the nikic/php-parser library, and has more capabilities
- * than the token analyzer, but is, unfortunately, about 25 times slower.
+ * We're using reflection and AST-based code parser to analyze a closure and
+ * determine its code and context using the nikic/php-parser library. The AST
+ * based analyzer and has more capabilities than the token analyzer, but is,
+ * unfortunately, about 25 times slower.
  */
 class AstAnalyzer extends ClosureAnalyzer
 {
@@ -108,6 +109,7 @@ class AstAnalyzer extends ClosureAnalyzer
      * @param \ReflectionFunction $reflection
      *
      * @throws ClosureAnalysisException
+     *
      * @return \PhpParser\Node[]
      */
     private function getFileAst(\ReflectionFunction $reflection)

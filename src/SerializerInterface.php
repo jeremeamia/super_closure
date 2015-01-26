@@ -1,5 +1,7 @@
 <?php namespace SuperClosure;
 
+use SuperClosure\Exception\ClosureUnserializationException;
+
 /**
  * Interface for a serializer that is used to serialize Closure objects.
  */
@@ -21,6 +23,7 @@ interface SerializerInterface
      *
      * @param string $serialized Serialized closure.
      *
+     * @throws ClosureUnserializationException if unserialization fails.
      * @return \Closure Unserialized closure.
      */
     public function unserialize($serialized);

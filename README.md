@@ -13,13 +13,13 @@ A PHP Library for serializing closures and anonymous functions.
 
 Once upon a time, I tried to serialize a PHP `Closure` object. As you can
 probably guess, it doesn't work at all. In fact, you get a very specific error
-message from your friendly, neighborhood PHP Runtime:
+message from the PHP Runtime:
 
 > Uncaught exception 'Exception' with message 'Serialization of 'Closure' is
 > not allowed'
 
-However, even though it is not "allowed" by PHP, the SuperClosure library makes
-it **possible** to circumvent this limitation. Here's the way you use it:
+Even though serializing closures is "not allowed" by PHP, the SuperClosure
+library makes it **possible**. Here's the way you use it:
 
 ```php
 use SuperClosure\Serializer;
@@ -141,6 +141,24 @@ should choose the fastest analyzer that supports the features you need.
   </tbody>
 </table>
 
+### Caveats
+
+1. For any variables used by reference (e.g., `function () use (&$vars, &$like,
+  &$these) {…}`), the references are not maintained after serialization. The
+  only exception to this is recursive closure references.
+2. If you have two closures defined on a single line (you shouldn't do this
+  anyway), you will not be able to serialize either one since it is ambiguous
+  which closure's code should be parsed (they are anonymous functions after
+  all).
+3. **Warning**: The `eval()` function is required to unserialize the closure.
+  This functions is considered dangerous by many, so you will have to evaluate
+  what precautions you may need to take when using this library. You should only
+  unserialize closures retrieved from a trusted source, otherwise you are
+  opening yourself up to code injection attacks. It is a good idea to encrypt
+  or sign serialized closures if you plan on storing or transporting them.
+
+### Analyzers
+
 You can choose the analyzer you want to use when you instantiate the
 `Serializer`. If you do not specify one, the `AstAnalyzer` is used by default,
 since it has the most capabilities.
@@ -159,22 +177,53 @@ $serializer = new Serializer(new AstAnalyzer());
 $serializer = new Serializer(new TokenAnalyzer());
 ```
 
-### Caveats
+Analyzers are also useful on their own if you are just looking to do some
+introspection on a Closure object. Check out what is returned when using the
+`AstAnalyzer`:
 
-1. For any variables used by reference (e.g., `function () use (&$vars, &$like,
-   &$these) {…}`), the references are not maintained after serialization. The
-   only exception to this is recursive closure references.
-2. If you have two closures defined on a single line (you shouldn't do this
-   anyway), you will not be able to serialize either one since it is ambiguous
-   which closure's code should be parsed (they are anonymous functions after
-   all).
-3. **Warning**: The `eval()` function is required to unserialize the closure.
-   This functions is considered dangerous by many, so you will have to evaluate
-   what precautions you may need to take when using this library. Unfortunately,
-   `eval()` *must* be used to make this library work. You should only
-   unserialize closures retrieved from a trusted source, otherwise you are
-   opening yourself up to code injection attacks. It may be a good idea to
-   encrypt serialized closures if you plan on storing or transporting them.
+```php
+use SuperClosure\Analyzer\AstAnalyzer;
+
+class Calculator
+{
+    public function getAdder($operand)
+    {
+        return function ($number) use ($operand) {
+            return $number + $operand;
+        };
+    }
+}
+
+$closure = (new Calculator)->getAdder(5);
+$analyzer = new AstAnalyzer();
+
+var_dump($analyzer->analyze($closure));
+// array(10) {
+//   'reflection' => class ReflectionFunction#5 (1) {...}
+//   'code' => string(68) "function ($number) use($operand) {
+//     return $number + $operand;
+// };"
+//   'hasThis' => bool(false)
+//   'context' => array(1) {
+//     'operand' => int(5)
+//   }
+//   'hasRefs' => bool(false)
+//   'binding' => class Calculator#2 (0) {...}
+//   'scope' => string(10) "Calculator"
+//   'isStatic' => bool(false)
+//   'ast' => class PhpParser\Node\Expr\Closure#13 (2) {...}
+//   'location' => array(8) {
+//     'class' => string(11) "\Calculator"
+//     'directory' => string(47) "/Users/lindblom/Projects/{...}/SuperClosureTest"
+//     'file' => string(58) "/Users/lindblom/Projects/{...}/SuperClosureTest/simple.php"
+//     'function' => string(9) "{closure}"
+//     'line' => int(11)
+//     'method' => string(22) "\Calculator::{closure}"
+//     'namespace' => NULL
+//     'trait' => NULL
+//   }
+// }
+```
 
 ## Installation
 
@@ -201,7 +250,7 @@ about the 7:50 mark they show how you can push a closure onto a queue as a job
 so that it can be executed by a worker. This is nice because you do not have to
 create a whole class for a job that might be really simple.
 
-## Tell me more about how this came about
+## Tell me about how this project started
 
 It all started  back in the beginning of 2010 when PHP 5.3 was starting to
 gain traction. I set out to prove that serializing a closure could be done,

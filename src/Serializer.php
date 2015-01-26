@@ -102,7 +102,7 @@ class Serializer implements SerializerInterface
     /**
      * Recursively traverses and wraps all Closure objects within the value.
      *
-     * NOTE: THIS METHOD MAY NOT WORK IN ALL SITUATIONS, SO BE CAREFUL.
+     * NOTE: THIS MAY NOT WORK IN ALL USE CASES, SO USE AT YOUR OWN RISK.
      *
      * @param mixed $data Any variable that contains closures.
      * @param SerializerInterface $serializer The serializer to use.

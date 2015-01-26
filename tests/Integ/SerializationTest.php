@@ -151,7 +151,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $results = ['original' => call_user_func_array($closure, $args)];
 
         try {
-            $serializer = new Serializer(new AstAnalyzer);
+            $serializer = new Serializer(new AstAnalyzer, 'hashkey');
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['ast'] = call_user_func_array($unserialized, $args);
@@ -160,7 +160,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         }
 
         try {
-            $serializer = new Serializer(new TokenAnalyzer);
+            $serializer = new Serializer(new TokenAnalyzer, 'hashkey');
             $serialized = $serializer->serialize($closure);
             $unserialized = $serializer->unserialize($serialized);
             $results['token'] = call_user_func_array($unserialized, $args);

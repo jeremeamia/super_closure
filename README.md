@@ -46,11 +46,11 @@ Yep, pretty cool, right?
 
 ### Features
 
-SuperClosure comes with two different "Closure Analyzers", which each support
+SuperClosure comes with two different **Closure Analyzers**, which each support
 different features regarding the serialization of closures. The `TokenAnalyzer`
-is not as robust as the `AstAnalyzer`, but it is around 25 times faster. Using
+is not as robust as the `AstAnalyzer`, but it is around 20-25 times faster. Using
 the table below, and keeping in mind what your closure's code looks like, you
-should choose the fastest analyzer that supports the features you need.
+should _choose the fastest analyzer that supports the features you need_.
 
 <table>
   <thead>
@@ -146,16 +146,17 @@ should choose the fastest analyzer that supports the features you need.
 1. For any variables used by reference (e.g., `function () use (&$vars, &$like,
   &$these) {…}`), the references are not maintained after serialization. The
   only exception to this is recursive closure references.
-2. If you have two closures defined on a single line (you shouldn't do this
-  anyway), you will not be able to serialize either one since it is ambiguous
-  which closure's code should be parsed (they are anonymous functions after
+2. If you have two closures defined on a single line (why would you do this
+  anyway?), you will not be able to serialize either one since it is ambiguous
+  which closure's code should be parsed (they are _anonymous_ functions after
   all).
 3. **Warning**: The `eval()` function is required to unserialize the closure.
   This functions is considered dangerous by many, so you will have to evaluate
   what precautions you may need to take when using this library. You should only
   unserialize closures retrieved from a trusted source, otherwise you are
-  opening yourself up to code injection attacks. It is a good idea to encrypt
-  or sign serialized closures if you plan on storing or transporting them.
+  opening yourself up to code injection attacks. It is a good idea sign
+  serialized closures if you plan on storing or transporting them. Read the
+  **Signing Closures** section below for details on how to do this.
 
 ### Analyzers
 
@@ -223,6 +224,31 @@ var_dump($analyzer->analyze($closure));
 //     'trait' => NULL
 //   }
 // }
+```
+
+### Signing Closures
+
+Version 2.1 of SuperClosure allows you to specify a signing key, when you 
+instantiate the Serializer. Doing this will configure your Serializer to
+sign any closures you serialize and verify the signatures of any closures
+you unserialize. Doing this can help protect you from code injection attacks
+that could potentially happen if someone tampered with a serialized closure.
+_Remember to keep you signing key secret_.
+
+```php
+$serializer1 = new SuperClosure\Serializer(null, $yourSecretSigningKey);
+$data = $serializer1->serialize(function () {echo "Hello!\n";});
+echo $data . "\n";
+// %rv9zNtTArySx/1803fgk3rPS1RO4uOPPaoZfTRWp554=C:32:"SuperClosure\Serializa...
+
+$serializer2 = new SuperClosure\Serializer(null, $incorrectKey);
+try {
+    $fn = $serializer2->unserialize($data);
+} catch (SuperClosure\Exception\ClosureUnserializationException $e) {
+    echo $e->getMessage() . "\n";
+}
+// The signature of the closure's data is invalid, which means the serialized
+// closure has been modified and is unsafe to unserialize.
 ```
 
 ## Installation

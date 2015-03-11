@@ -228,12 +228,12 @@ var_dump($analyzer->analyze($closure));
 
 ### Signing Closures
 
-Version 2.1 of SuperClosure allows you to specify a signing key, when you 
+Version 2.1+ of SuperClosure allows you to specify a signing key, when you 
 instantiate the Serializer. Doing this will configure your Serializer to
 sign any closures you serialize and verify the signatures of any closures
 you unserialize. Doing this can help protect you from code injection attacks
 that could potentially happen if someone tampered with a serialized closure.
-_Remember to keep you signing key secret_.
+_Remember to keep your signing key secret_.
 
 ```php
 $serializer1 = new SuperClosure\Serializer(null, $yourSecretSigningKey);

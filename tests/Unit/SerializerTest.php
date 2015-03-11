@@ -19,6 +19,39 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $unserializedFn(5));
     }
 
+    public function testUnserializingFailsWithInvalidSignature()
+    {
+        // Create a serializer with a signing key.
+        $serializer = new Serializer(null, 'foobar');
+        $originalFn = function ($n) {return $n +  5;};
+        $serializedFn = $serializer->serialize($originalFn);
+
+        // Modify the serialized closure.
+        $serializedFn[5] = '6119dcd1245df749d162b544d4f44280eef3e7f4d4c636611ed87e7b97198c0b';
+
+        // Unserialization should fail on invalid signature.
+        $this->setExpectedException('SuperClosure\Exception\ClosureUnserializationException');
+        $serializer->unserialize($serializedFn);
+    }
+
+    public function testSerializingAndUnserializingWithSignature()
+    {
+        // Create a serializer with a signing key.
+        $serializer = new Serializer(null, 'foobar');
+        $originalFn = function ($n) {return $n +  5;};
+        $serializedFn = $serializer->serialize($originalFn);
+
+        // Check data to make sure it looks like an array(2).
+        $this->assertEquals('%', $serializedFn[0]);
+        $unserializedData = unserialize(substr($serializedFn, 45));
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $unserializedData);
+
+        // Make sure unserialization still works.
+        $unserializedFn = $serializer->unserialize($serializedFn);
+        $this->assertEquals(10, $originalFn(5));
+        $this->assertEquals(10, $unserializedFn(5));
+    }
+
     public function testGettingClosureData()
     {
         $adjustment = 2;

@@ -75,11 +75,34 @@ class SerializableClosure implements \Serializable
     }
 
     /**
+     * Clones the SerializableClosure with a new bound object and class scope.
+     *
+     * The method is essentially a wrapped proxy to the \Closure::bindTo method.
+     *
+     * @param mixed $newthis  The object to which the closure should be bound,
+     *                        or NULL for the closure to be unbound.
+     * @param mixed $newscope The class scope to which the closure is to be
+     *                        associated, or 'static' to keep the current one.
+     *                        If an object is given, the type of the object will
+     *                        be used instead. This determines the visibility of
+     *                        protected and private methods of the bound object.
+     *
+     * @return SerializableClosure
+     * @link http://www.php.net/manual/en/closure.bindto.php
+     */
+    public function bindTo($newthis, $newscope = 'static')
+    {
+        return new self(
+            $this->closure->bindTo($newthis, $newscope),
+            $this->serializer
+        );
+    }
+
+    /**
      * Serializes the code, context, and binding of the closure.
      *
-     * @see http://php.net/manual/en/serializable.serialize.php
-     *
      * @return string|null
+     * @link http://php.net/manual/en/serializable.serialize.php
      */
     public function serialize()
     {
@@ -105,11 +128,10 @@ class SerializableClosure implements \Serializable
      * extracted into a fresh scope prior to redefining the closure. The
      * closure is also rebound to its former object and scope.
      *
-     * @see http://php.net/manual/en/serializable.unserialize.php
-     *
      * @param string $serialized
      *
      * @throws ClosureUnserializationException
+     * @link http://php.net/manual/en/serializable.unserialize.php
      */
     public function unserialize($serialized)
     {

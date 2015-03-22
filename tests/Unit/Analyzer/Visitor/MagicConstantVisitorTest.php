@@ -10,15 +10,15 @@ class MagicConstantVisitorTest extends \PHPUnit_Framework_TestCase
     public function classNameProvider()
     {
         return [
-            ['PhpParser\Node\Scalar\MagicConst\Class_', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\MagicConst\Dir', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\MagicConst\File', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\MagicConst\Function_', 'PhpParser\Node\Scalar\String'],
+            ['PhpParser\Node\Scalar\MagicConst\Class_', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\MagicConst\Dir', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\MagicConst\File', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\MagicConst\Function_', 'PhpParser\Node\Scalar\String_'],
             ['PhpParser\Node\Scalar\MagicConst\Line', 'PhpParser\Node\Scalar\LNumber'],
-            ['PhpParser\Node\Scalar\MagicConst\Method', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\MagicConst\Namespace_', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\MagicConst\Trait_', 'PhpParser\Node\Scalar\String'],
-            ['PhpParser\Node\Scalar\String', 'PhpParser\Node\Scalar\String'],
+            ['PhpParser\Node\Scalar\MagicConst\Method', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\MagicConst\Namespace_', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\MagicConst\Trait_', 'PhpParser\Node\Scalar\String_'],
+            ['PhpParser\Node\Scalar\String_', 'PhpParser\Node\Scalar\String_'],
         ];
     }
 

@@ -17,6 +17,19 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, $sc());
     }
 
+    public function testGanBindSerializableClosure()
+    {
+        $obj1 = new \stdClass();
+        $obj2 = new \stdClass();
+        $closure = function () {};
+        $closure = $closure->bindTo($obj1);
+        $sc1 = new SerializableClosure($closure, $this->getMockSerializer());
+        $sc2 = $sc1->bindTo($obj2);
+        $this->assertInstanceOf('SuperClosure\SerializableClosure', $sc2);
+        $this->assertNotSame($sc1, $sc2);
+        $this->assertNotSame($sc1->getClosure(), $sc2->getClosure());
+    }
+
     public function testCanSerializeAClosure()
     {
         $closure = function () {};

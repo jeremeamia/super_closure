@@ -137,7 +137,12 @@ class SerializableClosure implements \Serializable
     {
         // Unserialize the data and reconstruct the SuperClosure.
         $this->data = unserialize($serialized);
-        $this->reconstructClosure();
+        try {
+            $this->reconstructClosure();
+        } catch (\ParseException $e) {
+            // Discard the parse exception, we'll throw a custom one
+            // a few lines down.
+        }
         if (!$this->closure instanceof \Closure) {
             throw new ClosureUnserializationException(
                 'The closure is corrupted and cannot be unserialized.'

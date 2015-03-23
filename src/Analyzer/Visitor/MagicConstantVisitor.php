@@ -1,7 +1,7 @@
 <?php namespace SuperClosure\Analyzer\Visitor;
 
 use PhpParser\Node\Scalar\LNumber as NumberNode;
-use PhpParser\Node\Scalar\String as StringNode;
+use PhpParser\Node\Scalar\String_ as StringNode;
 use PhpParser\Node as AstNode;
 use PhpParser\NodeVisitorAbstract as NodeVisitor;
 

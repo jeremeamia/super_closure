@@ -4,6 +4,16 @@ use SuperClosure\Exception\ClosureAnalysisException;
 use SuperClosure\SerializableClosure;
 use SuperClosure\Serializer;
 
+class SerializableClosureTestDummy {
+    public $c;
+
+    public function __construct() {
+        $this->c = function() {
+            return 2;
+        };
+    }
+}
+
 /**
  * @covers \SuperClosure\SerializableClosure
  */
@@ -94,6 +104,15 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
         $u1 = unserialize($s1);
         $s2 = serialize($u1);
         $this->assertEquals($s1, $s2);
+    }
+
+    public function testSerializationOfClosureProperty()
+    {
+        $obj = new SerializableClosureTestDummy();
+        $closure = function () use ($obj) {return 4 * $obj->c->__invoke();};
+        $sc = new SerializableClosure($closure, $this->getMockSerializer());
+        $this->assertSame($closure, $sc->getClosure());
+        $this->assertEquals(8, $sc());
     }
 
     /**

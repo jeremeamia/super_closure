@@ -68,7 +68,7 @@ class TokenAnalyzer extends ClosureAnalyzer
                 case 3:
                     if ($token->is(T_FUNCTION)) {
                         throw new ClosureAnalysisException('Multiple closures '
-                            . 'were declared on the same line of code. Could '
+                            . 'were declared on the same line of code. Could not '
                             . 'determine which closure was the intended target.'
                         );
                     }

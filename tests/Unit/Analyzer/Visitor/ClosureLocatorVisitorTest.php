@@ -50,7 +50,7 @@ class ClosureLocatorVisitorTest extends \PHPUnit_Framework_TestCase
         $closureFinder->afterTraverse([]);
 
         $actualLocationKeys = array_filter($closureFinder->location);
-        $expectedLocationKeys = ['class', 'directory', 'file', 'function', 'line'];
+        $expectedLocationKeys = ['directory', 'file', 'function', 'line'];
 
         $this->assertEquals($expectedLocationKeys, array_keys($actualLocationKeys));
     }

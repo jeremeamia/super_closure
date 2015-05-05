@@ -106,12 +106,15 @@ final class ClosureLocatorVisitor extends NodeVisitor
         } elseif ($this->location['trait']) {
             $this->location['trait'] = $this->location['namespace'] . '\\' . $this->location['trait'];
             $this->location['method'] = "{$this->location['trait']}::{$this->location['function']}";
-        }
 
-        if (!$this->location['class']) {
-            /** @var \ReflectionClass $closureScopeClass */
-            $closureScopeClass = $this->reflection->getClosureScopeClass();
-            $this->location['class'] = $closureScopeClass ? $closureScopeClass->getName() : null;
+            // If the closure was declared in a trait, then we will do a best
+            // effort guess on the name of the class that used the trait. It's
+            // actually impossible at this point to know for sure what it is.
+            if ($closureScope = $this->reflection->getClosureScopeClass()) {
+                $this->location['class'] = $closureScope ? $closureScope->getName() : null;
+            } elseif ($closureThis = $this->reflection->getClosureThis()) {
+                $this->location['class'] = get_class($closureThis);
+            }
         }
     }
 }

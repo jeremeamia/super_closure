@@ -34,6 +34,26 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $serializer->unserialize($serializedFn);
     }
 
+    /**
+     * @expectedException \SuperClosure\Exception\ClosureUnserializationException
+     */
+    public function testUnserializingFailsWithInvalidData()
+    {
+        $serializer = new Serializer(new TokenAnalyzer());
+        $data = 'foobar' . serialize('foobar');
+        $serializer->unserialize($data);
+    }
+
+    /**
+     * @expectedException \SuperClosure\Exception\ClosureUnserializationException
+     */
+    public function testUnserializingFailsWhenSuperClosureIsNotReturned()
+    {
+        $serializer = new Serializer(new TokenAnalyzer());
+        $data = serialize('foobar');
+        $serializer->unserialize($data);
+    }
+
     public function testSerializingAndUnserializingWithSignature()
     {
         // Create a serializer with a signing key.

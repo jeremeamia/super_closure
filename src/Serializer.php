@@ -92,8 +92,17 @@ class Serializer implements SerializerInterface
             $this->verifySignature($signature, $serialized);
         }
 
-        /** @var SerializableClosure $unserialized */
+        set_error_handler(function () {});
         $unserialized = unserialize($serialized);
+        restore_error_handler();
+        if ($unserialized === false) {
+            throw new ClosureUnserializationException('The closure could not be unserialized');
+        } elseif (!$unserialized instanceof SerializableClosure) {
+            throw new ClosureUnserializationException(
+                'The closure did not unserialize to a SuperClosure. ' .
+                'Was it not serialized with SuperClosure\Serializer?'
+            );
+        }
 
         return $unserialized->getClosure();
     }

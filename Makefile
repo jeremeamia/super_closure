@@ -19,5 +19,8 @@ coverage-publish:
 integ:
 	vendor/bin/phpunit --debug --testsuite=integ $(TEST)
 
+perf:
+	php tests/perf.php
+
 travis:
 	vendor/bin/phpunit

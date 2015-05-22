@@ -157,6 +157,7 @@ should _choose the fastest analyzer that supports the features you need_.
   opening yourself up to code injection attacks. It is a good idea sign
   serialized closures if you plan on storing or transporting them. Read the
   **Signing Closures** section below for details on how to do this.
+4. Cannot serialize closures that are defined within `eval()`'d code.
 
 ### Analyzers
 

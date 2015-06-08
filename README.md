@@ -298,6 +298,7 @@ iterations have been more robust, thanks to the usage of the fabulous
 - [Jumper](https://github.com/kakawait/Jumper) - Serialize a closure to run on remote host via SSH.
 - [nicmart/Benchmark](https://github.com/nicmart/Benchmark) - Uses the `ClosureParser` to display a benchmarked
   Closure's code.
+- [florianv/business](https://github.com/florianv/business) - Serializes special days to store business days definitions.
 - Please let me know if and how your project uses Super Closure.
 
 [1]:  https://packagist.org/packages/jeremeamia/superclosure

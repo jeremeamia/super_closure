@@ -1,5 +1,6 @@
 <?php namespace SuperClosure;
 
+use RuntimeException;
 use SuperClosure\Exception\ClosureUnserializationException;
 
 /**
@@ -33,6 +34,13 @@ class SerializableClosure implements \Serializable
     private $data;
 
     /**
+     * Whether comments and whitespace should be stripped from the closure.
+     *
+     * @var bool
+     */
+    private $compressClosure;
+
+    /**
      * Create a new serializable closure instance.
      *
      * @param \Closure                 $closure
@@ -54,6 +62,20 @@ class SerializableClosure implements \Serializable
     public function getClosure()
     {
         return $this->closure;
+    }
+
+    /**
+     * Set whether comments and whitespace should be stripped from the closure.
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function shouldCompressClosure($state)
+    {
+        $this->compressClosure = (bool) $state;
+
+        return $this;
     }
 
     /**
@@ -107,8 +129,16 @@ class SerializableClosure implements \Serializable
     public function serialize()
     {
         try {
-            $this->data = $this->data ?: $this->serializer->getData($this->closure, true);
-            return serialize($this->data);
+            $this->data = $data = $this->data ?: $this->serializer->getData($this->closure, true);
+
+            if ($this->compressClosure && function_exists('gzencode')) {
+                $data['code'] = gzencode($data['code']);
+                $data['compressed'] = true;
+            } else {
+                $data['compressed'] = false;
+            }
+
+            return serialize($data);
         } catch (\Exception $e) {
             trigger_error(
                 'Serialization of closure failed: ' . $e->getMessage(),
@@ -137,6 +167,15 @@ class SerializableClosure implements \Serializable
     {
         // Unserialize the data and reconstruct the SuperClosure.
         $this->data = unserialize($serialized);
+
+        if (isset($this->data['compressed']) && $this->data['compressed'] === true) {
+            if (function_exists('gzdecode')) {
+                $this->data['code'] = gzdecode($this->data['code']);
+            } else {
+                throw new RuntimeException('unable to decode encoded data');
+            }
+        }
+
         try {
             $this->reconstructClosure();
         } catch (\ParseException $e) {

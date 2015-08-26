@@ -64,7 +64,7 @@ class SerializableClosure implements \Serializable
      * - `ReflectionFunction::invokeArgs()` should not be used here, because it
      *   does not work with closure bindings.
      * - Args passed-by-reference lose their references when proxied through
-     *   `__invoke()`. This is is an unfortunate, but understandable, limitation
+     *   `__invoke()`. This is an unfortunate, but understandable, limitation
      *   of PHP that will probably never change.
      *
      * @return mixed

@@ -123,4 +123,22 @@ class SerializableClosureTest extends \PHPUnit_Framework_TestCase
 
         return $serializer;
     }
+
+    public function testItCompressesNicely()
+    {
+        $closure = function () {
+            # should be removed
+            return 'hello world';
+        };
+
+        $closure = new SerializableClosure($closure);
+        $closure->shouldCompressClosure(true);
+
+        $serialized = serialize($closure);
+
+        /** @var SerializableClosure $closure */
+        $closure = unserialize($serialized);
+
+        $this->assertEquals('hello world', $closure());
+    }
 }

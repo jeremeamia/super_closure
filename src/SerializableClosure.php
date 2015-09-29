@@ -170,12 +170,24 @@ class SerializableClosure implements \Serializable
     private function reconstructClosure()
     {
         // Simulate the original context the closure was created in.
-        extract($this->data['context'], EXTR_OVERWRITE);
+        foreach ($this->data['context'] as $_var_name => &$_value) {
+            if ($_value instanceof self) {
+                // Unbox any SerializableClosures in the context.
+                $_value = $_value->getClosure();
+            } elseif ($_value === Serializer::RECURSION) {
+                // Track recursive references (there should only be one).
+                $_recursive_reference = $_var_name;
+            }
+
+            // Import the variable into this scope.
+            ${$_var_name} = $_value;
+        }
 
         // Evaluate the code to recreate the closure.
-        if ($_fn = array_search(Serializer::RECURSION, $this->data['context'], true)) {
-            @eval("\${$_fn} = {$this->data['code']};");
-            $this->closure = $$_fn;
+        if (isset($_recursive_reference)) {
+            // Special handling for recursive closures.
+            @eval("\${$_recursive_reference} = {$this->data['code']};");
+            $this->closure = ${$_recursive_reference};
         } else {
             @eval("\$this->closure = {$this->data['code']};");
         }

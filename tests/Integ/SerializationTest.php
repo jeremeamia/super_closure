@@ -6,6 +6,7 @@ use SuperClosure\SerializableClosure;
 use SuperClosure\Serializer;
 use SuperClosure\Test\Integ\Fixture\Collection;
 use SuperClosure\Test\Integ\Fixture\Foo;
+use Opis\Closure\SerializableClosure as OpisClosure;
 
 class SerializationTest extends \PHPUnit_Framework_TestCase
 {
@@ -122,7 +123,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $foo = new Foo(10);
         $closure = $foo->getClosure();
 
-        $results = $this->getResults($closure, [], true);
+        $results = $this->getResults($closure, []);
         $this->assertAllEquals(10, $results);
     }
 
@@ -142,14 +143,26 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             return 10;
         };
 
-        $results = $this->getResults($closure, [], true);
+        $results = $this->getResults($closure, []);
         $this->assertAllEquals(10, $results);
+    }
+
+    public function testClosuresInContextAreUnboxedBackToClosures()
+    {
+        $usedFn = function () {};
+        $closure = function () use ($usedFn){
+            return get_class($usedFn);
+        };
+
+        $results = $this->getResults($closure, []);
+        $this->assertAllEquals('Closure', $results);
     }
 
     private function getResults(\Closure $closure, array $args = [])
     {
         $results = ['original' => call_user_func_array($closure, $args)];
 
+        // AST
         try {
             $serializer = new Serializer(new AstAnalyzer, 'hashkey');
             $serialized = $serializer->serialize($closure);
@@ -161,6 +174,7 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             $results['ast'] = 'ERROR';
         }
 
+        // Token
         try {
             $serializer = new Serializer(new TokenAnalyzer, 'hashkey');
             $serialized = $serializer->serialize($closure);
@@ -171,6 +185,17 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         } catch (\Throwable $e) {
             $results['token'] = 'ERROR';
         }
+
+//        // Opis (Competitor)
+//        try {
+//            $serialized = serialize(new OpisClosure($closure, true));
+//            $unserialized = unserialize($serialized)->getClosure();
+//            $results['opis'] = call_user_func_array($unserialized, $args);
+//        } catch (\Exception $e) {
+//            $results['opis'] = 'ERROR';
+//        } catch (\Throwable $e) {
+//            $results['opis'] = 'ERROR';
+//        }
 
         return $results;
     }

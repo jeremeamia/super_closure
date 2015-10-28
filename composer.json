@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "nikic/php-parser": "~1.2"
+        "nikic/php-parser": "^2.0@beta"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",

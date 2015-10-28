@@ -257,8 +257,18 @@ try {
 To install the Super Closure library in your project using Composer, simply
 require the project with Composer:
 
-```
+```bash
 $ composer require jeremeamia/superclosure
+```
+
+You may of course manually update your require block if you so choose:
+
+```json
+{
+    "require": {
+        "jeremeamia/superclosure": "^2.0"
+    }
+}
 ```
 
 Please visit the [Composer homepage][7] for more information about how to use

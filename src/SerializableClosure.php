@@ -221,7 +221,7 @@ class SerializableClosure implements \Serializable
             return true;
         }
 
-        return $false;
+        return false;
     }
 
     /**

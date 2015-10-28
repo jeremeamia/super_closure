@@ -9,6 +9,7 @@ use PhpParser\PrettyPrinter\Standard as NodePrinter;
 use PhpParser\Error as ParserError;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser as CodeParser;
+use PhpParser\ParserFactory;
 use PhpParser\Lexer\Emulative as EmulativeLexer;
 
 /**
@@ -122,8 +123,19 @@ class AstAnalyzer extends ClosureAnalyzer
             );
         }
 
-        $parser = new CodeParser(new EmulativeLexer);
 
-        return $parser->parse(file_get_contents($fileName));
+        return $this->getParser()->parse(file_get_contents($fileName));
+    }
+
+    /**
+     * @return CodeParser
+     */
+    private function getParser()
+    {
+        if (class_exists('PhpParser\ParserFactory')) {
+            return (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        }
+
+        return new CodeParser(new EmulativeLexer);
     }
 }

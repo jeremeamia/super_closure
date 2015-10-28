@@ -8,8 +8,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard as NodePrinter;
 use PhpParser\Error as ParserError;
 use PhpParser\NodeVisitor\NameResolver;
-use PhpParser\Parser as CodeParser;
-use PhpParser\Lexer\Emulative as EmulativeLexer;
+use PhpParser\ParserFactory;
 
 /**
  * This is the AST based analyzer.
@@ -122,7 +121,7 @@ class AstAnalyzer extends ClosureAnalyzer
             );
         }
 
-        $parser = new CodeParser(new EmulativeLexer);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
 
         return $parser->parse(file_get_contents($fileName));
     }

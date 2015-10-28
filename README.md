@@ -254,17 +254,15 @@ try {
 
 ## Installation
 
-To install the Super Closure library in your project using Composer, first add
-the following to your `composer.json` config file.
-```json
-{
-    "require": {
-        "jeremeamia/superclosure": "~2.0"
-    }
-}
+To install the Super Closure library in your project using Composer, simply
+require the project with Composer:
+
 ```
-Then run Composer's install or update commands to complete installation. Please
-visit the [Composer homepage][7] for more information about how to use Composer.
+$ composer require jeremeamia/superclosure
+```
+
+Please visit the [Composer homepage][7] for more information about how to use
+Composer.
 
 ## Why would I need to serialize a closure?
 

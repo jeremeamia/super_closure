@@ -174,11 +174,54 @@ class SerializableClosure implements \Serializable
 
         // Evaluate the code to recreate the closure.
         if ($_fn = array_search(Serializer::RECURSION, $this->data['context'], true)) {
-            @eval("\${$_fn} = {$this->data['code']};");
+
+            // Eval work around
+            if(!$this->evalEnabled()) {
+                $secretKey = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 1).substr(md5(time()), 1);
+                $phpCode = "<?php if(\$secretKey != \"" . $secretKey . "\") return;";
+                $phpCode .= "\${$_fn} = {$this->data['code']};";
+                $phpCode .= "?>";
+                $temp_file = tempnam(sys_get_temp_dir(), 'eval');
+                // Write code to file and include it to execute it instead of calling eval
+                file_put_contents($temp_file, $phpCode);
+                include($temp_file);
+                unlink($temp_file);
+            }
+            else {
+                @eval("\${$_fn} = {$this->data['code']};");
+            }
             $this->closure = $$_fn;
         } else {
-            @eval("\$this->closure = {$this->data['code']};");
+            // Eval work around
+            if(!$this->evalEnabled()) {
+                $secretKey = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 1).substr(md5(time()), 1);
+                $phpCode = "<?php if(\$secretKey != \"" . $secretKey . "\") return;";
+                $phpCode .= "\$this->closure = {$this->data['code']};";
+                $phpCode .= "?>";
+                $temp_file = tempnam(sys_get_temp_dir(), 'eval');
+                // Write code to file and include it to execute it instead of calling eval
+                file_put_contents($temp_file, $phpCode);
+                include($temp_file);
+                unlink($temp_file);
+            }
+            else {
+                @eval("\$this->closure = {$this->data['code']};");
+            }
         }
+    }
+
+    private function evalEnabled() {
+        $isEvalFunctionAvailable = false;
+
+        $evalcheck = "\$isEvalFunctionAvailable = true;";
+
+        eval($evalcheck);
+
+        if ($isEvalFunctionAvailable === true) {
+            return true;
+        }
+
+        return $false;
     }
 
     /**

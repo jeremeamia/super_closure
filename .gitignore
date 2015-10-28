@@ -1,8 +1,9 @@
 .idea
-vendor
-build
+vendor/
+build/
 .DS_Store
 cache.properties
 composer.phar
 composer.lock
 php-cs-fixer.phar
+.sandbox

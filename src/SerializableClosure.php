@@ -139,7 +139,7 @@ class SerializableClosure implements \Serializable
         $this->data = unserialize($serialized);
         try {
             $this->reconstructClosure();
-        } catch (\ParseException $e) {
+        } catch (\ParseError $e) {
             // Discard the parse exception, we'll throw a custom one
             // a few lines down.
         }

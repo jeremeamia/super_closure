@@ -136,9 +136,16 @@ class SerializableClosure implements \Serializable
      */
     public function unserialize($serialized)
     {
-        // Unserialize the data and reconstruct the SuperClosure.
+        // Unserialize the closure data and reconstruct the closure object.
         $this->data = unserialize($serialized);
-        $this->closure = _reconstruct_closure($this->data);
+        $this->closure = __reconstruct_closure($this->data);
+
+        // Throw an exception if the closure could not be reconstructed.
+        if (!$this->closure instanceof Closure) {
+            throw new ClosureUnserializationException(
+                'The closure is corrupted and cannot be unserialized.'
+            );
+        }
 
         // Rebind the closure to its former binding and scope.
         if ($this->data['binding'] || $this->data['isStatic']) {
@@ -165,41 +172,46 @@ class SerializableClosure implements \Serializable
  *
  * HERE BE DRAGONS!
  *
- * The infamous `eval()` is used in this method, along with `extract()`, the
- * error suppression operator, and variable variables (i.e., double dollar
- * signs) to perform the unserialization work. I'm sorry, world!
+ * The infamous `eval()` is used in this method, along with the error
+ * suppression operator, and variable variables (i.e., double dollar signs) to
+ * perform the unserialization logic. I'm sorry, world!
  *
  * This is also done inside a plain function instead of a method so that the
  * binding and scope of the closure are null.
  *
  * @param array $__data Unserialized closure data.
  *
- * @return Closure
+ * @return Closure|null
  * @internal
  */
-function _reconstruct_closure(array $__data)
+function __reconstruct_closure(array $__data)
 {
     // Simulate the original context the closure was created in.
-    extract($__data['context'], EXTR_SKIP);
+    foreach ($__data['context'] as $__var_name => &$__value) {
+        if ($__value instanceof SerializableClosure) {
+            // Unbox any SerializableClosures in the context.
+            $__value = $__value->getClosure();
+        } elseif ($__value === Serializer::RECURSION) {
+            // Track recursive references (there should only be one).
+            $__recursive_reference = $__var_name;
+        }
 
+        // Import the variable into this scope.
+        ${$__var_name} = $__value;
+    }
+
+    // Evaluate the code to recreate the closure.
     try {
-        // Evaluate the code to recreate the closure.
-        if ($__fn = array_search(Serializer::RECURSION, $__data['context'], true)) {
-            @eval("\${$__fn} = {$__data['code']};");
-            $__closure = $$__fn;
+        if (isset($__recursive_reference)) {
+            // Special handling for recursive closures.
+            @eval("\${$__recursive_reference} = {$__data['code']};");
+            $__closure = ${$__recursive_reference};
         } else {
             @eval("\$__closure = {$__data['code']};");
         }
     } catch (\ParseException $e) {
-        // Discard the parse exception, we'll throw a custom one
-        // a few lines down.
+        // Discard the parse exception.
     }
 
-    if (!isset($__closure) || !$__closure instanceof \Closure) {
-        throw new ClosureUnserializationException(
-            'The closure is corrupted and cannot be unserialized.'
-        );
-    }
-
-    return $__closure;
+    return isset($__closure) ? $__closure : null;
 }

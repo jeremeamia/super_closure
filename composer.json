@@ -21,7 +21,7 @@
         "phpunit/phpunit": "~4.0|~5.0"
     },
     "suggest": {
-        "symfony/polyfill-php56": "Required to use the hash_equals function on PHP 5.5."
+        "symfony/polyfill-php56": "Required to use the hash_equals function on PHP 5.4/5.5."
     },
     "autoload": {
         "psr-4": {

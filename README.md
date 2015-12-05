@@ -1,4 +1,4 @@
-# PHP SuperClosure – Version 2
+# PHP SuperClosure – Version 3
 
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]
@@ -265,7 +265,7 @@ You may of course manually update your require block if you so choose:
 ```json
 {
     "require": {
-        "jeremeamia/superclosure": "^2.0"
+        "jeremeamia/superclosure": "^3.0"
     }
 }
 ```

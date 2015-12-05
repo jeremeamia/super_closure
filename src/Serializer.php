@@ -203,13 +203,6 @@ class Serializer implements SerializerInterface
      */
     private function verifySignature($signature, $data)
     {
-        // Ensure that hash_equals() is available.
-        static $hashEqualsFnExists = false;
-        if (!$hashEqualsFnExists) {
-            require __DIR__ . '/hash_equals.php';
-            $hashEqualsFnExists = true;
-        }
-
         // Verify that the provided signature matches the calculated signature.
         if (!hash_equals($signature, $this->calculateSignature($data))) {
             throw new ClosureUnserializationException('The signature of the'

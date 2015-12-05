@@ -3,8 +3,6 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]
 [![MIT License](https://img.shields.io/packagist/l/jeremeamia/superclosure.svg?style=flat)][10]
-[![Code Climate](https://codeclimate.com/github/jeremeamia/super_closure/badges/gpa.svg)][11]
-[![GratiPay](http://img.shields.io/gratipay/jeremeamia.svg?style=flat)](https://www.gittip.com/jeremeamia)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jeremeamia/super_closure)
 
 A PHP Library for serializing closures and anonymous functions.
@@ -157,7 +155,8 @@ should _choose the fastest analyzer that supports the features you need_.
   opening yourself up to code injection attacks. It is a good idea sign
   serialized closures if you plan on storing or transporting them. Read the
   **Signing Closures** section below for details on how to do this.
-4. Cannot serialize closures that are defined within `eval()`'d code.
+4. Cannot serialize closures that are defined within `eval()`'d code. This
+  includes re-serializing a closure that has been unserialized. 
 
 ### Analyzers
 
@@ -285,6 +284,12 @@ about the 7:50 mark they show how you can push a closure onto a queue as a job
 so that it can be executed by a worker. This is nice because you do not have to
 create a whole class for a job that might be really simple.
 
+Or... you might have a dependency injection container or router object that is
+built by writing closures. If you wanted to cache that, you would need to be
+able to serialize it.
+
+In general, however, serializing closures should probably be avoided.
+
 ## Tell me about how this project started
 
 It all started  back in the beginning of 2010 when PHP 5.3 was starting to
@@ -309,6 +314,12 @@ iterations have been more robust, thanks to the usage of the fabulous
 - [florianv/business](https://github.com/florianv/business) - Serializes special days to store business days definitions.
 - Please let me know if and how your project uses Super Closure.
 
+## Alternatives
+
+This year the [Opis Closure][11] library has been introduced, that also provides
+the ability to serialize a closure. You should check it out as well and see
+which one suits your needs the best.
+
 [1]:  https://packagist.org/packages/jeremeamia/superclosure
 [2]:  https://travis-ci.org/jeremeamia/super_closure
 [3]:  http://packagist.org/packages/jeremeamia/SuperClosure
@@ -319,4 +330,4 @@ iterations have been more robust, thanks to the usage of the fabulous
 [8]:  http://vimeo.com/64703617
 [9]:  http://www.userscape.com
 [10]: https://github.com/jeremeamia/super_closure/blob/master/LICENSE.md
-[11]: https://codeclimate.com/github/jeremeamia/super_closure
+[11]: https://github.com/opis/closure

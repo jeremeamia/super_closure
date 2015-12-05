@@ -1,6 +1,6 @@
 .idea
-vendor
-build
+vendor/
+build/
 .DS_Store
 cache.properties
 composer.phar

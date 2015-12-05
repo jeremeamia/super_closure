@@ -209,8 +209,8 @@ function __reconstruct_closure(array $__data)
         } else {
             @eval("\$__closure = {$__data['code']};");
         }
-    } catch (\ParseException $e) {
-        // Discard the parse exception.
+    } catch (\ParseError $e) {
+        // Discard the parse error.
     }
 
     return isset($__closure) ? $__closure : null;

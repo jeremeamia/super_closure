@@ -96,11 +96,12 @@ class Serializer implements SerializerInterface
         $unserialized = unserialize($serialized);
         restore_error_handler();
         if ($unserialized === false) {
-            throw new ClosureUnserializationException('The closure could not be unserialized');
+            throw new ClosureUnserializationException(
+                'The closure could not be unserialized.'
+            );
         } elseif (!$unserialized instanceof SerializableClosure) {
             throw new ClosureUnserializationException(
-                'The closure did not unserialize to a SuperClosure. ' .
-                'Was it not serialized with SuperClosure\Serializer?'
+                'The closure did not unserialize to a SuperClosure.'
             );
         }
 

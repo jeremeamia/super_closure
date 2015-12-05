@@ -1,8 +1,3 @@
-.idea
-vendor/
 build/
-.DS_Store
-cache.properties
-composer.phar
+vendor/
 composer.lock
-php-cs-fixer.phar

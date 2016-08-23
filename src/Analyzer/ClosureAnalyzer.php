@@ -55,14 +55,15 @@ abstract class ClosureAnalyzer
 
     private function isClosureStatic(\Closure $closure)
     {
-        $closure = @$closure->bindTo(new \stdClass);
+		if (version_compare(PHP_VERSION, '7.0', '>=')) {
+			$closure = @$closure->bindTo(new \stdClass);
 
-        if ($closure === null) {
-            return true;
-        }
-
+			if ($closure === null) {
+				return true;
+			}
+		}
+		
         $rebound = new \ReflectionFunction($closure);
-
         return $rebound->getClosureThis() === null;
     }
 }

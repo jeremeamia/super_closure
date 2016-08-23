@@ -62,8 +62,9 @@ abstract class ClosureAnalyzer
                 return true;
             }
         }
+
         $rebound = new \ReflectionFunction($closure);
-        
+
         return $rebound->getClosureThis() === null;
     }
 }

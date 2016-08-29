@@ -67,7 +67,7 @@ class Serializer implements SerializerInterface
     {
         $serialized = serialize(new SerializableClosure($closure, $this));
 
-        if ($this->signingKey) {
+        if (($serialized !== null) && $this->signingKey) {
             $signature = $this->calculateSignature($serialized);
             $serialized = '%' . base64_encode($signature) . $serialized;
         }

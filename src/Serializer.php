@@ -2,6 +2,7 @@
 
 use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
+use SuperClosure\Exception\ClosureSerializationException;
 use SuperClosure\Exception\ClosureUnserializationException;
 
 /**
@@ -66,6 +67,12 @@ class Serializer implements SerializerInterface
     public function serialize(\Closure $closure)
     {
         $serialized = serialize(new SerializableClosure($closure, $this));
+        
+        if ($serialized === null) {
+            throw new ClosureSerializationException(
+                'The closure could not be serialized.'
+            );
+        }
 
         if ($this->signingKey) {
             $signature = $this->calculateSignature($serialized);

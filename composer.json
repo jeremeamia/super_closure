@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "nikic/php-parser": "^1.2|^2.0",
+        "nikic/php-parser": "^1.2|^2.0|^3.0",
         "symfony/polyfill-php56": "^1.0"
     },
     "require-dev": {
@@ -35,5 +35,7 @@
         "branch-alias": {
             "dev-master": "2.2-dev"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

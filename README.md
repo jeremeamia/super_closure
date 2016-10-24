@@ -149,7 +149,7 @@ should _choose the fastest analyzer that supports the features you need_.
   which closure's code should be parsed (they are _anonymous_ functions after
   all).
 3. **Warning**: The `eval()` function is required to unserialize the closure.
-  This functions is considered dangerous by many, so you will have to evaluate
+  This function is considered dangerous by many, so you will have to evaluate
   what precautions you may need to take when using this library. You should only
   unserialize closures retrieved from a trusted source, otherwise you are
   opening yourself up to code injection attacks. It is a good idea sign

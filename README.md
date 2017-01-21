@@ -319,7 +319,8 @@ iterations have been more robust, thanks to the usage of the fabulous
 
 This year the [Opis Closure][11] library has been introduced, that also provides
 the ability to serialize a closure. You should check it out as well and see
-which one suits your needs the best.
+which one suits your needs the best. Starting with version `2.2.0`, *Opis Closure* is shipped
+with an analyzer which provides `AstAnalyzer`'s parsing precision at the speed of the `TokenAnalyzer`.
 
 [1]:  https://packagist.org/packages/jeremeamia/superclosure
 [2]:  https://travis-ci.org/jeremeamia/super_closure

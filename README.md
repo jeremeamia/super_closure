@@ -3,7 +3,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]
 [![MIT License](https://img.shields.io/packagist/l/jeremeamia/superclosure.svg?style=flat)][10]
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jeremeamia/super_closure)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jeremeamia/super_closure)
 
 A PHP Library for serializing closures and anonymous functions.
 

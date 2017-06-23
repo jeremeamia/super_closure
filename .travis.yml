@@ -28,10 +28,13 @@ matrix:
       env: PARSER_VERSION=^3.0
     - php: hhvm
       env: PARSER_VERSION=^1.2
+      dist: trusty
     - php: hhvm
       env: PARSER_VERSION=^2.0
+      dist: trusty
     - php: hhvm
       env: PARSER_VERSION=^3.0
+      dist: trusty
   allow_failures:
     - php: hhvm
   fast_finish: true

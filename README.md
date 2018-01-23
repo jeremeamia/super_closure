@@ -313,6 +313,7 @@ iterations have been more robust, thanks to the usage of the fabulous
   Closure's code.
 - [florianv/business](https://github.com/florianv/business) - Serializes special days to store business days definitions.
 - [zumba/json-serializer](https://github.com/zumba/json-serializer) - Serializes PHP variables into JSON format.
+- [PHP-DI](http://php-di.org/) - Compiles closure definitions into optimized PHP code.
 - Please let me know if and how your project uses Super Closure.
 
 ## Alternatives

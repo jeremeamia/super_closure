@@ -54,16 +54,16 @@ final class ClosureLocatorVisitor extends NodeVisitor
         // Determine information about the closure's location
         if (!$this->closureNode) {
             if ($node instanceof NamespaceNode) {
-                $namespace = ($node->name && is_array($node->name->parts))
-                    ? implode('\\', $node->name->parts)
+                $namespace = $node->name !== null
+                    ? $node->name->toString()
                     : null;
                 $this->location['namespace'] = $namespace;
             }
             if ($node instanceof TraitNode) {
-                $this->location['trait'] = $node->name;
+                $this->location['trait'] = (string) $node->name;
                 $this->location['class'] = null;
             } elseif ($node instanceof ClassNode) {
-                $this->location['class'] = $node->name;
+                $this->location['class'] = (string) $node->name;
                 $this->location['trait'] = null;
             }
         }

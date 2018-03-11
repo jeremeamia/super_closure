@@ -30,21 +30,21 @@ final class MagicConstantVisitor extends NodeVisitor
     {
         switch ($node->getType()) {
             case 'Scalar_MagicConst_Class' :
-                return new StringNode($this->location['class']);
+                return new StringNode($this->location['class'] ?: '');
             case 'Scalar_MagicConst_Dir' :
-                return new StringNode($this->location['directory']);
+                return new StringNode($this->location['directory'] ?: '');
             case 'Scalar_MagicConst_File' :
-                return new StringNode($this->location['file']);
+                return new StringNode($this->location['file'] ?: '');
             case 'Scalar_MagicConst_Function' :
-                return new StringNode($this->location['function']);
+                return new StringNode($this->location['function'] ?: '');
             case 'Scalar_MagicConst_Line' :
-                return new NumberNode($node->getAttribute('startLine'));
+                return new NumberNode($node->getAttribute('startLine') ?: 0);
             case 'Scalar_MagicConst_Method' :
-                return new StringNode($this->location['method']);
+                return new StringNode($this->location['method'] ?: '');
             case 'Scalar_MagicConst_Namespace' :
-                return new StringNode($this->location['namespace']);
+                return new StringNode($this->location['namespace'] ?: '');
             case 'Scalar_MagicConst_Trait' :
-                return new StringNode($this->location['trait']);
+                return new StringNode($this->location['trait'] ?: '');
         }
     }
 }

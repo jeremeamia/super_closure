@@ -30,6 +30,10 @@ matrix:
       env: PARSER_VERSION=^3.0
     - php: 7.1
       env: PARSER_VERSION=^4.0
+    - php: 7.2
+      env: PARSER_VERSION=^3.0
+    - php: 7.2
+      env: PARSER_VERSION=^4.0
     - php: hhvm
       env: PARSER_VERSION=^1.2
       dist: trusty

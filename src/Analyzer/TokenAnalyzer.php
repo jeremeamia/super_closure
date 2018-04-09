@@ -55,7 +55,7 @@ class TokenAnalyzer extends ClosureAnalyzer
                 // Handle tokens inside the function body.
                 case 2:
                     $data['tokens'][] = $token;
-                    if ($token->is('{')) {
+                    if ($token->is('{') || $token->is('${')) {
                         $braceLevel++;
                     } elseif ($token->is('}')) {
                         $braceLevel--;

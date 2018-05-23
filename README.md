@@ -152,7 +152,7 @@ should _choose the fastest analyzer that supports the features you need_.
   This function is considered dangerous by many, so you will have to evaluate
   what precautions you may need to take when using this library. You should only
   unserialize closures retrieved from a trusted source, otherwise you are
-  opening yourself up to code injection attacks. It is a good idea sign
+  opening yourself up to code injection attacks. It is a good idea to sign
   serialized closures if you plan on storing or transporting them. Read the
   **Signing Closures** section below for details on how to do this.
 4. Cannot serialize closures that are defined within `eval()`'d code. This

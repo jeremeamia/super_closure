@@ -332,6 +332,8 @@ This year the [Opis Closure][11] library has been introduced, that also provides
 the ability to serialize a closure. You should check it out as well and see
 which one suits your needs the best.
 
+If you wish to export your closures as executable PHP code instead, you can check out the [brick/varexporter][12] library.
+
 [1]:  https://packagist.org/packages/jeremeamia/superclosure
 [2]:  https://travis-ci.org/jeremeamia/super_closure
 [3]:  http://packagist.org/packages/jeremeamia/SuperClosure
@@ -343,3 +345,4 @@ which one suits your needs the best.
 [9]:  http://www.userscape.com
 [10]: https://github.com/jeremeamia/super_closure/blob/master/LICENSE.md
 [11]: https://github.com/opis/closure
+[12]: https://github.com/brick/varexporter

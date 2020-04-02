@@ -1,4 +1,4 @@
-# PHP SuperClosure – Version 2
+# PHP SuperClosure
 
 [![Total Downloads](https://img.shields.io/packagist/dt/jeremeamia/superclosure.svg?style=flat)][1]
 [![Build Status](https://img.shields.io/travis/jeremeamia/super_closure/master.svg?style=flat)][2]
@@ -6,6 +6,16 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jeremeamia/super_closure)
 
 A PHP Library for serializing closures and anonymous functions.
+
+---
+
+## No Longer Maintained
+
+This software is no longer maintained. Consider using [opis/closure][11] instead.
+
+The rest of the README will remain intact as it was prior to the software being abandoned.
+
+---
 
 ## Introduction
 

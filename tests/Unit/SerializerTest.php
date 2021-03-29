@@ -27,7 +27,7 @@ class SerializerTest extends \PHPUnit_Framework_TestCase
         $serializedFn = $serializer->serialize($originalFn);
 
         // Modify the serialized closure.
-        $serializedFn[5] = '6119dcd1245df749d162b544d4f44280eef3e7f4d4c636611ed87e7b97198c0b';
+        $serializedFn[5] = 'x';
 
         // Unserialization should fail on invalid signature.
         $this->setExpectedException('SuperClosure\Exception\ClosureUnserializationException');

@@ -109,6 +109,8 @@ class SerializableClosure implements \Serializable
     {
         try {
             $this->data = $this->data ?: $this->serializer->getData($this->closure, true);
+            $this->serializer = new Serializer;
+
             return serialize($this->data);
         } catch (\Exception $e) {
             trigger_error(
